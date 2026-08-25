@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/ui/Logo";
+import { Button, Logo } from "@cem/ui";
 import { institutionalLinks } from "@/config/navigation";
 import { services } from "@/data/home-content";
 

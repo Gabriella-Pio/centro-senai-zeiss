@@ -5,6 +5,7 @@ const repoRoot = path.join(__dirname, "../..");
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: repoRoot,
+  transpilePackages: ["@cem/ui"],
   turbopack: {
     root: repoRoot,
   },

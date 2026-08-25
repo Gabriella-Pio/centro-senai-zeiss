@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { Logo } from "@/components/ui/Logo";
+import { Logo } from "@cem/ui";
 import { institutionalLinks } from "@/config/navigation";
 import { services } from "@/data/home-content";
 

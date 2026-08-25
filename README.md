@@ -20,7 +20,7 @@ centro-senai-zeiss/
   apps/web          # site público          → localhost:3000
   apps/app          # módulo interno        → localhost:3001
   apps/api          # API NestJS            → localhost:3333
-  packages/ui       # tokens e primitivos (próximo passo)
+  packages/ui       # tokens e primitivos shadcn (`@cem/ui`)
 ```
 
 ## Como rodar

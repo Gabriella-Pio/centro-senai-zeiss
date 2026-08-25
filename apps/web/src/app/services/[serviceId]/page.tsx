@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { Button } from "@/components/ui/button";
+import { Button } from "@cem/ui";
 import { services } from "@/data/home-content";
 
 interface ServicePageProps {

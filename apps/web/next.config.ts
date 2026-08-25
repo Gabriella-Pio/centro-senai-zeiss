@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   // next fica no node_modules da raiz do workspace; sem isso o Turbopack
   // infere apps/web/src/app e não acha next/package.json.
   outputFileTracingRoot: repoRoot,
+  transpilePackages: ["@cem/ui"],
   turbopack: {
     root: repoRoot,
   },

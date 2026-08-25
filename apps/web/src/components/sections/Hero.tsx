@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/button";
+import { Button } from "@cem/ui";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 
 export function Hero() {

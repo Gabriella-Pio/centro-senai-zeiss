@@ -20,7 +20,7 @@ import {
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@cem/ui";
 import type { FeatureItem } from "@/data/home-content";
 
 // Mapa central de ícones — assim o conteúdo em data/home-content.ts guarda só
