@@ -13,7 +13,7 @@ export function Logo({ variant = "nav" }: LogoProps) {
       <div
         className={`${
           isNav ? "w-11 h-11 text-sm" : "w-9 h-9 text-xs"
-        } rounded-none flex items-center justify-center text-primary-foreground font-bold bg-primary shadow-md`}
+        } rounded-[var(--radius)] flex items-center justify-center text-primary-foreground font-bold bg-primary shadow-md`}
       >
         SZ
       </div>
@@ -21,9 +21,9 @@ export function Logo({ variant = "nav" }: LogoProps) {
         <div
           className={`${
             isNav ? "text-base" : "text-sm"
-          } font-semibold leading-tight tracking-tight text-foreground`}
+          } font-heading font-semibold leading-tight tracking-tight text-foreground`}
         >
-          SENAI <span className="text-accent">×</span> ZEISS
+          SENAI <span className="text-primary">×</span> ZEISS
         </div>
         {isNav && (
           <div className="text-foreground/50 text-[11px] font-medium tracking-widest uppercase">

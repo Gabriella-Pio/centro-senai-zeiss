@@ -49,7 +49,7 @@ export default function InstitutionalPage() {
 
       <Section variant="muted">
         <Container className="flex flex-col gap-6 max-w-3xl">
-          <h2 className="text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
+          <h2 className="font-heading text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
             Histórico
           </h2>
           <p className="text-base text-muted-foreground leading-relaxed font-light">

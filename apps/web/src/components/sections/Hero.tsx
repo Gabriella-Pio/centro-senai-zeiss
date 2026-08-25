@@ -6,26 +6,27 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 
 export function Hero() {
   return (
-    <Section
-      variant="default"
-      className="relative overflow-hidden !pt-40 md:!pt-56 !pb-32 md:!pb-48 border-b border-border"
-    >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,87,184,0.18)_0%,transparent_65%)] pointer-events-none" />
-
-      <Container className="text-center space-y-8 relative z-10 max-w-5xl">
+    <Section variant="default" className="!pt-32 md:!pt-44 !pb-20 md:!pb-28">
+      {/* Texture (coordinate grid / scan mesh) stays off until feat/web-home
+          has a real asset; if it returns, it sits behind this copy only. */}
+      <Container className="max-w-3xl">
         <Eyebrow>Centro de Excelência em Metrologia • SENAI Ítalo Bologna</Eyebrow>
 
-        <h1 className="text-display-lg font-bold tracking-tight leading-[1.05] text-foreground">
-          SENAI <span className="text-accent">×</span> ZEISS
+        <h1 className="mt-8 font-heading text-display-lg font-bold tracking-tight leading-[1.08] text-foreground">
+          SENAI <span className="text-primary">×</span> ZEISS
         </h1>
 
-        <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light">
+        <p className="mt-4 font-heading text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+          Precisão em cada etapa.
+        </p>
+
+        <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
           Metrologia dimensional de alta precisão, engenharia reversa,
           digitalização 3D e tomografia industrial com tecnologia alemã de
           ponta.
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-6">
+        <div className="mt-10 flex flex-wrap items-center gap-3">
           <Button size="xl" render={<Link href="/quote" />}>
             Solicitar Orçamento
           </Button>
@@ -34,8 +35,6 @@ export function Hero() {
           </Button>
         </div>
       </Container>
-
-      {/* Espaço reservado para a animação/visualização interativa (a definir) */}
     </Section>
   );
 }

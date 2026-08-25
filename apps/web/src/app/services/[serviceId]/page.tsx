@@ -23,7 +23,7 @@ export default function ServiceDetailPage({ params }: ServicePageProps) {
       <Container className="max-w-3xl flex flex-col gap-10">
         <div className="flex flex-col gap-4">
           <Eyebrow>Serviço</Eyebrow>
-          <h1 className="text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
+          <h1 className="font-heading text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
             {service.label}
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-light">

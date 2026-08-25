@@ -10,8 +10,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-[#00B8D9] selection:text-black;
-    font-size: 1.05rem;
+    @apply bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground;
+    font-size: var(--text-body);
     line-height: 1.6;
     font-feature-settings: "rlig" 1, "calt" 1;
   }

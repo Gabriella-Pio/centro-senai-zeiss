@@ -1,30 +1,39 @@
-/* Unique source of design tokens. Page CSS does not belong here. */
+/* Unique source of design tokens. Page CSS does not belong here.
+   Pairing A: General Sans (display) + IBM Plex Sans (body) + IBM Plex Mono (data).
+   Faces are loaded per app; these variables only name the stack. */
 @theme inline {
-  --color-background: #0b0f19;
-  --color-foreground: #f8fafc;
-  --color-card: #131b2e;
-  --color-card-foreground: #f8fafc;
-  --color-popover: #131b2e;
-  --color-popover-foreground: #f8fafc;
+  --color-background: #f6f4ef;
+  --color-foreground: #1c1917;
+  --color-card: #fffcf7;
+  --color-card-foreground: #1c1917;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1c1917;
   --color-primary: #0057b8;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #1e293b;
-  --color-secondary-foreground: #f8fafc;
-  --color-muted: #1e293b;
-  --color-muted-foreground: #94a3b8;
-  --color-accent: #00b8d9;
-  --color-accent-foreground: #0b0f19;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-input: rgba(255, 255, 255, 0.12);
-  --color-ring: #00b8d9;
+  --color-secondary: #ece7dc;
+  --color-secondary-foreground: #1c1917;
+  --color-muted: #efebe3;
+  --color-muted-foreground: #57534e;
+  --color-accent: #0057b8;
+  --color-accent-foreground: #ffffff;
+  --color-border: rgba(28, 25, 23, 0.12);
+  --color-input: rgba(28, 25, 23, 0.16);
+  --color-ring: #0057b8;
 
-  --text-display-lg: clamp(3rem, 4rem + 5vw, 7.5rem);
-  --text-display-md: clamp(2.25rem, 2.5rem + 3vw, 4.5rem);
-  --text-display-sm: clamp(1.75rem, 1.5rem + 2vw, 2.75rem);
+  --font-sans: var(--font-plex-sans), "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --font-heading: "General Sans", ui-sans-serif, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 
-  --radius: 0px;
+  --text-meta: 0.75rem;
+  --text-body: 1.125rem;
+  --text-display-lg: clamp(2.5rem, 2rem + 4vw, 5.5rem);
+  --text-display-md: clamp(1.75rem, 1.4rem + 2vw, 3.25rem);
+  --text-display-sm: clamp(1.4rem, 1.2rem + 1vw, 2.25rem);
+
+  /* Intent: 2px at 16px root. Components must use rounded-[var(--radius)]. */
+  --radius: 0.125rem;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }

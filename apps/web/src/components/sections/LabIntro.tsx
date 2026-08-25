@@ -14,7 +14,7 @@ export function LabIntro() {
       <Container className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="flex flex-col gap-6">
           <Eyebrow>Sobre o laboratório</Eyebrow>
-          <h2 className="text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
+          <h2 className="font-heading text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
             Precisão alemã, aplicada à indústria brasileira
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-light">
@@ -30,9 +30,9 @@ export function LabIntro() {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="flex flex-col gap-2 p-6 bg-card ring-1 ring-foreground/10"
+              className="flex flex-col gap-2 p-6 rounded-[var(--radius)] bg-card ring-1 ring-foreground/10"
             >
-              <span className="text-display-sm font-bold text-accent">{stat.value}</span>
+              <span className="font-heading text-display-sm font-bold text-accent">{stat.value}</span>
               <span className="text-xs text-muted-foreground leading-relaxed">{stat.label}</span>
             </div>
           ))}

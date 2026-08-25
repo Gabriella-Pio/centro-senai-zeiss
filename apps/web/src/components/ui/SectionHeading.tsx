@@ -21,7 +21,7 @@ export function SectionHeading({
   return (
     <div className={`flex flex-col gap-4 max-w-3xl ${alignment} ${className}`}>
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-      <h2 className="text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
+      <h2 className="font-heading text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
         {title}
       </h2>
       {description && (

@@ -16,7 +16,7 @@ export default function Footer() {
       <Container className="pt-24 md:pt-32 pb-16">
         <a
           href="/contact"
-          className="group flex items-baseline gap-4 md:gap-6 text-display-md leading-[1.05] font-bold tracking-tight text-foreground hover:text-accent transition-colors"
+          className="group flex items-baseline gap-4 md:gap-6 font-heading text-display-md leading-[1.05] font-bold tracking-tight text-foreground hover:text-accent transition-colors"
         >
           Fale conosco
           <span className="hidden sm:inline text-accent/60">/</span>

@@ -25,7 +25,7 @@ export default function Navbar() {
             onMouseEnter={() => setServicesOpen(true)}
             onMouseLeave={() => setServicesOpen(false)}
           >
-            <button className="flex items-center gap-1.5 px-4 py-2 text-base font-medium text-foreground/80 hover:text-foreground hover:bg-white/5 transition-colors">
+            <button className="flex items-center gap-1.5 px-4 py-2 text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors">
               Serviços
               <ChevronDown
                 size={16}
@@ -34,13 +34,13 @@ export default function Navbar() {
             </button>
 
             {servicesOpen && (
-              <div className="absolute top-full left-0 mt-1 w-72 overflow-hidden py-2 bg-popover border border-border shadow-2xl">
+              <div className="absolute top-full left-0 mt-1 w-72 overflow-hidden rounded-[var(--radius)] py-2 bg-popover border border-border shadow-2xl">
                 {services.map((s) => (
                   <Link
                     key={s.id}
                     href={`/services/${s.id}`}
                     onClick={() => setServicesOpen(false)}
-                    className="block px-4 py-3 text-sm text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
+                    className="block px-4 py-3 text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
                   >
                     {s.label}
                   </Link>
@@ -53,7 +53,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="px-4 py-2 text-base font-medium text-foreground/80 hover:text-foreground hover:bg-white/5 transition-colors"
+              className="px-4 py-2 text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors"
             >
               {link.label}
             </Link>

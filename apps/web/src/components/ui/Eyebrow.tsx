@@ -10,7 +10,7 @@ interface EyebrowProps {
 export function Eyebrow({ children, className = "" }: EyebrowProps) {
   return (
     <div
-      className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-border text-xs font-semibold text-accent tracking-widest uppercase ${className}`}
+      className={`inline-flex items-center gap-2 rounded-[var(--radius)] px-4 py-1.5 border border-border bg-muted text-meta font-semibold text-muted-foreground tracking-widest uppercase ${className}`}
     >
       {children}
     </div>

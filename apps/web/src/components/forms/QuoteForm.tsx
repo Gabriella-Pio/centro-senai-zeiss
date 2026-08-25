@@ -32,7 +32,7 @@ export function QuoteForm({ defaultServiceId }: QuoteFormProps) {
   if (submitted) {
     return (
       <div className="flex flex-col items-center gap-3 py-16 text-center">
-        <h2 className="text-xl font-semibold text-foreground">Solicitação enviada</h2>
+        <h2 className="font-heading text-xl font-semibold text-foreground">Solicitação enviada</h2>
         <p className="text-muted-foreground max-w-sm">
           Recebemos sua solicitação. Nossa equipe entrará em contato em até 2
           dias úteis.
