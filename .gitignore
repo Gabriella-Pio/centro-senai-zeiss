@@ -1,3 +1,20 @@
+# Workspaces
+node_modules/
+
+# Next / Nest build
+apps/*/.next/
+apps/*/dist/
+apps/*/out/
+apps/*/build/
+apps/api/generated/
+
+# Env
+.env
+.env.local
+
+# Pasta antiga após a mudança para apps/ (só cache do Next)
+frontend/
+
 # Logs
 logs
 *.log
@@ -37,3 +54,4 @@ pids
 .Trashes
 ehthumbs.db
 Thumbs.db
+docs/

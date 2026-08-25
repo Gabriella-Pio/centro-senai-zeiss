@@ -1,0 +1,32 @@
+/* Unique source of design tokens. Page CSS does not belong here. */
+@theme inline {
+  --color-background: #f6f4ef;
+  --color-foreground: #1c1917;
+  --color-card: #fffcf7;
+  --color-card-foreground: #1c1917;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1c1917;
+  --color-primary: #0057b8;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #ece7dc;
+  --color-secondary-foreground: #1c1917;
+  --color-muted: #efebe3;
+  --color-muted-foreground: #57534e;
+  --color-accent: #0e7490;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #b42318;
+  --color-border: rgba(28, 25, 23, 0.12);
+  --color-input: rgba(28, 25, 23, 0.16);
+  --color-ring: #0057b8;
+
+  --text-display-lg: clamp(2.5rem, 2rem + 4vw, 5.5rem);
+  --text-display-md: clamp(1.75rem, 1.4rem + 2vw, 3.25rem);
+  --text-display-sm: clamp(1.4rem, 1.2rem + 1vw, 2.25rem);
+
+  --radius: 0.125rem;
+  --font-sans: var(--font-sans);
+}
+
+:root {
+  color-scheme: light;
+}

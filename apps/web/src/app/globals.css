@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --color-background: #0B0F19;
+  --color-foreground: #F8FAFC;
+  --color-card: #131B2E;
+  --color-card-foreground: #F8FAFC;
+  --color-popover: #131B2E;
+  --color-popover-foreground: #F8FAFC;
+  --color-primary: #0057B8;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #1E293B;
+  --color-secondary-foreground: #F8FAFC;
+  --color-muted: #1E293B;
+  --color-muted-foreground: #94A3B8;
+  --color-accent: #00B8D9;
+  --color-accent-foreground: #0B0F19;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-input: rgba(255, 255, 255, 0.12);
+  --color-ring: #00B8D9;
+
+  /* Escala tipográfica "editorial" — usada em hero, títulos de seção e no
+     bloco de destaque do footer. É fluida (clamp) para não pular abruptamente
+     entre breakpoints, como acontecia com text-5xl -> sm:text-7xl. */
+  --text-display-lg: clamp(3rem, 4rem + 5vw, 7.5rem);
+  --text-display-md: clamp(2.25rem, 2.5rem + 3vw, 4.5rem);
+  --text-display-sm: clamp(1.75rem, 1.5rem + 2vw, 2.75rem);
+
+  /* Raio único do design system: cantos retos em toda parte, inclusive nos
+     CTAs de marketing — reforça a identidade de precisão/engenharia e evita
+     que o hero "fuja" do padrão usado nos componentes de UI (button, card...). */
+  --radius: 0px;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-[#00B8D9] selection:text-black;
+    /* Nota: rem é relativo ao <html>, não ao <body> — isso só afeta texto sem
+       classe utilitária de tamanho explícita. Para escalar navbar/hero/footer,
+       ajuste as classes text-* diretamente ou use os tokens --text-display-*. */
+    font-size: 1.05rem;
+    line-height: 1.6;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
