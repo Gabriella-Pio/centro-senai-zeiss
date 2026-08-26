@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+
+const archivo = Archivo({
+  subsets: ["latin", "latin-ext"],
+  weight: ["600", "700"],
+  variable: "--font-archivo",
+  display: "swap",
+});
 
 const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
@@ -29,13 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${plexSans.variable} ${plexMono.variable}`}>
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f%5B%5D=general-sans@600,700&display=swap"
-        />
-      </head>
+    <html lang="pt-BR" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
       <body className={`${plexSans.className} min-h-screen flex flex-col bg-background text-foreground font-sans`}>
         <Navbar />
         <main className="flex-1 pt-[80px]">{children}</main>

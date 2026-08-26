@@ -1,5 +1,7 @@
 import { Hero } from "@/components/sections/Hero";
 import { LabIntro } from "@/components/sections/LabIntro";
+import { ServiceHub } from "@/components/sections/ServiceHub";
+import { DifferentialsSwitch } from "@/components/sections/DifferentialsSwitch";
 import { FeatureGrid } from "@/components/sections/FeatureGrid";
 import { LogoRow } from "@/components/sections/LogoRow";
 import {
@@ -16,14 +18,9 @@ export default function HomePage() {
     <>
       <Hero />
       <LabIntro />
+      <ServiceHub />
 
-      <FeatureGrid
-        eyebrow="Diferenciais"
-        title="Por que a indústria escolhe o laboratório"
-        description="Cada medição passa por um processo rigoroso, do recebimento da peça à entrega do laudo."
-        items={differentials}
-        variant="surface"
-      />
+      <DifferentialsSwitch items={differentials} />
 
       <FeatureGrid
         eyebrow="Infraestrutura"
@@ -36,7 +33,7 @@ export default function HomePage() {
         eyebrow="Equipamentos"
         title="Tecnologia ZEISS de ponta"
         items={equipment}
-        variant="muted"
+        variant="default"
       />
 
       <FeatureGrid
@@ -46,8 +43,8 @@ export default function HomePage() {
         variant="default"
       />
 
-      <LogoRow title="Certificações" items={certifications} variant="surface" />
-      <LogoRow title="Parceiros" items={partners} variant="muted" />
+      <LogoRow title="Certificações" items={certifications} variant="default" />
+      <LogoRow title="Parceiros" items={partners} variant="default" />
     </>
   );
 }

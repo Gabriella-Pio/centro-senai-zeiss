@@ -55,3 +55,6 @@ pids
 ehthumbs.db
 Thumbs.db
 docs/
+
+# Prova de tipo local (Archivo / Plex / etc.). Não vai para o produto.
+apps/web/src/app/type-test/

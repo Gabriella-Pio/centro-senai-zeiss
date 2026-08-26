@@ -2,6 +2,7 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Card, CardHeader, CardTitle, CardContent } from "@cem/ui";
+import { vitrineCardClass } from "@/lib/vitrine-card";
 
 const pillars = [
   {
@@ -34,12 +35,12 @@ export default function InstitutionalPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {pillars.map((pillar) => (
-              <Card key={pillar.title} className="p-2">
+              <Card key={pillar.title} className={vitrineCardClass()}>
                 <CardHeader>
-                  <CardTitle className="text-base">{pillar.title}</CardTitle>
+                  <CardTitle className="font-heading text-lg font-semibold">{pillar.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">{pillar.description}</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{pillar.description}</p>
                 </CardContent>
               </Card>
             ))}

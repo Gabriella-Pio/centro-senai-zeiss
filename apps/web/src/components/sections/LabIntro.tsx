@@ -30,10 +30,10 @@ export function LabIntro() {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="flex flex-col gap-2 p-6 rounded-[var(--radius)] bg-card ring-1 ring-foreground/10"
+              className="flex flex-col gap-2 p-6 rounded-[var(--radius)] border border-border bg-card shadow-none"
             >
               <span className="font-heading text-display-sm font-bold text-accent">{stat.value}</span>
-              <span className="text-xs text-muted-foreground leading-relaxed">{stat.label}</span>
+              <span className="text-sm text-muted-foreground leading-relaxed">{stat.label}</span>
             </div>
           ))}
         </div>

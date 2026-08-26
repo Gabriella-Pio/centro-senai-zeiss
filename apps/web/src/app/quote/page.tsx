@@ -4,10 +4,12 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { QuoteForm } from "@/components/forms/QuoteForm";
 
 interface QuotePageProps {
-  searchParams: { service?: string };
+  searchParams: Promise<{ service?: string }>;
 }
 
-export default function QuotePage({ searchParams }: QuotePageProps) {
+export default async function QuotePage({ searchParams }: QuotePageProps) {
+  const { service } = await searchParams;
+
   return (
     <Section variant="default" className="!pt-16">
       <Container className="max-w-2xl flex flex-col gap-16">
@@ -17,7 +19,7 @@ export default function QuotePage({ searchParams }: QuotePageProps) {
           description="Preencha os dados abaixo e nossa equipe técnica retorna com uma proposta."
           align="left"
         />
-        <QuoteForm defaultServiceId={searchParams.service} />
+        <QuoteForm defaultServiceId={service} />
       </Container>
     </Section>
   );

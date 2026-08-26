@@ -3,13 +3,13 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@cem/ui";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { CoordinateGrid } from "@/components/sections/CoordinateGrid";
 
 export function Hero() {
   return (
-    <Section variant="default" className="!pt-32 md:!pt-44 !pb-20 md:!pb-28">
-      {/* Texture (coordinate grid / scan mesh) stays off until feat/web-home
-          has a real asset; if it returns, it sits behind this copy only. */}
-      <Container className="max-w-3xl">
+    <Section variant="default" className="relative overflow-hidden !pt-32 md:!pt-44 !pb-20 md:!pb-28">
+      <CoordinateGrid fade />
+      <Container className="relative z-10 max-w-3xl">
         <Eyebrow>Centro de Excelência em Metrologia • SENAI Ítalo Bologna</Eyebrow>
 
         <h1 className="mt-8 font-heading text-display-lg font-bold tracking-tight leading-[1.08] text-foreground">

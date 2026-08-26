@@ -1,5 +1,5 @@
 /* Unique source of design tokens. Page CSS does not belong here.
-   Pairing A: General Sans (display) + IBM Plex Sans (body) + IBM Plex Mono (data).
+   Archivo (display) + IBM Plex Sans (body) + IBM Plex Mono (data).
    Faces are loaded per app; these variables only name the stack. */
 @theme inline {
   --color-background: #f6f4ef;
@@ -21,7 +21,7 @@
   --color-ring: #0057b8;
 
   --font-sans: var(--font-plex-sans), "IBM Plex Sans", ui-sans-serif, sans-serif;
-  --font-heading: "General Sans", ui-sans-serif, sans-serif;
+  --font-heading: var(--font-archivo), "Archivo", ui-sans-serif, sans-serif;
   --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 
   --text-meta: 0.75rem;

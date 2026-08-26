@@ -2,6 +2,8 @@ export interface FeatureItem {
   title: string;
   description: string;
   icon: string; // nome do ícone lucide-react, resolvido no componente
+  /** Foto de equipamento/peça, quando o laboratório autorizar. Sem arquivo, o bloco usa o ícone. */
+  image?: string;
 }
 
 export const differentials: FeatureItem[] = [

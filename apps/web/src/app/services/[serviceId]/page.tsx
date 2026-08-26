@@ -7,15 +7,16 @@ import { Button } from "@cem/ui";
 import { services } from "@/data/home-content";
 
 interface ServicePageProps {
-  params: { serviceId: string };
+  params: Promise<{ serviceId: string }>;
 }
 
 export function generateStaticParams() {
   return services.map((service) => ({ serviceId: service.id }));
 }
 
-export default function ServiceDetailPage({ params }: ServicePageProps) {
-  const service = services.find((s) => s.id === params.serviceId);
+export default async function ServiceDetailPage({ params }: ServicePageProps) {
+  const { serviceId } = await params;
+  const service = services.find((s) => s.id === serviceId);
   if (!service) notFound();
 
   return (
@@ -32,13 +33,13 @@ export default function ServiceDetailPage({ params }: ServicePageProps) {
         </div>
 
         <div className="flex flex-col gap-3">
-          <h2 className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
+          <h2 className="text-meta font-bold tracking-widest uppercase text-muted-foreground">
             Aplicações
           </h2>
           <ul className="flex flex-col gap-2">
             {service.applications.map((app) => (
-              <li key={app} className="flex items-center gap-3 text-foreground/80">
-                <span className="w-1.5 h-1.5 bg-accent shrink-0" />
+              <li key={app} className="flex items-center gap-3 text-sm text-foreground/80">
+                <span className="h-1.5 w-1.5 shrink-0 bg-primary" />
                 {app}
               </li>
             ))}
@@ -46,10 +47,10 @@ export default function ServiceDetailPage({ params }: ServicePageProps) {
         </div>
 
         <div className="flex flex-col gap-3">
-          <h2 className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
+          <h2 className="text-meta font-bold tracking-widest uppercase text-muted-foreground">
             Público-alvo
           </h2>
-          <p className="text-foreground/80">{service.audience}</p>
+          <p className="text-sm text-foreground/80">{service.audience}</p>
         </div>
 
         <div className="pt-4">

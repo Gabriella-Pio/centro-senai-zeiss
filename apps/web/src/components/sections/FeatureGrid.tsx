@@ -21,10 +21,9 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Card, CardHeader, CardTitle, CardContent } from "@cem/ui";
+import { vitrineCardClass } from "@/lib/vitrine-card";
 import type { FeatureItem } from "@/data/home-content";
 
-// Mapa central de ícones — assim o conteúdo em data/home-content.ts guarda só
-// o nome (string) do ícone, sem depender de importar componentes React.
 const iconMap: Record<string, LucideIcon> = {
   Target,
   ShieldCheck,
@@ -62,15 +61,15 @@ export function FeatureGrid({ eyebrow, title, description, items, variant = "def
           {items.map((item) => {
             const Icon = iconMap[item.icon];
             return (
-              <Card key={item.title} className="p-2 hover:ring-accent/40 transition-all">
+              <Card key={item.title} className={vitrineCardClass()}>
                 <CardHeader className="gap-3">
-                  <div className="w-11 h-11 flex items-center justify-center bg-primary/10 text-accent">
+                  <div className="flex h-11 w-11 items-center justify-center bg-primary/10 text-primary">
                     {Icon && <Icon size={22} strokeWidth={1.75} />}
                   </div>
-                  <CardTitle className="text-base">{item.title}</CardTitle>
+                  <CardTitle className="font-heading text-lg font-semibold">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                 </CardContent>
               </Card>
             );
