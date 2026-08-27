@@ -19,7 +19,7 @@ interface ArticleDetailProps {
 
 export function ArticleDetail({ eyebrow, title, body, groups, cta }: ArticleDetailProps) {
   return (
-    <Section variant="default" className="!pt-16">
+    <Section variant="default" clearNav>
       <Container className="max-w-3xl flex flex-col gap-10">
         <div className="flex flex-col gap-4">
           <Eyebrow>{eyebrow}</Eyebrow>

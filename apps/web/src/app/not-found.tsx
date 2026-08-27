@@ -7,7 +7,7 @@ import { notFoundCopy } from "@/copy";
 
 export default function NotFound() {
   return (
-    <Section variant="default" className="!pt-32 md:!pt-44 !pb-20 md:!pb-28">
+    <Section variant="default" className="pb-20! md:pb-28!" clearNav>
       <Container className="max-w-3xl">
         <Eyebrow>{notFoundCopy.eyebrow}</Eyebrow>
 

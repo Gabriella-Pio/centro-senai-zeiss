@@ -17,7 +17,7 @@ interface HeroProps {
 
 export function Hero({ eyebrow, brand, subtitle, body, primaryCta, secondaryCta }: HeroProps) {
   return (
-    <Section variant="default" className="relative overflow-hidden pt-32! md:pt-44! pb-20! md:pb-28!">
+    <Section variant="default" className="relative overflow-hidden pb-20! md:pb-28!" clearNav>
       <CoordinateGrid fade />
       <Container className="relative z-10 text-left">
         <Eyebrow>{eyebrow}</Eyebrow>

@@ -2,47 +2,46 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** Some ao descer, volta ao subir. Fica visível no topo da página. */
+const TOP_PX = 24;
+
+/** Some ao descer, volta ao subir. No topo da página permanece visível. */
 export function useHideOnScroll({
   disabled = false,
-  threshold = 8,
+  threshold = 16,
 }: {
   disabled?: boolean;
   threshold?: number;
 } = {}) {
   const [hidden, setHidden] = useState(false);
+  const [atTop, setAtTop] = useState(true);
   const lastY = useRef(0);
 
   useEffect(() => {
-    if (disabled) {
-      setHidden(false);
-      return;
-    }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    lastY.current = window.scrollY;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const onScroll = () => {
       const y = window.scrollY;
-      const delta = y - lastY.current;
+      setAtTop(y < TOP_PX);
 
-      if (y < 24) {
-        setHidden(false);
-      } else if (delta > threshold) {
-        setHidden(true);
-      } else if (delta < -threshold) {
-        setHidden(false);
+      if (!disabled && !reduceMotion) {
+        const delta = y - lastY.current;
+        if (y < TOP_PX) {
+          setHidden(false);
+        } else if (delta > threshold) {
+          setHidden(true);
+        } else if (delta < -threshold) {
+          setHidden(false);
+        }
       }
 
       lastY.current = y;
     };
 
+    lastY.current = window.scrollY;
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [disabled, threshold]);
 
-  return hidden;
+  return { hidden: disabled ? false : hidden, atTop };
 }

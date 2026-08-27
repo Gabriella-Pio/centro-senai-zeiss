@@ -1,62 +1,81 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button, cn } from "@cem/ui";
 import { BrandLockup } from "@/components/layout/BrandLockup";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
+import { NavTray, navTrayRowClass } from "@/components/layout/NavTray";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
+import { useSectionBackdrop } from "@/hooks/useSectionBackdrop";
 import { nav } from "@/copy/site";
 import { services } from "@/copy/services";
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const hidden = useHideOnScroll({ disabled: mobileOpen });
-
-  useEffect(() => {
-    if (hidden) setServicesOpen(false);
-  }, [hidden]);
+  const [openTray, setOpenTray] = useState<"services" | "lang" | null>(null);
+  const { hidden, atTop } = useHideOnScroll({ disabled: mobileOpen });
+  const backdrop = useSectionBackdrop(headerRef, pathname);
+  const tray = hidden ? null : openTray;
+  const solid = mobileOpen || !atTop;
 
   return (
     <header
+      ref={headerRef}
       className={cn(
-        "fixed top-0 right-0 left-0 z-50 border-b border-border bg-background",
-        "transition-transform duration-300 ease-out",
+        "fixed top-0 right-0 left-0 z-50",
+        solid ? "bg-background" : "bg-transparent",
+        "transition-[translate,background-color] duration-300 ease-[cubic-bezier(0.45,0,0.55,1)] motion-reduce:transition-none",
         hidden ? "-translate-y-full" : "translate-y-0",
       )}
+      style={!mobileOpen && solid && backdrop ? { backgroundColor: backdrop } : undefined}
     >
-      <div className="mx-auto flex h-[96px] w-full max-w-[var(--max-width-content)] items-center justify-between px-6 sm:px-8">
+      <div className="mx-auto flex h-(--nav-height) w-full max-w-(--max-width-content) items-center justify-between px-6 sm:px-8">
         <BrandLockup variant="nav" />
 
         <nav className="hidden lg:flex items-center gap-2">
           <div
             className="relative"
-            onMouseEnter={() => setServicesOpen(true)}
-            onMouseLeave={() => setServicesOpen(false)}
+            onMouseEnter={() => setOpenTray("services")}
+            onMouseLeave={() => setOpenTray((current) => (current === "services" ? null : current))}
           >
-            <button className="flex items-center gap-1.5 px-4 py-2 text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors">
+            <button
+              type="button"
+              aria-expanded={tray === "services"}
+              aria-haspopup="menu"
+              className={cn(
+                "flex items-center gap-1.5 px-4 py-2 text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors",
+                tray === "services" && "bg-muted text-foreground",
+              )}
+            >
               {nav.servicesLabel}
               <ChevronDown
                 size={16}
-                className={`transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`}
+                className={`transition-transform duration-200 ${tray === "services" ? "rotate-180" : ""}`}
               />
             </button>
 
-            {servicesOpen && (
-              <div className="absolute top-full left-0 mt-1 w-72 overflow-hidden rounded-[var(--radius)] py-2 bg-popover border border-border shadow-2xl">
-                {services.map((s) => (
+            {tray === "services" && (
+              <NavTray role="menu" aria-label={nav.servicesLabel}>
+                {services.map((s, index) => (
                   <Link
                     key={s.id}
                     href={`/services/${s.id}`}
-                    onClick={() => setServicesOpen(false)}
-                    className="block px-4 py-3 text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
+                    role="menuitem"
+                    onClick={() => setOpenTray(null)}
+                    className={navTrayRowClass(pathname === `/services/${s.id}`)}
                   >
-                    {s.label}
+                    <span className="w-6 font-mono text-[11px] tabular-nums text-muted-foreground">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span>{s.label}</span>
                   </Link>
                 ))}
-              </div>
+              </NavTray>
             )}
           </div>
 
@@ -83,7 +102,10 @@ export default function Navbar() {
           >
             {nav.contactCta.label}
           </Button>
-          <LanguageSwitch />
+          <LanguageSwitch
+            open={tray === "lang"}
+            onOpenChange={(open) => setOpenTray(open ? "lang" : null)}
+          />
         </div>
 
         <button
@@ -96,7 +118,7 @@ export default function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-background px-6 py-6 flex flex-col gap-2">
+        <div className="lg:hidden border-t border-border bg-background px-6 py-6 flex flex-col gap-2 animate-in fade-in-0 slide-in-from-top-2 duration-200 motion-reduce:animate-none">
           {services.map((s) => (
             <Link
               key={s.id}

@@ -6,7 +6,7 @@ import { contactCards, contactHeading, mapPlaceholder } from "@/copy";
 
 export default function ContactPage() {
   return (
-    <Section variant="default" className="!pt-16">
+    <Section variant="default" clearNav>
       <Container className="flex flex-col gap-16">
         <SectionHeading {...contactHeading} />
 
@@ -15,7 +15,7 @@ export default function ContactPage() {
 
           {/* TODO: incorporar mapa real (ex: Google Maps embed) quando a
               chave de API/endereço definitivo estiverem disponíveis. */}
-          <div className="flex min-h-[280px] w-full items-center justify-center rounded-[var(--radius)] border border-border bg-card text-sm text-muted-foreground">
+          <div className="flex min-h-70 w-full items-center justify-center rounded-(--radius) border border-border bg-card text-sm text-muted-foreground">
             {mapPlaceholder}
           </div>
         </div>

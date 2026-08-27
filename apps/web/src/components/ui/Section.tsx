@@ -1,4 +1,4 @@
-import React from "react"
+import { cn } from "@cem/ui"
 
 interface SectionProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode
@@ -7,12 +7,15 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement> {
    * conjunto — usar com moderação, "quando relevante" (ex: seção de
    * diferenciais/certificações), nunca como um light mode completo. */
   variant?: "default" | "muted" | "surface"
+  /** Padding-top extra para o conteúdo não ficar sob a navbar fixa. */
+  clearNav?: boolean
 }
 
 export function Section({
   children,
   className = "",
   variant = "default",
+  clearNav = false,
   ...props
 }: SectionProps) {
   const bgClasses = {
@@ -23,7 +26,12 @@ export function Section({
 
   return (
     <section
-      className={`py-24 md:py-36 transition-colors ${bgClasses[variant]} ${className}`}
+      className={cn(
+        "py-24 md:py-36 transition-colors",
+        bgClasses[variant],
+        clearNav && "pt-(--page-pad-top)!",
+        className,
+      )}
       {...props}
     >
       {children}

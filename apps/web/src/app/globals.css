@@ -9,6 +9,14 @@
   :root {
     /* Largura máxima do conteúdo (navbar, seções, footer). 95rem = 1520px. */
     --max-width-content: 95rem;
+    /* Altura da navbar fixa. A primeira seção usa --page-pad-top para passar por baixo dela. */
+    --nav-height: 7rem;
+    --page-pad-top: calc(var(--nav-height) + 4rem);
+  }
+  @media (width >= 48rem) {
+    :root {
+      --page-pad-top: calc(var(--nav-height) + 8rem);
+    }
   }
   * {
     @apply border-border outline-ring/50;

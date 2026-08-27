@@ -12,7 +12,7 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
   const { service } = await searchParams;
 
   return (
-    <Section variant="default" className="!pt-16">
+    <Section variant="default" clearNav>
       <Container className="max-w-2xl flex flex-col gap-16">
         <SectionHeading {...quoteHeading} align="left" />
         <QuoteForm

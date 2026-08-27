@@ -6,7 +6,7 @@ import { services, servicesCatalog, servicesHeading } from "@/copy";
 
 export default function ServicesPage() {
   return (
-    <Section variant="default" className="!pt-16">
+    <Section variant="default" clearNav>
       <Container className="flex flex-col gap-16">
         <SectionHeading {...servicesHeading} />
         <ActionCardGrid

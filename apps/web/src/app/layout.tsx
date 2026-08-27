@@ -40,7 +40,7 @@ export default function RootLayout({
     <html lang="pt-BR" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
       <body className={`${plexSans.className} min-h-screen flex flex-col bg-background text-foreground font-sans`}>
         <Navbar />
-        <main className="flex-1 pt-24">{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

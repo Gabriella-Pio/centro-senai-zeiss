@@ -10,6 +10,7 @@ interface FeatureGridProps {
   variant?: "default" | "muted" | "surface";
   columns?: 2 | 3 | 4;
   className?: string;
+  clearNav?: boolean;
 }
 
 export function FeatureGrid({
@@ -18,9 +19,10 @@ export function FeatureGrid({
   variant = "default",
   columns = 4,
   className,
+  clearNav = false,
 }: FeatureGridProps) {
   return (
-    <Section variant={variant} className={className}>
+    <Section variant={variant} className={className} clearNav={clearNav}>
       <Container className="flex flex-col gap-16">
         <SectionHeading {...heading} />
         <CardGrid items={items} columns={columns} />
