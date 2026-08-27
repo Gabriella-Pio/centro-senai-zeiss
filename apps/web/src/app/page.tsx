@@ -1,50 +1,47 @@
 import { Hero } from "@/components/sections/Hero";
 import { LabIntro } from "@/components/sections/LabIntro";
-import { ServiceHub } from "@/components/sections/ServiceHub";
+import { LinkCardGrid } from "@/components/sections/LinkCardGrid";
 import { DifferentialsSwitch } from "@/components/sections/DifferentialsSwitch";
 import { FeatureGrid } from "@/components/sections/FeatureGrid";
 import { LogoRow } from "@/components/sections/LogoRow";
 import {
   differentials,
-  infrastructure,
+  differentialsHeading,
   equipment,
-  areasOfExpertise,
-  certifications,
+  equipmentHeading,
+  hero,
+  infrastructure,
+  infrastructureHeading,
+  labIntro,
   partners,
-} from "@/data/home-content";
+  sectors,
+  sectorsHeading,
+  serviceHubHeading,
+  services,
+} from "@/copy";
 
 export default function HomePage() {
   return (
     <>
-      <Hero />
-      <LabIntro />
-      <ServiceHub />
-
-      <DifferentialsSwitch items={differentials} />
-
-      <FeatureGrid
-        eyebrow="Infraestrutura"
-        title="Estrutura preparada para alta precisão"
-        items={infrastructure}
-        variant="default"
+      <Hero {...hero} />
+      <LabIntro {...labIntro} />
+      <LinkCardGrid
+        heading={serviceHubHeading}
+        items={services.map((service) => ({
+          title: service.label,
+          description: service.shortDescription,
+          href: `/services/${service.id}`,
+          icon: service.icon,
+        }))}
       />
 
-      <FeatureGrid
-        eyebrow="Equipamentos"
-        title="Tecnologia ZEISS de ponta"
-        items={equipment}
-        variant="default"
-      />
+      <DifferentialsSwitch heading={differentialsHeading} items={differentials} />
 
-      <FeatureGrid
-        eyebrow="Áreas de atuação"
-        title="Setores que atendemos"
-        items={areasOfExpertise}
-        variant="default"
-      />
+      <FeatureGrid heading={infrastructureHeading} items={infrastructure} />
+      <FeatureGrid heading={equipmentHeading} items={equipment} />
+      <FeatureGrid heading={sectorsHeading} items={sectors} />
 
-      <LogoRow title="Certificações" items={certifications} variant="default" />
-      <LogoRow title="Parceiros" items={partners} variant="default" />
+      <LogoRow title={partners.title} items={partners.items} variant="default" />
     </>
   );
 }

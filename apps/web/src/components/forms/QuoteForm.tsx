@@ -12,13 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@cem/ui";
-import { services } from "@/data/home-content";
+import type { QuoteFormCopy } from "@/copy/quote";
 
 interface QuoteFormProps {
   defaultServiceId?: string;
+  services: { id: string; label: string }[];
+  copy: QuoteFormCopy;
 }
 
-export function QuoteForm({ defaultServiceId }: QuoteFormProps) {
+export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) {
   const [serviceId, setServiceId] = useState(defaultServiceId ?? "");
   const [submitted, setSubmitted] = useState(false);
 
@@ -32,41 +34,57 @@ export function QuoteForm({ defaultServiceId }: QuoteFormProps) {
   if (submitted) {
     return (
       <div className="flex flex-col items-center gap-3 py-16 text-center">
-        <h2 className="font-heading text-xl font-semibold text-foreground">Solicitação enviada</h2>
-        <p className="text-muted-foreground max-w-sm">
-          Recebemos sua solicitação. Nossa equipe entrará em contato em até 2
-          dias úteis.
-        </p>
+        <h2 className="font-heading text-xl font-semibold text-foreground">{copy.success.title}</h2>
+        <p className="text-muted-foreground max-w-sm">{copy.success.body}</p>
       </div>
     );
   }
+
+  const { fields } = copy;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="company">Empresa</Label>
-          <Input id="company" name="company" required placeholder="Nome da empresa" />
+          <Label htmlFor="company">{fields.company.label}</Label>
+          <Input id="company" name="company" required placeholder={fields.company.placeholder} />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="contactName">Responsável</Label>
-          <Input id="contactName" name="contactName" required placeholder="Seu nome" />
+          <Label htmlFor="contactName">{fields.contactName.label}</Label>
+          <Input
+            id="contactName"
+            name="contactName"
+            required
+            placeholder={fields.contactName.placeholder}
+          />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="email">E-mail</Label>
-          <Input id="email" name="email" type="email" required placeholder="voce@empresa.com" />
+          <Label htmlFor="email">{fields.email.label}</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            placeholder={fields.email.placeholder}
+          />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="phone">Telefone</Label>
-          <Input id="phone" name="phone" type="tel" required placeholder="(00) 00000-0000" />
+          <Label htmlFor="phone">{fields.phone.label}</Label>
+          <Input id="phone" name="phone" type="tel" required placeholder={fields.phone.placeholder} />
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="service">Serviço desejado</Label>
-        <Select value={serviceId} onValueChange={setServiceId} name="service">
+        <Label htmlFor="service">{fields.service.label}</Label>
+        <Select
+          value={serviceId}
+          onValueChange={(value) => {
+            if (value) setServiceId(value);
+          }}
+          name="service"
+        >
           <SelectTrigger id="service" className="w-full">
-            <SelectValue placeholder="Selecione um serviço" />
+            <SelectValue placeholder={fields.service.placeholder} />
           </SelectTrigger>
           <SelectContent>
             {services.map((service) => (
@@ -79,18 +97,18 @@ export function QuoteForm({ defaultServiceId }: QuoteFormProps) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="description">Descrição da necessidade</Label>
+        <Label htmlFor="description">{fields.description.label}</Label>
         <Textarea
           id="description"
           name="description"
           required
-          placeholder="Descreva a peça, prazo e o que precisa ser medido/analisado"
+          placeholder={fields.description.placeholder}
           className="min-h-32"
         />
       </div>
 
       <Button type="submit" size="lg" className="self-start">
-        Enviar solicitação
+        {copy.submit}
       </Button>
     </form>
   );

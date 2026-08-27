@@ -6,8 +6,8 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { Button, cn } from "@cem/ui";
 import { BrandLockup } from "@/components/layout/BrandLockup";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
-import { institutionalLinks } from "@/config/navigation";
-import { services } from "@/data/home-content";
+import { nav } from "@/copy/site";
+import { services } from "@/copy/services";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -29,7 +29,6 @@ export default function Navbar() {
       <div className="mx-auto flex h-[96px] max-w-[1280px] items-center justify-between px-6 sm:px-8">
         <BrandLockup variant="nav" />
 
-        {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-2">
           <div
             className="relative"
@@ -37,7 +36,7 @@ export default function Navbar() {
             onMouseLeave={() => setServicesOpen(false)}
           >
             <button className="flex items-center gap-1.5 px-4 py-2 text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors">
-              Serviços
+              {nav.servicesLabel}
               <ChevronDown
                 size={16}
                 className={`transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`}
@@ -60,7 +59,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {institutionalLinks.map((link) => (
+          {nav.links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -71,24 +70,21 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* CTA */}
         <div className="hidden lg:flex items-center">
-          <Button size="lg" render={<Link href="/quote" />} className="px-6 h-11 text-sm">
-            Solicitar Orçamento
+          <Button size="lg" render={<Link href={nav.cta.href} />} className="px-6 h-11 text-sm">
+            {nav.cta.label}
           </Button>
         </div>
 
-        {/* Mobile Trigger */}
         <button
           className="lg:hidden p-2 text-foreground/80 hover:text-foreground"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
+          aria-label={mobileOpen ? nav.closeMenu : nav.openMenu}
         >
           {mobileOpen ? <X size={26} /> : <Menu size={26} />}
         </button>
       </div>
 
-      {/* Mobile Drawer */}
       {mobileOpen && (
         <div className="lg:hidden border-t border-border bg-background px-6 py-6 flex flex-col gap-2">
           {services.map((s) => (
@@ -102,7 +98,7 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="h-px bg-border my-2" />
-          {institutionalLinks.map((link) => (
+          {nav.links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -114,11 +110,11 @@ export default function Navbar() {
           ))}
           <div className="pt-4">
             <Button
-              render={<Link href="/quote" />}
+              render={<Link href={nav.cta.href} />}
               onClick={() => setMobileOpen(false)}
               className="w-full h-12 text-sm"
             >
-              Solicitar Orçamento
+              {nav.cta.label}
             </Button>
           </div>
         </div>

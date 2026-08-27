@@ -2,38 +2,28 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowRight, Cpu, ShieldCheck, Target, Users, type LucideIcon } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@cem/ui";
-import type { FeatureItem } from "@/data/home-content";
-
-const iconMap: Record<string, LucideIcon> = {
-  Target,
-  ShieldCheck,
-  Cpu,
-  Users,
-};
+import { getIcon } from "@/lib/icons";
+import type { FeatureItem, SectionCopy } from "@/copy/types";
 
 interface DifferentialsSwitchProps {
+  heading: SectionCopy;
   items: FeatureItem[];
 }
 
-export function DifferentialsSwitch({ items }: DifferentialsSwitchProps) {
+export function DifferentialsSwitch({ heading, items }: DifferentialsSwitchProps) {
   const [active, setActive] = useState(0);
   const current = items[active];
-  const Icon = iconMap[current.icon];
+  const Icon = getIcon(current?.icon);
 
   return (
     <Section variant="default">
       <Container className="flex flex-col gap-12">
-        <SectionHeading
-          align="left"
-          eyebrow="Diferenciais"
-          title="Por que a indústria escolhe o laboratório"
-          description="Cada medição passa por um processo rigoroso, do recebimento da peça à entrega do laudo."
-        />
+        <SectionHeading align="left" {...heading} />
 
         <div className="grid grid-cols-1 gap-x-16 gap-y-4 lg:grid-cols-2">
           <div className="relative aspect-square overflow-hidden rounded-(--radius) border border-border bg-muted lg:col-start-1 lg:row-start-1">

@@ -3,6 +3,7 @@ import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { siteMeta } from "@/copy/site";
 
 const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
@@ -26,8 +27,8 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Centro de Excelência em Metrologia SENAI × ZEISS",
-  description: "Plataforma oficial de metrologia de alta precisão e gestão de serviços industriais.",
+  title: siteMeta.title,
+  description: siteMeta.description,
 };
 
 export default function RootLayout({

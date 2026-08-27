@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { brand } from "@/copy/site";
 
 type BrandLockupProps = {
   /** "nav" mostra o subtítulo; "footer" é mais compacto. */
@@ -18,7 +19,7 @@ export function BrandLockup({ variant = "nav" }: BrandLockupProps) {
   return (
     <Link
       href="/"
-      aria-label="SENAI × ZEISS Centro de Excelência"
+      aria-label={brand.ariaLabel}
       className="flex min-w-0 shrink-0 items-center gap-2.5"
     >
       <Image
@@ -42,7 +43,7 @@ export function BrandLockup({ variant = "nav" }: BrandLockupProps) {
       />
       {isNav && (
         <span className="hidden text-[11px] font-medium uppercase tracking-widest text-foreground/50 sm:inline">
-          Centro de Excelência
+          {brand.subtitle}
         </span>
       )}
     </Link>
