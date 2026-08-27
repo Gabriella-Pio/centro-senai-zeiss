@@ -19,7 +19,7 @@ export function Hero({ eyebrow, brand, subtitle, body, primaryCta, secondaryCta 
   return (
     <Section variant="default" className="relative overflow-hidden pt-32! md:pt-44! pb-20! md:pb-28!">
       <CoordinateGrid fade />
-      <Container className="relative z-10 max-w-3xl">
+      <Container className="relative z-10 text-left">
         <Eyebrow>{eyebrow}</Eyebrow>
 
         <h1 className="mt-8 font-heading text-display-lg font-bold tracking-tight leading-[1.08] text-foreground">

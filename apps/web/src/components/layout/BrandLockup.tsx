@@ -3,49 +3,24 @@ import Image from "next/image";
 import { brand } from "@/copy/site";
 
 type BrandLockupProps = {
-  /** "nav" mostra o subtítulo; "footer" é mais compacto. */
+  /** "nav" é um pouco maior; "footer" compacto. */
   variant?: "nav" | "footer";
 };
 
-/**
- * Lockup público: wordmarks SENAI e ZEISS (arquivos autorizados) + × de parceria.
- * O laranja do SENAI fica na marca; o azul da ZEISS não vira segundo accent.
- */
 export function BrandLockup({ variant = "nav" }: BrandLockupProps) {
   const isNav = variant === "nav";
-  const senaiClass = isNav ? "h-9 w-auto sm:h-10" : "h-7 w-auto";
-  const zeissClass = isNav ? "h-9 w-auto sm:h-10" : "h-7 w-auto";
 
   return (
-    <Link
-      href="/"
-      aria-label={brand.ariaLabel}
-      className="flex min-w-0 shrink-0 items-center gap-2.5"
-    >
+    <Link href="/" aria-label={brand.ariaLabel} className="flex min-w-0 shrink-0 items-center">
       <Image
-        src="/brand/senai.png"
+        src="/brand/logo-senai.png"
         alt=""
-        width={148}
-        height={40}
-        className={senaiClass}
+        width={1024}
+        height={95}
+        unoptimized
+        className={isNav ? "h-8 w-auto sm:h-9" : "h-6 w-auto max-w-full"}
         priority={isNav}
       />
-      <span className="font-heading text-lg font-semibold leading-none text-primary sm:text-xl" aria-hidden>
-        ×
-      </span>
-      <Image
-        src="/brand/zeiss.png"
-        alt=""
-        width={80}
-        height={80}
-        className={zeissClass}
-        priority={isNav}
-      />
-      {isNav && (
-        <span className="hidden text-[11px] font-medium uppercase tracking-widest text-foreground/50 sm:inline">
-          {brand.subtitle}
-        </span>
-      )}
     </Link>
   );
 }

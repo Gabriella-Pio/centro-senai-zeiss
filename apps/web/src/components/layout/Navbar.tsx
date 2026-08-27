@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button, cn } from "@cem/ui";
 import { BrandLockup } from "@/components/layout/BrandLockup";
+import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import { nav } from "@/copy/site";
 import { services } from "@/copy/services";
@@ -26,7 +27,7 @@ export default function Navbar() {
         hidden ? "-translate-y-full" : "translate-y-0",
       )}
     >
-      <div className="mx-auto flex h-[96px] max-w-[1280px] items-center justify-between px-6 sm:px-8">
+      <div className="mx-auto flex h-[96px] w-full max-w-[var(--max-width-content)] items-center justify-between px-6 sm:px-8">
         <BrandLockup variant="nav" />
 
         <nav className="hidden lg:flex items-center gap-2">
@@ -70,10 +71,19 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center">
+        <div className="hidden lg:flex items-center gap-2">
           <Button size="lg" render={<Link href={nav.cta.href} />} className="px-6 h-11 text-sm">
             {nav.cta.label}
           </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            render={<Link href={nav.contactCta.href} />}
+            className="px-6 h-11 text-sm"
+          >
+            {nav.contactCta.label}
+          </Button>
+          <LanguageSwitch />
         </div>
 
         <button
@@ -108,7 +118,7 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <div className="pt-4">
+          <div className="flex flex-col gap-2 pt-4">
             <Button
               render={<Link href={nav.cta.href} />}
               onClick={() => setMobileOpen(false)}
@@ -116,6 +126,15 @@ export default function Navbar() {
             >
               {nav.cta.label}
             </Button>
+            <Button
+              variant="outline"
+              render={<Link href={nav.contactCta.href} />}
+              onClick={() => setMobileOpen(false)}
+              className="w-full h-12 text-sm"
+            >
+              {nav.contactCta.label}
+            </Button>
+            <LanguageSwitch />
           </div>
         </div>
       )}

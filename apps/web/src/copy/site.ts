@@ -5,8 +5,7 @@ export const siteMeta = {
 };
 
 export const brand = {
-  ariaLabel: "SENAI × ZEISS Centro de Excelência",
-  subtitle: "Centro de Excelência",
+  ariaLabel: "SENAI",
 };
 
 export const location = {
@@ -23,8 +22,18 @@ export const location = {
 export const nav = {
   servicesLabel: "Serviços",
   cta: { label: "Solicitar orçamento", href: "/quote" },
+  contactCta: { label: "Contato", href: "/contact" },
   openMenu: "Abrir menu",
   closeMenu: "Fechar menu",
+  languages: {
+    ariaLabel: "Idioma",
+    defaultCode: "pt",
+    options: [
+      { code: "pt", label: "Português" },
+      { code: "en", label: "English" },
+      { code: "de", label: "Deutsch" },
+    ],
+  },
   links: [
     { label: "Institucional", href: "/institutional" },
     { label: "Orçamento", href: "/quote" },
