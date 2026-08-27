@@ -1,18 +1,13 @@
-import React from "react";
+import { cn } from "@cem/ui";
 
 interface EyebrowProps {
   children: React.ReactNode;
   className?: string;
 }
 
-/** Selo pequeno em caixa alta, mesmo padrão usado no Hero — extraído pra
- * não ficar reescrevendo a mesma string de classes em cada seção nova. */
-export function Eyebrow({ children, className = "" }: EyebrowProps) {
-  return (
-    <div
-      className={`inline-flex items-center gap-2 rounded-(--radius) px-4 py-1.5 border border-border bg-muted text-meta font-semibold text-muted-foreground tracking-widest uppercase ${className}`}
-    >
-      {children}
-    </div>
-  );
+export const eyebrowClassName =
+  "inline-flex w-fit border-b border-border pb-0.5 text-[11.5px] font-medium tracking-[0.18em] uppercase text-muted-foreground";
+
+export function Eyebrow({ children, className }: EyebrowProps) {
+  return <div className={cn(eyebrowClassName, className)}>{children}</div>;
 }
