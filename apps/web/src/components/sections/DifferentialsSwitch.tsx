@@ -36,7 +36,7 @@ export function DifferentialsSwitch({ items }: DifferentialsSwitchProps) {
         />
 
         <div className="grid grid-cols-1 gap-x-16 gap-y-4 lg:grid-cols-2">
-          <div className="relative aspect-square overflow-hidden rounded-[var(--radius)] border border-border bg-muted lg:col-start-1 lg:row-start-1">
+          <div className="relative aspect-square overflow-hidden rounded-(--radius) border border-border bg-muted lg:col-start-1 lg:row-start-1">
             {current.image ? (
               <Image
                 src={current.image}

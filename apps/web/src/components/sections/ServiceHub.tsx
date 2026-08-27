@@ -31,7 +31,7 @@ export function ServiceHub() {
               <Link
                 key={service.id}
                 href={`/services/${service.id}`}
-                className="group block rounded-[var(--radius)] outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="group block rounded-(--radius) outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 <Card className={vitrineCardClass("h-full")}>
                   <CardHeader className="gap-3">

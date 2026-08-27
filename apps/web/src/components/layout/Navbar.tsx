@@ -1,22 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { Button, Logo } from "@cem/ui";
+import { Button, cn } from "@cem/ui";
+import { BrandLockup } from "@/components/layout/BrandLockup";
+import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import { institutionalLinks } from "@/config/navigation";
 import { services } from "@/data/home-content";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const hidden = useHideOnScroll({ disabled: mobileOpen });
+
+  useEffect(() => {
+    if (hidden) setServicesOpen(false);
+  }, [hidden]);
 
   return (
-    // bg-background aponta para o mesmo token usado no <body> (globals.css),
-    // então a navbar "acompanha" o fundo por definição — sem hex duplicado.
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background transition-colors duration-200">
-      <div className="max-w-[1280px] mx-auto px-6 sm:px-8 h-[96px] flex items-center justify-between">
-        <Logo variant="nav" />
+    <header
+      className={cn(
+        "fixed top-0 right-0 left-0 z-50 border-b border-border bg-background",
+        "transition-transform duration-300 ease-out",
+        hidden ? "-translate-y-full" : "translate-y-0",
+      )}
+    >
+      <div className="mx-auto flex h-[96px] max-w-[1280px] items-center justify-between px-6 sm:px-8">
+        <BrandLockup variant="nav" />
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-2">

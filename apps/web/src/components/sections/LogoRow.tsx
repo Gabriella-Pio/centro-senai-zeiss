@@ -12,7 +12,7 @@ interface LogoRowProps {
  * <Image>, mantendo a mesma estrutura de grid. */
 export function LogoRow({ title, items, variant = "muted" }: LogoRowProps) {
   return (
-    <Section variant={variant} className="!py-16 md:!py-20">
+    <Section variant={variant} className="py-16! md:py-20!">
       <Container className="flex flex-col items-center gap-10">
         <h3 className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
           {title}

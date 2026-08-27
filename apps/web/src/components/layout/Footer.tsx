@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { Logo } from "@cem/ui";
+import { BrandLockup } from "@/components/layout/BrandLockup";
 import { institutionalLinks } from "@/config/navigation";
 import { services } from "@/data/home-content";
 
@@ -28,7 +28,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-16 pt-4 border-t border-border relative">
           {/* Coluna 1: Identidade */}
           <div className="md:col-span-1 space-y-4">
-            <Logo variant="footer" />
+            <BrandLockup variant="footer" />
             <p className="text-xs text-foreground/50 leading-relaxed max-w-xs">
               Centro de Excelência em Metrologia de Alta Precisão, localizado
               no SENAI Ítalo Bologna (Goiânia/GO).
