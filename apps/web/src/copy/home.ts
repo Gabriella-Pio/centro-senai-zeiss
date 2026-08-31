@@ -13,6 +13,11 @@ export const labIntro = {
   eyebrow: "Sobre o centro",
   title: "Precisão alemã a serviço da indústria brasileira",
   body: "Instalado na Faculdade SENAI Ítalo Bologna, em Goiânia, o Centro de Excelência em Metrologia SENAI ZEISS reúne equipamentos ZEISS de última geração e equipe técnica especializada. Atendemos indústrias de Goiás e de outros estados na validação dimensional, análise de falhas, reconstrução CAD e inspeção não destrutiva — com o mesmo rigor exigido em qualidade, manutenção e desenvolvimento de produto.",
+  image: {
+    src: "/lab/centro.jpg",
+    alt: "Vista do laboratório do Centro de Excelência em Metrologia SENAI ZEISS, com a sala de medição ao fundo.",
+  },
+  cta: { label: "Conhecer o centro", href: "/institutional" },
   stats: [
     { value: "0,9 µm", label: "Precisão de medição por coordenadas" },
     { value: "1º no Brasil", label: "Centro SENAI ZEISS" },
