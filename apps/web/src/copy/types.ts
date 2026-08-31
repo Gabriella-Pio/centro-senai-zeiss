@@ -21,6 +21,8 @@ export type FeatureItem = {
   /** Foto de equipamento/peça, quando o laboratório autorizar. Sem arquivo, o bloco usa o ícone. */
   image?: string;
   imageAlt?: string;
+  /** contain: recorte de produto em fundo branco. cover: foto de sala. */
+  imageFit?: "cover" | "contain";
   href?: string;
 };
 

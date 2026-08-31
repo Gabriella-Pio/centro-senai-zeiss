@@ -15,9 +15,12 @@ interface MediaSwitchProps {
   heading: SectionCopy;
   items: FeatureItem[];
   ctaLabel?: string;
+  /** A seta promete outra página. Desligue quando o switcher só troca
+   *  o conteúdo em tela, como no parque de equipamentos. */
+  showArrow?: boolean;
 }
 
-export function MediaSwitch({ heading, items, ctaLabel }: MediaSwitchProps) {
+export function MediaSwitch({ heading, items, ctaLabel, showArrow = true }: MediaSwitchProps) {
   const [active, setActive] = useState(0);
   const current = items[active];
   const Icon = getIcon(current?.icon);
@@ -28,13 +31,18 @@ export function MediaSwitch({ heading, items, ctaLabel }: MediaSwitchProps) {
         <SectionHeading align="left" {...heading} />
 
         <div className="grid grid-cols-1 gap-x-16 gap-y-4 lg:grid-cols-2">
-          <div className="relative aspect-square overflow-hidden rounded-(--radius) border border-border bg-muted lg:col-start-1 lg:row-start-1">
+          <div
+            className={cn(
+              "relative aspect-square overflow-hidden rounded-(--radius) border border-border lg:col-start-1 lg:row-start-1",
+              current.image && current.imageFit === "contain" ? "bg-card" : "bg-muted",
+            )}
+          >
             {current.image ? (
               <Image
                 src={current.image}
                 alt={current.imageAlt ?? current.title}
                 fill
-                className="object-cover"
+                className={current.imageFit === "contain" ? "object-contain p-8" : "object-cover"}
                 sizes="(min-width: 1024px) 40vw, 100vw"
               />
             ) : (
@@ -69,11 +77,23 @@ export function MediaSwitch({ heading, items, ctaLabel }: MediaSwitchProps) {
                     >
                       {item.title}
                     </span>
-                    <ArrowRight
-                      size={20}
-                      strokeWidth={1.75}
-                      className={cn("shrink-0", isActive ? "text-foreground" : "text-muted-foreground")}
-                    />
+                    {showArrow ? (
+                      <ArrowRight
+                        size={20}
+                        strokeWidth={1.75}
+                        className={cn("shrink-0", isActive ? "text-foreground" : "text-muted-foreground")}
+                      />
+                    ) : (
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "font-mono text-xs tracking-widest tabular-nums shrink-0",
+                          isActive ? "text-foreground" : "text-muted-foreground",
+                        )}
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                    )}
                   </button>
                 </li>
               );

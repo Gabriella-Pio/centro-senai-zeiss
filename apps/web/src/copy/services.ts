@@ -51,6 +51,7 @@ export const services: ServiceContent[] = [
       "Reconstrução de superfícies e volumes para fabricação",
       "Comparação entre peça real e projeto nominal",
       "Geração de dados para usinagem e manufatura aditiva",
+      "Impressão 3D do modelo reconstruído para prototipagem",
       "Documentação técnica de componentes legados",
     ],
     audience:
