@@ -11,13 +11,13 @@ import { cn } from "@cem/ui";
 import { getIcon } from "@/lib/icons";
 import type { FeatureItem, SectionCopy } from "@/copy/types";
 
-interface DifferentialsSwitchProps {
+interface MediaSwitchProps {
   heading: SectionCopy;
   items: FeatureItem[];
   ctaLabel?: string;
 }
 
-export function DifferentialsSwitch({ heading, items, ctaLabel }: DifferentialsSwitchProps) {
+export function MediaSwitch({ heading, items, ctaLabel }: MediaSwitchProps) {
   const [active, setActive] = useState(0);
   const current = items[active];
   const Icon = getIcon(current?.icon);

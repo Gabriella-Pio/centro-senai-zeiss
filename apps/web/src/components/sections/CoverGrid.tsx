@@ -16,12 +16,12 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getIcon } from "@/lib/icons";
 import type { FeatureItem, SectionCopy } from "@/copy/types";
 
-interface DifferentialsGalleryProps {
+interface CoverGridProps {
   heading: SectionCopy;
   items: FeatureItem[];
 }
 
-export function DifferentialsGallery({ heading, items }: DifferentialsGalleryProps) {
+export function CoverGrid({ heading, items }: CoverGridProps) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const current = items[active];
@@ -43,7 +43,7 @@ export function DifferentialsGallery({ heading, items }: DifferentialsGalleryPro
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item, index) => (
-            <DifferentialTile key={item.title} item={item} onOpen={() => openAt(index)} />
+            <CoverTile key={item.title} item={item} onOpen={() => openAt(index)} />
           ))}
         </div>
       </Container>
@@ -71,7 +71,7 @@ export function DifferentialsGallery({ heading, items }: DifferentialsGalleryPro
   );
 }
 
-function DifferentialTile({
+function CoverTile({
   item,
   onOpen,
 }: {
