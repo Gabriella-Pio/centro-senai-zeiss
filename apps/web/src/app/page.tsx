@@ -1,7 +1,7 @@
 import { Hero } from "@/components/sections/Hero";
 import { LabIntro } from "@/components/sections/LabIntro";
-import { LinkCardGrid } from "@/components/sections/LinkCardGrid";
 import { DifferentialsSwitch } from "@/components/sections/DifferentialsSwitch";
+import { DifferentialsGallery } from "@/components/sections/DifferentialsGallery";
 import { FeatureGrid } from "@/components/sections/FeatureGrid";
 import { LogoRow } from "@/components/sections/LogoRow";
 import {
@@ -18,6 +18,7 @@ import {
   sectorsHeading,
   serviceHubHeading,
   services,
+  servicesCatalog,
 } from "@/copy";
 
 export default function HomePage() {
@@ -25,17 +26,18 @@ export default function HomePage() {
     <>
       <Hero {...hero} />
       <LabIntro {...labIntro} />
-      <LinkCardGrid
+      <DifferentialsSwitch
         heading={serviceHubHeading}
+        ctaLabel={servicesCatalog.detailsLabel}
         items={services.map((service) => ({
           title: service.label,
           description: service.shortDescription,
-          href: `/services/${service.id}`,
           icon: service.icon,
+          href: `/services/${service.id}`,
         }))}
       />
 
-      <DifferentialsSwitch heading={differentialsHeading} items={differentials} />
+      <DifferentialsGallery heading={differentialsHeading} items={differentials} />
 
       <FeatureGrid heading={infrastructureHeading} items={infrastructure} />
       <FeatureGrid heading={equipmentHeading} items={equipment} />

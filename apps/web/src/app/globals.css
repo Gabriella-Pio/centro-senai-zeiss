@@ -27,4 +27,7 @@
     line-height: 1.6;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  button:not(:disabled) {
+    cursor: pointer;
+  }
 }

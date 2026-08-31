@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -13,9 +14,10 @@ import type { FeatureItem, SectionCopy } from "@/copy/types";
 interface DifferentialsSwitchProps {
   heading: SectionCopy;
   items: FeatureItem[];
+  ctaLabel?: string;
 }
 
-export function DifferentialsSwitch({ heading, items }: DifferentialsSwitchProps) {
+export function DifferentialsSwitch({ heading, items, ctaLabel }: DifferentialsSwitchProps) {
   const [active, setActive] = useState(0);
   const current = items[active];
   const Icon = getIcon(current?.icon);
@@ -30,7 +32,7 @@ export function DifferentialsSwitch({ heading, items }: DifferentialsSwitchProps
             {current.image ? (
               <Image
                 src={current.image}
-                alt={current.title}
+                alt={current.imageAlt ?? current.title}
                 fill
                 className="object-cover"
                 sizes="(min-width: 1024px) 40vw, 100vw"
@@ -50,7 +52,7 @@ export function DifferentialsSwitch({ heading, items }: DifferentialsSwitchProps
                   key={item.title}
                   className={cn(
                     "flex border-b lg:min-h-0 lg:flex-1",
-                    isActive ? "border-foreground" : "border-border"
+                    isActive ? "border-foreground" : "border-border",
                   )}
                 >
                   <button
@@ -62,7 +64,7 @@ export function DifferentialsSwitch({ heading, items }: DifferentialsSwitchProps
                     <span
                       className={cn(
                         "font-heading text-xl font-semibold tracking-tight sm:text-2xl",
-                        isActive ? "text-foreground" : "text-muted-foreground"
+                        isActive ? "text-foreground" : "text-muted-foreground",
                       )}
                     >
                       {item.title}
@@ -78,9 +80,17 @@ export function DifferentialsSwitch({ heading, items }: DifferentialsSwitchProps
             })}
           </ul>
 
-          <p className="text-sm leading-relaxed text-muted-foreground lg:col-start-1 lg:row-start-2">
-            {current.description}
-          </p>
+          <div className="flex flex-col gap-4 lg:col-start-1 lg:row-start-2">
+            <p className="text-sm leading-relaxed text-muted-foreground">{current.description}</p>
+            {current.href && ctaLabel ? (
+              <Link
+                href={current.href}
+                className="relative inline-flex w-fit pb-0.5 text-sm font-medium text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-right after:bg-foreground after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.45,0,0.55,1)] hover:after:scale-x-0 focus-visible:after:scale-x-0 motion-reduce:after:transition-none"
+              >
+                {ctaLabel}
+              </Link>
+            ) : null}
+          </div>
         </div>
       </Container>
     </Section>

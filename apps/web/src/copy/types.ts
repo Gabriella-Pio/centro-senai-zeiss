@@ -20,6 +20,8 @@ export type FeatureItem = {
   icon?: string;
   /** Foto de equipamento/peça, quando o laboratório autorizar. Sem arquivo, o bloco usa o ícone. */
   image?: string;
+  imageAlt?: string;
+  href?: string;
 };
 
 export type LinkCardItem = {

@@ -63,6 +63,9 @@ export const differentials: FeatureItem[] = [
     description:
       "Equipe dedicada à metrologia industrial, no ambiente de uma faculdade SENAI: atendimento à indústria e capacitação de profissionais no mesmo complexo.",
     icon: "Users",
+    image: "/lab/tecnico.png",
+    imageAlt:
+      "Técnico do centro operando uma máquina de medição, com a peça no volume de ensaio.",
   },
 ];
 
