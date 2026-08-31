@@ -34,8 +34,8 @@ export function Hero({
       variant="default"
       className={
         image
-          ? "relative overflow-hidden pb-20! md:pb-28! lg:min-h-svh"
-          : "relative overflow-hidden pb-20! md:pb-28!"
+          ? "relative overflow-hidden pb-(--section-after-hero)! md:pb-(--section-after-hero-lg)! lg:min-h-svh"
+          : "relative overflow-hidden pb-(--section-after-hero)! md:pb-(--section-after-hero-lg)!"
       }
       clearNav
     >

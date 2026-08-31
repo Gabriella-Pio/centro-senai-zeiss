@@ -27,7 +27,7 @@ export function Section({
   return (
     <section
       className={cn(
-        "py-24 md:py-36 transition-colors",
+        "py-(--section-py) md:py-(--section-py-lg) transition-colors",
         bgClasses[variant],
         clearNav && "pt-(--page-pad-top)!",
         className,

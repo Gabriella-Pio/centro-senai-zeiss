@@ -27,7 +27,7 @@ export function MediaSwitch({ heading, items, ctaLabel, showArrow = true }: Medi
 
   return (
     <Section variant="default">
-      <Container className="flex flex-col gap-12">
+      <Container className="flex flex-col gap-(--section-stack)">
         <SectionHeading align="left" {...heading} />
 
         <div className="grid grid-cols-1 gap-x-16 gap-y-4 lg:grid-cols-2">

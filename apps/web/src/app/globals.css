@@ -12,6 +12,18 @@
     /* Altura da navbar fixa. A primeira seção usa --page-pad-top para passar por baixo dela. */
     --nav-height: 7rem;
     --page-pad-top: calc(var(--nav-height) + 4rem);
+    /* Ritmo vertical das seções — padding block em Section.tsx */
+    --section-py: 3.5rem;
+    --section-py-lg: 5rem;
+    /* Hero: menos respiro embaixo para não somar com o padding-top da próxima seção */
+    --section-after-hero: 2rem;
+    --section-after-hero-lg: 2.5rem;
+    /* Gaps internos (heading → conteúdo, colunas de foto+texto) */
+    --section-stack: 3rem;
+    --section-stack-lg: 4rem;
+    --section-stack-tight: 2rem;
+    --section-inline: 4rem;
+    --section-inline-lg: 6.5rem;
   }
   @media (width >= 48rem) {
     :root {

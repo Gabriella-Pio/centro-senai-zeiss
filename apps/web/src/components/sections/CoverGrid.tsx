@@ -38,7 +38,7 @@ export function CoverGrid({ heading, items }: CoverGridProps) {
 
   return (
     <Section variant="muted">
-      <Container className="flex flex-col gap-12">
+      <Container className="flex flex-col gap-(--section-stack)">
         <SectionHeading align="left" {...heading} />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

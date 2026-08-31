@@ -23,7 +23,7 @@ export function FeatureGrid({
 }: FeatureGridProps) {
   return (
     <Section variant={variant} className={className} clearNav={clearNav}>
-      <Container className="flex flex-col gap-16">
+      <Container className="flex flex-col gap-(--section-stack-lg)">
         <SectionHeading {...heading} />
         <CardGrid items={items} columns={columns} />
       </Container>
