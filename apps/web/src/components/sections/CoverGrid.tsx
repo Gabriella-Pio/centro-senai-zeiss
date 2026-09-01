@@ -15,6 +15,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SnapCarouselShell } from "@/components/ui/SnapCarouselShell";
 import { useSnapCarousel } from "@/components/ui/useSnapCarousel";
+import { publicAsset } from "@/lib/public-asset";
 import { mediaFrameClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
 import { getIcon } from "@/lib/icons";
 import type { FeatureItem, SectionCopy } from "@/copy/types";
@@ -118,7 +119,7 @@ function CoverTile({
     >
       {hasPhoto ? (
         <Image
-          src={item.image!}
+          src={publicAsset(item.image!)}
           alt=""
           fill
           className="object-cover object-[72%_28%] transition-transform duration-500 group-hover:scale-[1.03]"
@@ -166,7 +167,7 @@ function DrawerBody({
       <div className={mediaFrameClass("relative mx-8 mt-8 aspect-4/3")}>
         {item.image ? (
           <Image
-            src={item.image}
+            src={publicAsset(item.image)}
             alt={photoAlt}
             fill
             className={mediaPhotoCoverClass}

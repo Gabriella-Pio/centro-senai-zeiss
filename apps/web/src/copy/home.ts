@@ -127,20 +127,18 @@ export const partners = {
     },
     {
       name: 'SENAI Goiás',
-      logoSrc: '/brand/partners/senai-goias.png',
+      logoSrc: '/brand/partners/senai-estendido.png',
       logoAlt: 'Logo SENAI Goiás — rede de educação profissional e serviços à indústria',
       href: 'https://goias.senai.br',
     },
     {
       name: 'FIEG',
-      logoSrc: '/brand/partners/fieg.svg',
+      logoSrc: '/brand/partners/fieg.png',
       logoAlt: 'Logo FIEG — Federação das Indústrias do Estado de Goiás',
       href: 'https://www.fieg.com.br',
     },
     {
       name: 'Faculdade SENAI Ítalo Bologna',
-      logoSrc: '/brand/partners/faculdade-senai.svg',
-      logoAlt: 'Logo Faculdade SENAI Ítalo Bologna — sede do centro em Goiânia',
       href: 'https://goias.senai.br/unidade/faculdade-senai-italo-bologna',
     },
   ] satisfies PartnerLogo[],

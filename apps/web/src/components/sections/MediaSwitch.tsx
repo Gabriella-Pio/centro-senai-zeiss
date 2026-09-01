@@ -11,6 +11,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@cem/ui";
 import { getIcon } from "@/lib/icons";
 import { mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
+import { publicAsset } from "@/lib/public-asset";
 import type { CtaCopy, FeatureItem, SectionCopy } from "@/copy/types";
 import "./media-switch.css";
 
@@ -143,8 +144,8 @@ export function MediaSwitch({
           >
             {current.image ? (
               <Image
-                key={current.image}
-                src={current.image}
+                key={publicAsset(current.image)}
+                src={publicAsset(current.image)}
                 alt={current.imageAlt ?? current.title}
                 fill
                 className={cn(

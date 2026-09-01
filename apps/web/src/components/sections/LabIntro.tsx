@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HairlineLink } from "@/components/ui/HairlineLink";
 import { mediaFrameClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
+import { publicAsset } from "@/lib/public-asset";
 import type { CtaCopy } from "@/copy/types";
 
 interface LabIntroProps {
@@ -26,7 +27,7 @@ export function LabIntro({ eyebrow, title, body, cta, image }: LabIntroProps) {
           )}
         >
           <Image
-            src={image.src}
+            src={publicAsset(image.src)}
             alt={image.alt}
             fill
             className={mediaPhotoCoverClass}

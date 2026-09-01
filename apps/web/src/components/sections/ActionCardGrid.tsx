@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, Button } from "@cem/ui";
 import { cn } from "@cem/ui";
+import { publicAsset } from "@/lib/public-asset";
 import { vitrineCardClass } from "@/lib/vitrine-card";
 import { cardPhotoAspectClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
 import type { ActionCardItem } from "@/copy/types";
@@ -39,7 +40,7 @@ export function ActionCardGrid({ items, columns = 2 }: ActionCardGridProps) {
                 )}
               >
                 <Image
-                  src={item.image!}
+                  src={publicAsset(item.image!)}
                   alt={item.imageAlt ?? item.title}
                   fill
                   className={isProductCutout ? "object-contain p-4" : mediaPhotoCoverClass}

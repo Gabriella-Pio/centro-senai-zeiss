@@ -11,8 +11,9 @@ export type CtaCopy = {
 
 export type PartnerLogo = {
   name: string;
-  logoSrc: string;
-  logoAlt: string;
+  /** Omita quando não houver logo oficial — exibe o nome em tipografia institucional. */
+  logoSrc?: string;
+  logoAlt?: string;
   href?: string;
 };
 

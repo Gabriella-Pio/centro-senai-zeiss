@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { cn } from "@cem/ui";
+import { publicAsset } from "@/lib/public-asset";
 import type { PartnerLogo } from "@/copy/types";
 import "./logo-row.css";
 
@@ -12,15 +13,21 @@ interface LogoRowProps {
 }
 
 function PartnerLogoItem({ partner }: { partner: PartnerLogo }) {
-  const isWide = partner.logoSrc.endsWith(".svg");
-  const image = (
+  const content = partner.logoSrc ? (
     <Image
-      src={partner.logoSrc}
-      alt={partner.logoAlt}
-      width={isWide ? 320 : 200}
-      height={isWide ? 48 : 80}
-      className={cn("logo-row__logo", isWide && "logo-row__logo--wide")}
+      src={publicAsset(partner.logoSrc)}
+      alt={partner.logoAlt ?? partner.name}
+      width={partner.logoSrc.endsWith(".svg") ? 320 : 200}
+      height={partner.logoSrc.endsWith(".svg") ? 48 : 80}
+      className={cn(
+        "logo-row__logo",
+        partner.logoSrc.endsWith(".svg") && "logo-row__logo--wide",
+      )}
     />
+  ) : (
+    <span className="logo-row__text text-center font-semibold tracking-tight text-foreground">
+      {partner.name}
+    </span>
   );
 
   if (partner.href) {
@@ -30,14 +37,14 @@ function PartnerLogoItem({ partner }: { partner: PartnerLogo }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={partner.name}
-        className="inline-flex items-center justify-center outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        className="inline-flex max-w-[11rem] items-center justify-center px-2 outline-none focus-visible:ring-1 focus-visible:ring-ring sm:max-w-[13rem]"
       >
-        {image}
+        {content}
       </a>
     );
   }
 
-  return <span className="inline-flex items-center justify-center">{image}</span>;
+  return <span className="inline-flex items-center justify-center">{content}</span>;
 }
 
 export function LogoRow({ title, items, variant = "muted" }: LogoRowProps) {

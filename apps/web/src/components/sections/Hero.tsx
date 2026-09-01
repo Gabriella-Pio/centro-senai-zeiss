@@ -7,6 +7,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { CoordinateGrid } from "@/components/sections/CoordinateGrid";
 import { HeroPhotoBackground } from "@/components/sections/HeroPhotoBackground";
 import { mediaFrameClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
+import { publicAsset } from "@/lib/public-asset";
 import type { HeroPhotoBlend } from "@/components/sections/hero-photo-blends";
 import type { CtaCopy } from "@/copy/types";
 
@@ -45,7 +46,7 @@ export function Hero({
     >
       {image ? (
         <HeroPhotoBackground
-          src={image.src}
+          src={publicAsset(image.src)}
           objectPosition={image.objectPosition}
           zoom={image.zoom}
           blend={imageBlend}
@@ -67,7 +68,7 @@ export function Hero({
         {image ? (
           <div className={mediaFrameClass("relative mb-8 aspect-4/3 lg:hidden")}>
             <Image
-              src={image.src}
+              src={publicAsset(image.src)}
               alt={image.alt}
               fill
               priority
