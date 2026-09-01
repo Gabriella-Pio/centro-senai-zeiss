@@ -5,6 +5,7 @@ export type {
   FieldCopy,
   InfoCardItem,
   LinkCardItem,
+  PartnerLogo,
   SectionCopy,
   ServiceContent,
   StatItem,

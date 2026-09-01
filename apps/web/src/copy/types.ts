@@ -9,6 +9,13 @@ export type CtaCopy = {
   href: string;
 };
 
+export type PartnerLogo = {
+  name: string;
+  logoSrc: string;
+  logoAlt: string;
+  href?: string;
+};
+
 export type StatItem = {
   value: string;
   label: string;

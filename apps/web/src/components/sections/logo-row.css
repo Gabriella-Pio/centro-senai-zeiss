@@ -1,0 +1,37 @@
+/* LogoRow — tipografia do título via CSS (evita conflito text-* Tailwind v4). */
+
+.logo-row__title {
+  font-size: var(--text-meta);
+  letter-spacing: var(--tracking-meta);
+}
+
+.logo-row__logo {
+  height: 2rem;
+  width: auto;
+  max-width: 9rem;
+  object-fit: contain;
+  opacity: 0.55;
+  transition: opacity 0.25s ease;
+}
+
+.logo-row__logo:hover,
+.logo-row__logo:focus-visible {
+  opacity: 1;
+}
+
+@media (width >= 40rem) {
+  .logo-row__logo {
+    height: 2.5rem;
+    max-width: 11rem;
+  }
+}
+
+.logo-row__logo--wide {
+  max-width: 13rem;
+}
+
+@media (width >= 40rem) {
+  .logo-row__logo--wide {
+    max-width: 16rem;
+  }
+}

@@ -1,4 +1,4 @@
-import type { FeatureItem, SectionCopy } from '@/copy/types';
+import type { FeatureItem, PartnerLogo, SectionCopy } from '@/copy/types';
 
 export const hero = {
   eyebrow: 'Centro de Excelência em Metrologia · Faculdade SENAI Ítalo Bologna',
@@ -118,5 +118,30 @@ export const sectors: FeatureItem[] = [
 
 export const partners = {
   title: 'Parceiros',
-  items: ['ZEISS', 'SENAI Goiás', 'FIEG', 'Faculdade SENAI Ítalo Bologna'],
+  items: [
+    {
+      name: 'ZEISS',
+      logoSrc: '/brand/partners/zeiss.png',
+      logoAlt: 'Logo Carl Zeiss — parceiro tecnológico em metrologia industrial',
+      href: 'https://www.zeiss.com/metrology',
+    },
+    {
+      name: 'SENAI Goiás',
+      logoSrc: '/brand/partners/senai-goias.png',
+      logoAlt: 'Logo SENAI Goiás — rede de educação profissional e serviços à indústria',
+      href: 'https://goias.senai.br',
+    },
+    {
+      name: 'FIEG',
+      logoSrc: '/brand/partners/fieg.svg',
+      logoAlt: 'Logo FIEG — Federação das Indústrias do Estado de Goiás',
+      href: 'https://www.fieg.com.br',
+    },
+    {
+      name: 'Faculdade SENAI Ítalo Bologna',
+      logoSrc: '/brand/partners/faculdade-senai.svg',
+      logoAlt: 'Logo Faculdade SENAI Ítalo Bologna — sede do centro em Goiânia',
+      href: 'https://goias.senai.br/unidade/faculdade-senai-italo-bologna',
+    },
+  ] satisfies PartnerLogo[],
 };
