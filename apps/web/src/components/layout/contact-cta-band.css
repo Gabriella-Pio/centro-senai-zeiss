@@ -1,0 +1,17 @@
+/* ContactCtaBand — tipografia via CSS (evita conflito text-* Tailwind v4). */
+
+.contact-cta-band__title {
+  font-size: var(--text-display-md);
+  line-height: var(--leading-display-tight);
+  letter-spacing: var(--tracking-display);
+}
+
+.contact-cta-band__description {
+  font-size: var(--text-lead);
+  line-height: var(--leading-lead);
+}
+
+.contact-cta-band__action-label {
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-meta);
+}

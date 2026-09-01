@@ -46,7 +46,6 @@ export const nav = {
 };
 
 export const footer = {
-  cta: { label: "Fale conosco", href: "/contact" },
   tagline:
     "Centro de Excelência em Metrologia SENAI ZEISS, na Faculdade SENAI Ítalo Bologna, em Goiânia.",
   visitTitle: "Visite-nos",
@@ -65,4 +64,13 @@ export const footer = {
     openInGoogleMaps: "Abrir endereço no Google Maps",
     openInWaze: "Abrir endereço no Waze",
   },
+};
+
+export const contactBand = {
+  eyebrow: "Contato",
+  title: "Fale com a equipe técnica",
+  description:
+    "Solicite orçamento, agende visita ao laboratório ou tire dúvidas sobre medição e ensaios.",
+  href: "/contact",
+  linkLabel: "Entrar em contato",
 };

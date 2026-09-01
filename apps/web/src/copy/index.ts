@@ -11,7 +11,7 @@ export type {
   StatItem,
 } from "@/copy/types";
 
-export { brand, footer, location, nav, siteMeta } from "@/copy/site";
+export { brand, contactBand, footer, location, nav, siteMeta } from "@/copy/site";
 export {
   serviceDetail,
   services,
