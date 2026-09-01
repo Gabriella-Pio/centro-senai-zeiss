@@ -34,8 +34,8 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
   if (submitted) {
     return (
       <div className="flex flex-col items-center gap-3 py-16 text-center">
-        <h2 className="font-heading text-xl font-semibold text-foreground">{copy.success.title}</h2>
-        <p className="text-muted-foreground max-w-sm">{copy.success.body}</p>
+        <h2 className="type-band-title font-heading font-semibold text-foreground">{copy.success.title}</h2>
+        <p className="type-caption max-w-sm text-muted-foreground">{copy.success.body}</p>
       </div>
     );
   }

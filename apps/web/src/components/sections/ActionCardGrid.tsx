@@ -51,14 +51,14 @@ export function ActionCardGrid({ items, columns = 2 }: ActionCardGridProps) {
 
             <CardHeader className="gap-2 p-3 pb-0">
               <div className="flex items-start justify-between gap-3">
-                <CardTitle className="font-heading text-base font-semibold leading-snug tracking-tight">
+                <CardTitle className="type-card-title font-heading font-semibold leading-snug tracking-tight">
                   {item.title}
                 </CardTitle>
                 <ArrowUpRight size={16} strokeWidth={1.75} className="mt-0.5 shrink-0 text-muted-foreground" />
               </div>
             </CardHeader>
             <CardContent className="flex-1 p-3 pt-2">
-              <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+              <p className="type-caption text-muted-foreground">{item.description}</p>
             </CardContent>
             <CardFooter className="gap-3 border-t border-border p-3 pt-4">
               <Button variant="outline" size="sm" render={<Link href={item.secondaryCta.href} />}>

@@ -41,6 +41,18 @@
   letter-spacing: var(--tracking-display);
 }
 
+.type-card-title {
+  font-size: var(--text-card-title);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.type-display-lg {
+  font-size: var(--text-display-lg);
+  line-height: var(--leading-display-tight);
+  letter-spacing: var(--tracking-display);
+}
+
 .type-band-title {
   font-size: var(--text-band-title);
   line-height: var(--leading-display-tight);

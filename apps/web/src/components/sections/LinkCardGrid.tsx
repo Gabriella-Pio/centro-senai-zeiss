@@ -47,12 +47,12 @@ export function LinkCardGrid({
                         <Icon size={22} strokeWidth={1.75} />
                       </div>
                     )}
-                    <CardTitle className="font-heading text-lg font-semibold group-hover:text-foreground">
+                    <CardTitle className="type-card-title font-heading font-semibold group-hover:text-foreground">
                       {item.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+                    <p className="type-caption text-muted-foreground">{item.description}</p>
                   </CardContent>
                 </Card>
               </Link>
