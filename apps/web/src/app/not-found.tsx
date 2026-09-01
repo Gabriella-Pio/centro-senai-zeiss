@@ -11,7 +11,10 @@ export default function NotFound() {
       <Container className="max-w-3xl">
         <Eyebrow>{notFoundCopy.eyebrow}</Eyebrow>
 
-        <p className="mt-8 font-heading text-display-lg font-bold tracking-tight leading-[1.08] text-foreground">
+        <p
+          aria-hidden
+          className="type-display-lg mt-8 font-heading font-bold text-foreground"
+        >
           {notFoundCopy.code}
         </p>
 
@@ -19,7 +22,7 @@ export default function NotFound() {
           {notFoundCopy.title}
         </h1>
 
-        <p className="mt-6 max-w-2xl text-hero-lead leading-relaxed text-muted-foreground">
+        <p className="type-hero-lead mt-6 max-w-2xl text-muted-foreground">
           {notFoundCopy.body}
         </p>
 

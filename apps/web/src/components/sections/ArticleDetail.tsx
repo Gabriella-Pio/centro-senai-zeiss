@@ -23,28 +23,28 @@ export function ArticleDetail({ eyebrow, title, body, groups, cta }: ArticleDeta
       <Container className="max-w-3xl flex flex-col gap-10">
         <div className="flex flex-col gap-4">
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h1 className="font-heading text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
+          <h1 className="type-display-sm font-heading font-bold text-foreground">
             {title}
           </h1>
-          <p className="text-lead text-muted-foreground leading-relaxed font-light">{body}</p>
+          <p className="type-lead text-muted-foreground font-light">{body}</p>
         </div>
 
         {groups.map((group) => (
           <div key={group.title} className="flex flex-col gap-3">
-            <h2 className="text-meta font-bold tracking-widest uppercase text-muted-foreground">
+            <h2 className="type-meta font-bold uppercase text-muted-foreground">
               {group.title}
             </h2>
             {"items" in group ? (
               <ul className="flex flex-col gap-2">
                 {group.items.map((item) => (
-                  <li key={item} className="flex items-center gap-3 text-caption text-foreground/80">
+                  <li key={item} className="type-caption flex items-center gap-3 text-foreground/80">
                     <span className="h-1.5 w-1.5 shrink-0 bg-primary" />
                     {item}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-caption text-foreground/80">{group.text}</p>
+              <p className="type-caption text-foreground/80">{group.text}</p>
             )}
           </div>
         ))}

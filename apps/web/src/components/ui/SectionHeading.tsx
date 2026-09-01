@@ -26,7 +26,7 @@ export function SectionHeading({
         {title}
       </h2>
       {description ? (
-        <p className="section-heading__description mt-(--sh-desc-gap) text-muted-foreground font-light">
+        <p className="section-heading__description type-lead mt-(--sh-desc-gap) text-muted-foreground font-light">
           {description}
         </p>
       ) : null}

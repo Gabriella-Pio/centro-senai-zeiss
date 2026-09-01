@@ -30,7 +30,7 @@ export function CardGrid({ items, columns = 4 }: CardGridProps) {
               <CardTitle className="font-heading text-card-title font-semibold">{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-caption leading-relaxed text-muted-foreground">{item.description}</p>
+              <p className="type-caption text-muted-foreground">{item.description}</p>
             </CardContent>
           </Card>
         );

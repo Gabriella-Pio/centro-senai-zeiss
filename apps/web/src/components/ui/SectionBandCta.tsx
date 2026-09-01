@@ -28,9 +28,9 @@ export function SectionBandCta({
     >
       <div className="min-w-0 flex flex-col gap-2">
         <Eyebrow className="mx-auto sm:mx-0">{eyebrow}</Eyebrow>
-        <p className="font-heading text-band-title font-bold tracking-tight text-foreground">{title}</p>
+        <p className="type-band-title font-heading font-bold text-foreground">{title}</p>
         {description ? (
-          <p className="max-w-xl text-caption leading-relaxed text-muted-foreground">{description}</p>
+          <p className="type-caption max-w-xl text-muted-foreground">{description}</p>
         ) : null}
       </div>
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-primary/35 text-primary transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">

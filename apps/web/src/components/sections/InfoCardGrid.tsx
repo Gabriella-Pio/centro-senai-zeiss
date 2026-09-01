@@ -30,7 +30,7 @@ export function InfoCardGrid({ items, columns = 2 }: InfoCardGridProps) {
               <CardTitle className="font-heading text-card-title font-semibold">{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="whitespace-pre-line text-caption text-muted-foreground">{item.value}</p>
+              <p className="type-caption whitespace-pre-line text-muted-foreground">{item.value}</p>
             </CardContent>
           </Card>
         );

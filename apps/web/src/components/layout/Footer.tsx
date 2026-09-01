@@ -13,7 +13,7 @@ const footerLinkClass =
   "text-primary-foreground/75 hover:text-primary-foreground transition-colors duration-200";
 
 const footerHeadingClass =
-  "text-meta font-bold mb-6 tracking-[0.2em] uppercase text-primary-foreground/50";
+  "type-meta font-bold mb-6 uppercase text-primary-foreground/50";
 
 const mapLinks = getLocationLinks(location.mapsQuery);
 
@@ -26,7 +26,7 @@ export default function Footer() {
         <div className="relative grid grid-cols-1 gap-14 md:grid-cols-2 md:gap-x-12 md:gap-y-16 lg:grid-cols-12 lg:gap-8">
           <div className="space-y-6 lg:col-span-4">
             <BrandLockup variant="footer" inverted />
-            <p className="max-w-sm text-sm leading-relaxed text-primary-foreground/65 md:text-base md:leading-relaxed">
+        <p className="max-w-sm type-body text-primary-foreground/65">
               {footer.tagline}
             </p>
           </div>

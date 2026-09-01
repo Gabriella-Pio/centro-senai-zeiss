@@ -15,7 +15,7 @@ export function StatRow({ items, variant = "default" }: StatRowProps) {
           {items.map((stat) => (
             <div key={stat.label} className="flex flex-col gap-2 border-t border-border pt-6">
               <dt className="font-heading text-3xl font-bold tracking-tight text-foreground">{stat.value}</dt>
-              <dd className="text-caption leading-snug text-muted-foreground">{stat.label}</dd>
+              <dd className="type-caption text-muted-foreground">{stat.label}</dd>
             </div>
           ))}
         </dl>

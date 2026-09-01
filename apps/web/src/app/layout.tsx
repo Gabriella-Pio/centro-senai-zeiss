@@ -16,7 +16,7 @@ const archivo = Archivo({
 
 const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["300", "400", "500"],
   variable: "--font-plex-sans",
   display: "swap",
 });

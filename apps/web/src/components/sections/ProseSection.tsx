@@ -11,13 +11,13 @@ export function ProseSection({ title, paragraphs, variant = "default" }: ProseSe
   return (
     <Section variant={variant}>
       <Container className="flex max-w-3xl flex-col gap-6">
-        <h2 className="font-heading text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
+        <h2 className="type-display-sm font-heading font-bold text-foreground">
           {title}
         </h2>
         {paragraphs.map((paragraph) => (
           <p
             key={paragraph.slice(0, 48)}
-            className="text-body leading-body text-muted-foreground font-light"
+            className="type-body text-muted-foreground font-light"
           >
             {paragraph}
           </p>

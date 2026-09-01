@@ -1,0 +1,48 @@
+/* Tipografia semântica — font-size via CSS; combine com utilitários de cor (text-muted-foreground etc.). */
+
+.type-lead {
+  font-size: var(--text-lead);
+  line-height: var(--leading-lead);
+}
+
+.type-body {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+.type-caption {
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+}
+
+.type-meta {
+  font-size: var(--text-meta);
+  letter-spacing: var(--tracking-meta);
+}
+
+.type-link {
+  font-size: var(--text-link);
+}
+
+.type-hero-lead {
+  font-size: var(--text-hero-lead);
+  line-height: var(--leading-lead);
+}
+
+.type-display-sm {
+  font-size: var(--text-display-sm);
+  line-height: var(--leading-display-tight);
+  letter-spacing: var(--tracking-display);
+}
+
+.type-display-md {
+  font-size: var(--text-display-md);
+  line-height: var(--leading-display-tight);
+  letter-spacing: var(--tracking-display);
+}
+
+.type-band-title {
+  font-size: var(--text-band-title);
+  line-height: var(--leading-display-tight);
+  letter-spacing: var(--tracking-display);
+}

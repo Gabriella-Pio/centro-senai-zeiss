@@ -81,7 +81,7 @@ export function Hero({
         <div className={image ? "max-w-2xl" : undefined}>
           <Eyebrow>{eyebrow}</Eyebrow>
 
-          <h1 className="mt-8 font-heading text-display-lg font-bold tracking-display leading-display-tight text-foreground">
+          <h1 className="mt-8 type-display-lg font-heading font-bold text-foreground">
             {brand.left} <span className="text-primary">×</span> {brand.right}
           </h1>
 
@@ -89,7 +89,7 @@ export function Hero({
             {subtitle}
           </p>
 
-          <p className="mt-6 max-w-2xl text-hero-lead leading-lead text-muted-foreground">{body}</p>
+          <p className="type-hero-lead text-muted-foreground">{body}</p>
 
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button size="xl" render={<Link href={primaryCta.href} />}>

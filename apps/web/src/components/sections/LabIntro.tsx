@@ -38,7 +38,7 @@ export function LabIntro({ eyebrow, title, body, cta, image }: LabIntroProps) {
         <div className="flex min-h-0 w-full flex-col gap-(--section-stack-tight)">
           <SectionHeading align="left" className="max-w-none gap-3" eyebrow={eyebrow} title={title} />
 
-          <p className="text-lead leading-lead text-muted-foreground font-light">{body}</p>
+          <p className="type-lead text-muted-foreground font-light">{body}</p>
 
           <HairlineLink href={cta.href}>{cta.label}</HairlineLink>
         </div>

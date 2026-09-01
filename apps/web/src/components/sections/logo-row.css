@@ -1,9 +1,4 @@
-/* LogoRow — tipografia do título via CSS (evita conflito text-* Tailwind v4). */
-
-.logo-row__title {
-  font-size: var(--text-meta);
-  letter-spacing: var(--tracking-meta);
-}
+/* LogoRow — dimensões dos logos parceiros. */
 
 .logo-row__logo {
   height: 2rem;

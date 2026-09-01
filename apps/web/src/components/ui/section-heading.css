@@ -10,8 +10,3 @@
   line-height: var(--leading-display-tight);
   letter-spacing: var(--tracking-display);
 }
-
-.section-heading__description {
-  font-size: var(--text-lead);
-  line-height: var(--leading-lead);
-}
