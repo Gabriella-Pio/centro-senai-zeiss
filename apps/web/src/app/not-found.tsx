@@ -15,11 +15,11 @@ export default function NotFound() {
           {notFoundCopy.code}
         </p>
 
-        <h1 className="mt-4 font-heading text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+        <h1 className="mt-4 font-heading text-hero-subtitle font-semibold tracking-tight text-foreground">
           {notFoundCopy.title}
         </h1>
 
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+        <p className="mt-6 max-w-2xl text-hero-lead leading-relaxed text-muted-foreground">
           {notFoundCopy.body}
         </p>
 

@@ -1,17 +1,16 @@
 import { Hero } from "@/components/sections/Hero";
 import { LabIntro } from "@/components/sections/LabIntro";
-import { MediaSwitch } from "@/components/sections/MediaSwitch";
 import { CoverGrid } from "@/components/sections/CoverGrid";
 import { FeatureGrid } from "@/components/sections/FeatureGrid";
+import { MediaSwitch } from "@/components/sections/MediaSwitch";
 import { LogoRow } from "@/components/sections/LogoRow";
 import {
   differentials,
   differentialsHeading,
   equipment,
+  equipmentCatalogCta,
   equipmentHeading,
   hero,
-  infrastructure,
-  infrastructureHeading,
   labIntro,
   partners,
   sectors,
@@ -21,6 +20,17 @@ import {
   servicesCatalog,
 } from "@/copy";
 
+const serviceItems = services.map((service) => ({
+  title: service.label,
+  description: service.shortDescription,
+  icon: service.icon,
+  href: `/services/${service.id}`,
+  image: service.cardImage,
+  imageAlt: service.cardImageAlt,
+  imageFit: service.cardImageFit,
+  imagePosition: service.cardImagePosition,
+}));
+
 export default function HomePage() {
   return (
     <>
@@ -28,22 +38,22 @@ export default function HomePage() {
       <LabIntro {...labIntro} />
       <MediaSwitch
         heading={serviceHubHeading}
-        ctaLabel={servicesCatalog.detailsLabel}
-        items={services.map((service) => ({
-          title: service.label,
-          description: service.shortDescription,
-          icon: service.icon,
-          href: `/services/${service.id}`,
-        }))}
+        items={serviceItems}
+        zone="services"
+        atmosphere="grid"
+        listTrailing="service-link"
+        catalogCta={servicesCatalog.allServicesCta}
       />
-
       <CoverGrid heading={differentialsHeading} items={differentials} />
-
-      <FeatureGrid heading={infrastructureHeading} items={infrastructure} />
-      <FeatureGrid heading={equipmentHeading} items={equipment} />
-      <FeatureGrid heading={sectorsHeading} items={sectors} />
-
-      <LogoRow title={partners.title} items={partners.items} variant="default" />
+      <MediaSwitch
+        heading={equipmentHeading}
+        items={equipment}
+        ctaLabel="Ver serviço relacionado"
+        listTrailing="number"
+        catalogCta={equipmentCatalogCta}
+      />
+      <FeatureGrid heading={sectorsHeading} items={sectors} zone="catalog" />
+      <LogoRow title={partners.title} items={partners.items} />
     </>
   );
 }

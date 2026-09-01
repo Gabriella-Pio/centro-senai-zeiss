@@ -1,5 +1,6 @@
 import React from "react";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import "./section-heading.css";
 
 interface SectionHeadingProps {
   eyebrow?: string;
@@ -13,22 +14,22 @@ export function SectionHeading({
   eyebrow,
   title,
   description,
-  align = "center",
+  align = "left",
   className = "",
 }: SectionHeadingProps) {
   const alignment = align === "center" ? "text-center items-center mx-auto" : "text-left items-start";
 
   return (
-    <div className={`flex flex-col gap-4 max-w-3xl ${alignment} ${className}`}>
-      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-      <h2 className="font-heading text-display-sm font-bold tracking-tight text-foreground leading-[1.1]">
+    <div className={`section-heading flex max-w-3xl flex-col ${alignment} ${className}`}>
+      {eyebrow ? <Eyebrow className="mb-(--sh-eyebrow-gap)">{eyebrow}</Eyebrow> : null}
+      <h2 className="section-heading__title font-heading font-bold text-foreground">
         {title}
       </h2>
-      {description && (
-        <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-light">
+      {description ? (
+        <p className="section-heading__description mt-(--sh-desc-gap) text-muted-foreground font-light">
           {description}
         </p>
-      )}
+      ) : null}
     </div>
   );
 }

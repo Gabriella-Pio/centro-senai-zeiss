@@ -1,0 +1,17 @@
+/* SectionHeading — ritmo vertical + tipografia (evita conflito text-* Tailwind v4) */
+
+.section-heading {
+  --sh-eyebrow-gap: 1rem;
+  --sh-desc-gap: 1.375rem;
+}
+
+.section-heading__title {
+  font-size: var(--text-display-sm);
+  line-height: var(--leading-display-tight);
+  letter-spacing: var(--tracking-display);
+}
+
+.section-heading__description {
+  font-size: var(--text-lead);
+  line-height: var(--leading-lead);
+}

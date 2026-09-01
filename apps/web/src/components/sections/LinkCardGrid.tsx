@@ -28,7 +28,7 @@ export function LinkCardGrid({
 }: LinkCardGridProps) {
   return (
     <Section variant={variant}>
-      <Container className="flex flex-col gap-16">
+      <Container className="flex flex-col gap-(--section-stack-lg)">
         <SectionHeading {...heading} />
 
         <div className={`grid grid-cols-1 gap-6 ${columnClass[columns]}`}>

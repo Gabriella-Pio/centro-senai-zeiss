@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -5,6 +6,7 @@ import { Button } from "@cem/ui";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { CoordinateGrid } from "@/components/sections/CoordinateGrid";
 import { HeroPhotoBackground } from "@/components/sections/HeroPhotoBackground";
+import { mediaFrameClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
 import type { HeroPhotoBlend } from "@/components/sections/hero-photo-blends";
 import type { CtaCopy } from "@/copy/types";
 
@@ -17,6 +19,7 @@ interface HeroProps {
   secondaryCta: CtaCopy;
   image?: { src: string; alt: string; objectPosition?: string; zoom?: number };
   imageBlend?: HeroPhotoBlend;
+  parallax?: boolean;
 }
 
 export function Hero({
@@ -27,7 +30,8 @@ export function Hero({
   primaryCta,
   secondaryCta,
   image,
-  imageBlend = "diagonal",
+  imageBlend = "panel",
+  parallax = false,
 }: HeroProps) {
   return (
     <Section
@@ -45,6 +49,7 @@ export function Hero({
           objectPosition={image.objectPosition}
           zoom={image.zoom}
           blend={imageBlend}
+          parallax={parallax}
         />
       ) : null}
 
@@ -59,18 +64,32 @@ export function Hero({
       </div>
 
       <Container className="relative z-10 text-left">
+        {image ? (
+          <div className={mediaFrameClass("relative mb-8 aspect-4/3 lg:hidden")}>
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              priority
+              className={mediaPhotoCoverClass}
+              style={{ objectPosition: image.objectPosition ?? "50% 42%" }}
+              sizes={mediaPhotoSizes.heroMobile}
+            />
+          </div>
+        ) : null}
+
         <div className={image ? "max-w-2xl" : undefined}>
           <Eyebrow>{eyebrow}</Eyebrow>
 
-          <h1 className="mt-8 font-heading text-display-lg font-bold tracking-tight leading-[1.08] text-foreground">
+          <h1 className="mt-8 font-heading text-display-lg font-bold tracking-display leading-display-tight text-foreground">
             {brand.left} <span className="text-primary">×</span> {brand.right}
           </h1>
 
-          <p className="mt-4 font-heading text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+          <p className="mt-4 font-heading text-hero-subtitle font-semibold tracking-tight text-foreground">
             {subtitle}
           </p>
 
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{body}</p>
+          <p className="mt-6 max-w-2xl text-hero-lead leading-lead text-muted-foreground">{body}</p>
 
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button size="xl" render={<Link href={primaryCta.href} />}>

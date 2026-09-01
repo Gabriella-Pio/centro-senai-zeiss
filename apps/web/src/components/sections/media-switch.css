@@ -1,0 +1,66 @@
+/* MediaSwitch — layout e tipografia exclusivos do componente.
+   Tokens em packages/ui/tokens.css; classes abaixo aplicam font-size via CSS
+   para não conflitar com text-primary / text-muted-foreground (Tailwind v4). */
+
+.media-switch {
+  --ms-gap: 2.5rem;
+  --ms-split: 5.5rem;
+  --ms-split-lg: 7.5rem;
+  --ms-height: 46rem;
+  --ms-row-py: 0.8125rem;
+  --ms-blurb-gap: 1.375rem;
+}
+
+.media-switch__header-cta {
+  font-size: var(--text-header-cta);
+}
+
+.media-switch__item-title {
+  font-size: var(--text-switch-title);
+  line-height: var(--leading-switch-title);
+  letter-spacing: var(--tracking-switch-title);
+}
+
+/* Serviços: nomes longos — sans semibold, um degrau abaixo dos equipamentos (marca). */
+.media-switch__item-title--service {
+  font-size: var(--text-switch-title-service);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.media-switch__item-tag,
+.media-switch__photo-tag,
+.media-switch__item-index {
+  font-family: var(--font-mono);
+}
+
+.media-switch__item-tag {
+  font-size: var(--text-switch-tag);
+  letter-spacing: var(--tracking-switch-tag);
+  line-height: 1;
+}
+
+.media-switch__item-index {
+  font-size: var(--text-switch-index);
+  letter-spacing: var(--tracking-index);
+}
+
+.media-switch__photo-tag {
+  font-size: var(--text-switch-tag);
+  letter-spacing: var(--tracking-switch-tag);
+}
+
+.media-switch__related-link {
+  font-size: var(--text-caption);
+}
+
+.media-switch__blurb {
+  font-size: var(--text-switch-blurb);
+  line-height: var(--leading-switch-blurb);
+}
+
+@media (width >= 64rem) {
+  .media-switch__panel {
+    min-height: var(--ms-height);
+  }
+}

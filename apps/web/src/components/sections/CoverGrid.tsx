@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react";
 import {
@@ -13,8 +13,12 @@ import {
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { SnapCarouselShell } from "@/components/ui/SnapCarouselShell";
+import { useSnapCarousel } from "@/components/ui/useSnapCarousel";
+import { mediaFrameClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
 import { getIcon } from "@/lib/icons";
 import type { FeatureItem, SectionCopy } from "@/copy/types";
+import "./cover-grid.css";
 
 interface CoverGridProps {
   heading: SectionCopy;
@@ -22,6 +26,8 @@ interface CoverGridProps {
 }
 
 export function CoverGrid({ heading, items }: CoverGridProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { active: carouselActive, goPrev, goNext } = useSnapCarousel(scrollRef, items.length);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const current = items[active];
@@ -37,16 +43,38 @@ export function CoverGrid({ heading, items }: CoverGridProps) {
   }
 
   return (
-    <Section variant="muted">
+    <Section zone="proof">
       <Container className="flex flex-col gap-(--section-stack)">
         <SectionHeading align="left" {...heading} />
+      </Container>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="relative mx-auto mt-4 w-full max-w-[min(100%,calc(var(--max-width-content)+var(--section-bleed-lg)*2))] px-4 sm:px-6 lg:mt-(--section-stack) lg:px-8">
+        <SnapCarouselShell
+          count={items.length}
+          active={carouselActive}
+          onPrev={goPrev}
+          onNext={goNext}
+          className="lg:hidden"
+        >
+          <div
+            ref={scrollRef}
+            className="scrollbar-none flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain pb-2 [-webkit-overflow-scrolling:touch] [touch-action:pan-x_pan-y]"
+            aria-label="Diferenciais — carrossel horizontal"
+          >
+            {items.map((item, index) => (
+              <div key={item.title} className="w-full shrink-0 snap-start">
+                <CoverTile item={item} onOpen={() => openAt(index)} />
+              </div>
+            ))}
+          </div>
+        </SnapCarouselShell>
+
+        <div className="hidden gap-5 lg:grid lg:grid-cols-3 xl:grid-cols-5">
           {items.map((item, index) => (
             <CoverTile key={item.title} item={item} onOpen={() => openAt(index)} />
           ))}
         </div>
-      </Container>
+      </div>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
@@ -86,15 +114,15 @@ function CoverTile({
       type="button"
       onClick={onOpen}
       aria-haspopup="dialog"
-      className="group relative aspect-4/5 overflow-hidden rounded-(--radius) border border-border bg-foreground text-left text-card outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      className="group relative aspect-4/5 w-full overflow-hidden rounded-(--radius) border border-border bg-foreground text-left text-card outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
       {hasPhoto ? (
         <Image
           src={item.image!}
           alt=""
           fill
-          className="object-cover object-[72%_28%]"
-          sizes="(min-width: 1024px) 22rem, 50vw"
+          className="object-cover object-[72%_28%] transition-transform duration-500 group-hover:scale-[1.03]"
+          sizes={mediaPhotoSizes.card}
         />
       ) : (
         <span className="absolute inset-0 flex items-center justify-center opacity-35">
@@ -107,7 +135,7 @@ function CoverTile({
         style={{ height: hasPhoto ? "48%" : "42%" }}
       />
       <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-6">
-        <span className="font-heading text-xl font-semibold tracking-tight">{item.title}</span>
+        <span className="cover-grid__tile-title font-heading font-semibold tracking-tight">{item.title}</span>
         <ArrowUpRight size={18} strokeWidth={1.75} className="shrink-0" />
       </span>
     </button>
@@ -135,14 +163,15 @@ function DrawerBody({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="relative mx-8 mt-8 aspect-4/3 overflow-hidden rounded-(--radius) border border-border bg-muted">
+      <div className={mediaFrameClass("relative mx-8 mt-8 aspect-4/3")}>
         {item.image ? (
           <Image
             src={item.image}
             alt={photoAlt}
             fill
-            className="object-cover object-[72%_28%]"
-            sizes="36rem"
+            className={mediaPhotoCoverClass}
+            style={{ objectPosition: "72% 28%" }}
+            sizes={mediaPhotoSizes.drawer}
           />
         ) : (
           <span className="absolute inset-0 flex items-center justify-center">
@@ -152,11 +181,11 @@ function DrawerBody({
       </div>
 
       <div className="flex flex-1 flex-col gap-6 px-8 pt-10">
-        <p className="text-sm font-medium tracking-[0.18em] uppercase text-muted-foreground">({n})</p>
-        <SheetTitle className="font-heading text-2xl font-bold tracking-tight leading-[1.15] text-foreground">
+        <p className="cover-grid__drawer-index font-medium uppercase text-muted-foreground">({n})</p>
+        <SheetTitle className="cover-grid__drawer-title font-heading font-bold text-foreground">
           {item.title}
         </SheetTitle>
-        <SheetDescription className="text-lg leading-relaxed text-muted-foreground">
+        <SheetDescription className="cover-grid__drawer-description text-muted-foreground">
           {item.description}
         </SheetDescription>
       </div>
@@ -185,7 +214,7 @@ function DrawerBody({
               <ArrowRight size={20} strokeWidth={1.75} />
             </Button>
           </div>
-          <p className="font-mono text-xs tracking-widest tabular-nums text-muted-foreground">
+          <p className="cover-grid__drawer-counter tabular-nums text-muted-foreground">
             {n} / {String(count).padStart(2, "0")}
           </p>
         </div>

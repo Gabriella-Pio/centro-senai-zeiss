@@ -15,7 +15,11 @@ export const location = {
     "Setor Centro Oeste — Goiânia/GO",
     "CEP 74.560-020",
   ],
+  /** Query usada em Google Maps e Waze. */
+  mapsQuery:
+    "Faculdade SENAI Ítalo Bologna, Rua Armogaste José da Silveira, 612, Goiânia, GO, 74560-020",
   phone: "(62) 3226-4500",
+  phoneTel: "+556232264500",
   hours: "Segunda a sexta, 8h às 18h",
 };
 
@@ -55,4 +59,10 @@ export const footer = {
     privacy: "Política de Privacidade",
   },
   backToTop: "Voltar ao topo",
+  mapsLinks: {
+    googleMaps: "Google Maps",
+    waze: "Waze",
+    openInGoogleMaps: "Abrir endereço no Google Maps",
+    openInWaze: "Abrir endereço no Waze",
+  },
 };

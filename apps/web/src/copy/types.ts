@@ -23,6 +23,9 @@ export type FeatureItem = {
   imageAlt?: string;
   /** contain: recorte de produto em fundo branco. cover: foto de sala. */
   imageFit?: "cover" | "contain";
+  imagePosition?: string;
+  /** Rótulo curto do tipo de ensaio (ex.: Medição óptica). */
+  tag?: string;
   href?: string;
 };
 
@@ -31,6 +34,10 @@ export type LinkCardItem = {
   description: string;
   href: string;
   icon?: string;
+  image?: string;
+  imageAlt?: string;
+  imageFit?: "cover" | "contain";
+  imagePosition?: string;
 };
 
 export type ActionCardItem = {
@@ -38,6 +45,10 @@ export type ActionCardItem = {
   description: string;
   primaryCta: CtaCopy;
   secondaryCta: CtaCopy;
+  image?: string;
+  imageAlt?: string;
+  imageFit?: "cover" | "contain";
+  imagePosition?: string;
 };
 
 export type InfoCardItem = {
@@ -54,6 +65,11 @@ export type ServiceContent = {
   applications: string[];
   audience: string;
   icon: string;
+  /** Foto no card da home (opcional). Sem arquivo, o card usa o ícone. */
+  cardImage?: string;
+  cardImageAlt?: string;
+  cardImageFit?: "cover" | "contain";
+  cardImagePosition?: string;
 };
 
 export type FieldCopy = {

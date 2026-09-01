@@ -1,0 +1,8 @@
+/* Eyebrow — tipografia via variável, separada de text-primary (cor).
+   No Tailwind v4, utilitários text-* de tamanho e cor competem no mesmo slot. */
+
+.ui-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-eyebrow);
+}

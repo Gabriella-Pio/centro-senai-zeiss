@@ -13,8 +13,8 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
 
   return (
     <Section variant="default" clearNav>
-      <Container className="max-w-2xl flex flex-col gap-16">
-        <SectionHeading {...quoteHeading} align="left" />
+      <Container className="flex max-w-2xl flex-col gap-(--section-stack-lg)">
+        <SectionHeading {...quoteHeading} />
         <QuoteForm
           defaultServiceId={service}
           services={services.map((item) => ({ id: item.id, label: item.label }))}

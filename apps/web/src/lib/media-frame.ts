@@ -1,0 +1,19 @@
+import { cn } from "@cem/ui";
+
+/** Moldura padrão de foto em todo o site — hero panel, LabIntro, cards, drawer. */
+export function mediaFrameClass(className?: string) {
+  return cn("overflow-hidden rounded-(--radius) border border-border bg-muted", className);
+}
+
+export const mediaPhotoCoverClass = "object-cover";
+
+/** Proporção portrait compartilhada — cards de serviço e tiles de diferenciais. */
+export const cardPhotoAspectClass = "aspect-4/5";
+
+export const mediaPhotoSizes = {
+  card: "(min-width: 1024px) 22rem, 45vw",
+  heroDesktop: "(min-width: 1024px) 62vw, 0px",
+  heroMobile: "100vw",
+  split: "(min-width: 1024px) 50vw, 100vw",
+  drawer: "36rem",
+} as const;

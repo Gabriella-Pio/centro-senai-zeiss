@@ -17,7 +17,7 @@ export function ProseSection({ title, paragraphs, variant = "default" }: ProseSe
         {paragraphs.map((paragraph) => (
           <p
             key={paragraph.slice(0, 48)}
-            className="text-base text-muted-foreground leading-relaxed font-light"
+            className="text-body leading-body text-muted-foreground font-light"
           >
             {paragraph}
           </p>

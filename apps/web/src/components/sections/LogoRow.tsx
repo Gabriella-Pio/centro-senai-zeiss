@@ -14,7 +14,7 @@ export function LogoRow({ title, items, variant = "muted" }: LogoRowProps) {
   return (
     <Section variant={variant} className="py-(--section-py)! md:py-(--section-py-lg)!">
       <Container className="flex flex-col items-center gap-10">
-        <h3 className="text-xs font-bold tracking-widest uppercase text-muted-foreground">
+        <h3 className="text-meta font-bold tracking-widest uppercase text-muted-foreground">
           {title}
         </h3>
         <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">

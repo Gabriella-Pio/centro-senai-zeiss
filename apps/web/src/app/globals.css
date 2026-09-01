@@ -7,36 +7,210 @@
 
 @layer base {
   :root {
-    /* Largura máxima do conteúdo (navbar, seções, footer). 95rem = 1520px. */
     --max-width-content: 95rem;
-    /* Altura da navbar fixa. A primeira seção usa --page-pad-top para passar por baixo dela. */
     --nav-height: 7rem;
     --page-pad-top: calc(var(--nav-height) + 4rem);
-    /* Ritmo vertical das seções — padding block em Section.tsx */
-    --section-py: 3.5rem;
-    --section-py-lg: 5rem;
-    /* Hero: menos respiro embaixo para não somar com o padding-top da próxima seção */
-    --section-after-hero: 2rem;
-    --section-after-hero-lg: 2.5rem;
-    /* Gaps internos (heading → conteúdo, colunas de foto+texto) */
-    --section-stack: 3rem;
-    --section-stack-lg: 4rem;
-    --section-stack-tight: 2rem;
-    --section-inline: 4rem;
-    --section-inline-lg: 6.5rem;
+    --section-py: 4rem;
+    --section-py-lg: 5.5rem;
+    --section-after-hero: 3.5rem;
+    --section-after-hero-lg: 5rem;
+    --section-handoff-after-hero: 0.75rem;
+    --section-handoff-after-hero-lg: 1.25rem;
+    --section-stack: 4rem; /* vertical gap: heading → content, section blocks */
+    --section-stack-lg: 5rem;
+    --section-stack-tight: 2rem; /* smaller inner gaps (description → link) */
+    --section-inline: 6.5rem; /* desktop split genérico (colunas) */
+    --section-inline-lg: 8.5rem;
+    --section-bleed: 1.5rem;
+    --section-bleed-lg: 3rem;
+    --atmosphere-inset: 2.5rem;
+    --zone-fade: 14%;
   }
   @media (width >= 48rem) {
     :root {
       --page-pad-top: calc(var(--nav-height) + 8rem);
+      --atmosphere-inset: 3.5rem;
+      --zone-fade: 11%;
     }
   }
+  @media (width >= 64rem) {
+    :root {
+      --atmosphere-inset: 4.5rem;
+    }
+  }
+
+  /* Base global — creme + toques de azul fixos */
+  .site-backdrop {
+    background:
+      radial-gradient(
+        ellipse 140% 95% at 92% -12%,
+        color-mix(in srgb, var(--color-primary) 18%, transparent),
+        transparent 56%
+      ),
+      radial-gradient(
+        ellipse 110% 75% at -5% 108%,
+        color-mix(in srgb, var(--color-primary) 12%, transparent),
+        transparent 54%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-secondary) 35%, var(--color-background)) 0%,
+        var(--color-background) 38%,
+        var(--color-background) 62%,
+        color-mix(in srgb, var(--color-secondary) 28%, var(--color-background)) 100%
+      );
+  }
+
+  /* Zonas por seção — variam conforme o scroll, sempre com fade vertical */
+  .section-zone-intro::before,
+  .section-zone-services::before,
+  .section-zone-proof::before,
+  .section-zone-catalog::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black var(--zone-fade),
+      black calc(100% - var(--zone-fade)),
+      transparent 100%
+    );
+  }
+
+  .section-zone-intro::before {
+    background:
+      radial-gradient(
+        ellipse 95% 85% at 12% 45%,
+        color-mix(in srgb, var(--color-secondary) 88%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 88% 55%,
+        color-mix(in srgb, var(--color-secondary) 38%, transparent),
+        transparent 55%
+      );
+  }
+
+  .section-zone-services::before {
+    background:
+      radial-gradient(
+        ellipse 100% 90% at 88% 22%,
+        color-mix(in srgb, var(--color-primary) 22%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        ellipse 70% 60% at 8% 78%,
+        color-mix(in srgb, var(--color-primary) 10%, transparent),
+        transparent 58%
+      );
+  }
+
+  .section-zone-proof::before {
+    background:
+      radial-gradient(
+        ellipse 90% 75% at 50% 48%,
+        color-mix(in srgb, var(--color-secondary) 48%, transparent),
+        transparent 68%
+      ),
+      radial-gradient(
+        ellipse 70% 60% at 18% 82%,
+        color-mix(in srgb, var(--color-foreground) 9%, transparent),
+        transparent 58%
+      );
+  }
+
+  .section-zone-catalog::before {
+    background:
+      radial-gradient(
+        ellipse 85% 80% at 78% 48%,
+        color-mix(in srgb, var(--color-primary) 16%, transparent),
+        transparent 58%
+      ),
+      radial-gradient(
+        ellipse 55% 45% at 12% 72%,
+        color-mix(in srgb, var(--color-primary) 8%, transparent),
+        transparent 52%
+      );
+  }
+
+  .section-atmosphere-grid {
+    opacity: 0.5;
+    background-image: linear-gradient(
+        color-mix(in srgb, var(--color-primary) 14%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-primary) 14%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 44px 44px;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 22%,
+      black 78%,
+      transparent 100%
+    );
+  }
+
+  .section-atmosphere-glow {
+    background: radial-gradient(
+      ellipse 70% 80% at 50% 50%,
+      color-mix(in srgb, var(--color-primary) 10%, transparent),
+      transparent 68%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 22%,
+      black 78%,
+      transparent 100%
+    );
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Faixa de contato — separada do rodapé */
+  .site-contact-cta {
+    border-top: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-secondary) 42%, var(--color-background));
+  }
+
+  /* Rodapé institucional */
+  .site-footer {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  .site-footer-glow {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-primary-foreground) 8%, transparent) 0%,
+      transparent 42%,
+      color-mix(in srgb, var(--color-foreground) 14%, transparent) 100%
+    );
+  }
+
+  .site-footer-divider {
+    border-color: color-mix(in srgb, var(--color-primary-foreground) 15%, transparent);
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground;
     font-size: var(--text-body);
-    line-height: 1.6;
+    line-height: var(--leading-body);
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   button:not(:disabled) {

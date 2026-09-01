@@ -1,4 +1,4 @@
-import type { FeatureItem, SectionCopy } from "@/copy/types";
+import type { FeatureItem, SectionCopy, StatItem } from "@/copy/types";
 
 export const institutionalHeading: SectionCopy = {
   eyebrow: "Institucional",
@@ -22,6 +22,44 @@ export const pillars: FeatureItem[] = [
     title: "Valores",
     description:
       "Rigor técnico, rastreabilidade, precisão e compromisso com o desenvolvimento da indústria.",
+  },
+];
+
+export const institutionalStats: StatItem[] = [
+  { value: "0,9 µm", label: "Precisão de medição por coordenadas" },
+  { value: "1º no Brasil", label: "Centro SENAI ZEISS" },
+  { value: "8", label: "Equipamentos ZEISS instalados" },
+];
+
+export const infrastructureHeading: SectionCopy = {
+  eyebrow: "Infraestrutura",
+  title: "Ambiente preparado para medições de alta precisão",
+  description:
+    "Salas climatizadas, áreas de digitalização e fluxo rastreado de recebimento — condições controladas para reduzir incerteza e garantir rastreabilidade das peças.",
+};
+
+export const infrastructure: FeatureItem[] = [
+  {
+    title: "Sala climatizada de metrologia",
+    description:
+      "Controle de temperatura e umidade para medições dimensionais com incerteza reduzida.",
+    icon: "Thermometer",
+  },
+  {
+    title: "Laboratório de digitalização 3D",
+    description: "Área dedicada a escaneamento óptico, reconstrução digital e comparação peça–CAD.",
+    icon: "Scan",
+  },
+  {
+    title: "Inspeção dimensional",
+    description:
+      "Bancadas e volume de medição para peças de diferentes portes, materiais e geometrias.",
+    icon: "Ruler",
+  },
+  {
+    title: "Recebimento e logística",
+    description: "Fluxo de identificação, guarda e devolução das peças enviadas para ensaio.",
+    icon: "PackageCheck",
   },
 ];
 

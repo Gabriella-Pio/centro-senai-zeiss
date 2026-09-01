@@ -4,12 +4,34 @@ import type { NextConfig } from "next";
 const repoRoot = path.join(__dirname, "../..");
 
 const nextConfig: NextConfig = {
-  // next fica no node_modules da raiz do workspace; sem isso o Turbopack
-  // infere apps/web/src/app e não acha next/package.json.
   outputFileTracingRoot: repoRoot,
   transpilePackages: ["@cem/ui"],
   turbopack: {
     root: repoRoot,
+  },
+  async redirects() {
+    return [
+      {
+        source: "/services/metrologia-dimensional",
+        destination: "/services/controle-qualidade-dimensional",
+        permanent: true,
+      },
+      {
+        source: "/services/engenharia-reversa",
+        destination: "/services/digitalizacao-engenharia-reversa",
+        permanent: true,
+      },
+      {
+        source: "/services/digitalizacao-3d",
+        destination: "/services/digitalizacao-engenharia-reversa",
+        permanent: true,
+      },
+      {
+        source: "/services/tomografia-industrial",
+        destination: "/services/inspecao-interna",
+        permanent: true,
+      },
+    ];
   },
 };
 

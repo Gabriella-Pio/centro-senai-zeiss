@@ -18,20 +18,21 @@ export {
   servicesHeading,
 } from "@/copy/services";
 export {
+  equipment,
+  equipmentCatalogCta,
+  equipmentHeading,
+} from "@/copy/equipment";
+export {
   differentials,
   differentialsHeading,
-  equipment,
-  equipmentHeading,
   hero,
-  infrastructure,
-  infrastructureHeading,
   labIntro,
   partners,
   sectors,
   sectorsHeading,
   serviceHubHeading,
 } from "@/copy/home";
-export { history, institutionalHeading, pillars } from "@/copy/institutional";
+export { history, infrastructure, infrastructureHeading, institutionalHeading, institutionalStats, pillars } from "@/copy/institutional";
 export { contactCards, contactHeading, mapPlaceholder } from "@/copy/contact";
 export { quoteForm, quoteHeading } from "@/copy/quote";
 export { notFoundCopy } from "@/copy/not-found";

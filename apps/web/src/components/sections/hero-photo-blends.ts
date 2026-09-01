@@ -63,7 +63,8 @@ export function heroPhotoBlendStyle(blend: HeroPhotoBlend): BlendStyle {
       return {
         shellClass:
           "inset-y-0 right-0 w-[62vw] max-w-[56rem] hero-photo-panel overflow-hidden",
-        bottomFadeClass: "absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background/80 to-transparent",
+        bottomFadeClass:
+          "absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-background via-background/50 to-transparent",
       };
     case "column":
       return {

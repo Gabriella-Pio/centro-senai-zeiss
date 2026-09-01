@@ -27,10 +27,10 @@ export function CardGrid({ items, columns = 4 }: CardGridProps) {
                   <Icon size={22} strokeWidth={1.75} />
                 </div>
               )}
-              <CardTitle className="font-heading text-lg font-semibold">{item.title}</CardTitle>
+              <CardTitle className="font-heading text-card-title font-semibold">{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+              <p className="text-caption leading-relaxed text-muted-foreground">{item.description}</p>
             </CardContent>
           </Card>
         );

@@ -1,0 +1,27 @@
+/* CoverGrid drawer — tipografia via CSS (evita conflito text-* Tailwind v4). */
+
+.cover-grid__drawer-index {
+  font-size: var(--text-meta);
+  letter-spacing: 0.18em;
+}
+
+.cover-grid__drawer-title {
+  font-size: var(--text-display-sm);
+  line-height: 1.15;
+  letter-spacing: var(--tracking-display);
+}
+
+.cover-grid__drawer-description {
+  font-size: var(--text-lead);
+  line-height: var(--leading-lead);
+}
+
+.cover-grid__drawer-counter {
+  font-family: var(--font-mono);
+  font-size: var(--text-switch-index);
+  letter-spacing: var(--tracking-index);
+}
+
+.cover-grid__tile-title {
+  font-size: var(--text-card-title);
+}

@@ -7,10 +7,10 @@ import { contactCards, contactHeading, mapPlaceholder } from "@/copy";
 export default function ContactPage() {
   return (
     <Section variant="default" clearNav>
-      <Container className="flex flex-col gap-16">
+      <Container className="flex flex-col gap-(--section-stack-lg)">
         <SectionHeading {...contactHeading} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 gap-(--section-stack) lg:grid-cols-2">
           <InfoCardGrid items={contactCards} />
 
           {/* TODO: incorporar mapa real (ex: Google Maps embed) quando a

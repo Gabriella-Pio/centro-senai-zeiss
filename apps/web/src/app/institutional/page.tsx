@@ -1,12 +1,22 @@
 import { FeatureGrid } from "@/components/sections/FeatureGrid";
 import { ProseSection } from "@/components/sections/ProseSection";
-import { history, institutionalHeading, pillars } from "@/copy";
+import { StatRow } from "@/components/sections/StatRow";
+import {
+  history,
+  infrastructure,
+  infrastructureHeading,
+  institutionalHeading,
+  institutionalStats,
+  pillars,
+} from "@/copy";
 
 export default function InstitutionalPage() {
   return (
     <>
       <FeatureGrid heading={institutionalHeading} items={pillars} columns={3} clearNav />
-      <ProseSection title={history.title} paragraphs={history.paragraphs} variant="muted" />
+      <StatRow items={institutionalStats} variant="muted" />
+      <FeatureGrid heading={infrastructureHeading} items={infrastructure} columns={3} variant="muted" />
+      <ProseSection title={history.title} paragraphs={history.paragraphs} variant="default" />
     </>
   );
 }

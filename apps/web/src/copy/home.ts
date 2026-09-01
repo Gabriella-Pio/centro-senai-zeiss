@@ -1,10 +1,10 @@
-import type { FeatureItem, SectionCopy, StatItem } from '@/copy/types';
+import type { FeatureItem, SectionCopy } from '@/copy/types';
 
 export const hero = {
   eyebrow: 'Centro de Excelência em Metrologia · Faculdade SENAI Ítalo Bologna',
   brand: { left: 'SENAI', right: 'ZEISS' },
   subtitle: 'O primeiro centro de excelência em metrologia SENAI ZEISS do Brasil.',
-  body: 'Metrologia dimensional, engenharia reversa, digitalização 3D e tomografia industrial com tecnologia ZEISS. Validamos componentes, avaliamos conformidade e entregamos dados que a indústria usa para decidir.',
+  body: 'Controle de qualidade dimensional, digitalização, inspeção interna, prototipação 3D e consultoria em qualidade — com tecnologia ZEISS e equipe técnica SENAI.',
   primaryCta: { label: 'Solicitar orçamento', href: '/quote' },
   secondaryCta: { label: 'Conhecer o centro', href: '/institutional' },
   image: {
@@ -12,30 +12,25 @@ export const hero = {
     alt: 'Vista do laboratório do Centro de Excelência em Metrologia SENAI ZEISS, com equipamentos ZEISS ao fundo.',
     objectPosition: '50% 40%',
   },
-  imageBlend: 'diagonal' as const,
+  imageBlend: 'panel' as const,
 };
 
 export const labIntro = {
   eyebrow: 'Sobre o centro',
   title: 'Precisão alemã a serviço da indústria brasileira',
-  body: 'Instalado na Faculdade SENAI Ítalo Bologna, em Goiânia, o Centro de Excelência em Metrologia SENAI ZEISS reúne equipamentos ZEISS de última geração e equipe técnica especializada. Atendemos indústrias de Goiás e de outros estados na validação dimensional, análise de falhas, reconstrução CAD e inspeção não destrutiva — com o mesmo rigor exigido em qualidade, manutenção e desenvolvimento de produto.',
+  body: 'Instalado na Faculdade SENAI Ítalo Bologna, em Goiânia, o Centro de Excelência em Metrologia SENAI ZEISS reúne equipamentos ZEISS de última geração, salas climatizadas e equipe técnica especializada. Atendemos indústrias de Goiás e de outros estados na validação dimensional, análise de falhas, reconstrução CAD e inspeção não destrutiva — com o mesmo rigor exigido em qualidade, manutenção e desenvolvimento de produto.',
   image: {
     src: '/lab/info.jpeg',
     alt: 'Vista do laboratório do Centro de Excelência em Metrologia SENAI ZEISS, com a sala de medição ao fundo.',
   },
   cta: { label: 'Conhecer o centro', href: '/institutional' },
-  stats: [
-    { value: '0,9 µm', label: 'Precisão de medição por coordenadas' },
-    { value: '1º no Brasil', label: 'Centro SENAI ZEISS' },
-    { value: '8', label: 'Equipamentos ZEISS instalados' },
-  ] satisfies StatItem[],
 };
 
 export const serviceHubHeading: SectionCopy = {
   eyebrow: 'Serviços',
   title: 'O que medimos e o que entregamos',
   description:
-    'Quatro linhas técnicas para controle de qualidade, engenharia e inspeção industrial. Cada serviço tem página própria, com aplicações e indicação de público.',
+    'Cinco linhas de atendimento — do laudo dimensional à consultoria em conformidade. Cada serviço combina equipamentos ZEISS conforme a peça e o relatório.',
 };
 
 export const differentialsHeading: SectionCopy = {
@@ -79,67 +74,13 @@ export const differentials: FeatureItem[] = [
     imageAlt:
       'Técnico do centro operando uma máquina de medição, com a peça na bancada de trabalho.',
   },
-];
-
-export const infrastructureHeading: SectionCopy = {
-  eyebrow: 'Infraestrutura',
-  title: 'Ambiente preparado para medições de alta precisão',
-};
-
-export const infrastructure: FeatureItem[] = [
   {
-    title: 'Sala climatizada de metrologia',
+    title: 'Valores acessíveis',
     description:
-      'Controle de temperatura e umidade para medições dimensionais com incerteza reduzida.',
-    icon: 'Thermometer',
-  },
-  {
-    title: 'Laboratório de digitalização 3D',
-    description: 'Área dedicada a escaneamento óptico, reconstrução digital e comparação peça–CAD.',
-    icon: 'Scan',
-  },
-  {
-    title: 'Inspeção dimensional',
-    description:
-      'Bancadas e volume de medição para peças de diferentes portes, materiais e geometrias.',
-    icon: 'Ruler',
-  },
-  {
-    title: 'Recebimento e logística',
-    description: 'Fluxo de identificação, guarda e devolução das peças enviadas para ensaio.',
-    icon: 'PackageCheck',
-  },
-];
-
-export const equipmentHeading: SectionCopy = {
-  eyebrow: 'Equipamentos',
-  title: 'Parque ZEISS para medição, digitalização e inspeção',
-};
-
-export const equipment: FeatureItem[] = [
-  {
-    title: 'Máquinas de medição por coordenadas',
-    description:
-      'CMM ZEISS para metrologia dimensional de alta precisão, em peças usinadas, ferramental e componentes críticos.',
-    icon: 'Box',
-  },
-  {
-    title: 'Sistemas ópticos e multissensores',
-    description:
-      'Medição por contato e por imagem, inclusive em características de difícil acesso ao apalpador.',
-    icon: 'Aperture',
-  },
-  {
-    title: 'Scanners 3D',
-    description:
-      'Digitalização de superfícies complexas para engenharia reversa, controle dimensional e documentação.',
-    icon: 'Scan',
-  },
-  {
-    title: 'Raio-X e tomografia industrial',
-    description:
-      'Ensaio não destrutivo da estrutura interna: poros, trincas, inclusões e montagens fechadas.',
-    icon: 'Layers',
+      'Estrutura SENAI pensada para atender desde pequenas empresas até grandes indústrias — com condições compatíveis com o porte e a recorrência da demanda.',
+    icon: 'BadgePercent',
+    image: '/lab/info.jpeg',
+    imageAlt: 'Vista do laboratório do centro, com ambiente preparado para atender diferentes portes de empresa.',
   },
 ];
 

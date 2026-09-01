@@ -1,6 +1,8 @@
 import {
   Aperture,
+  BadgePercent,
   Box,
+  ClipboardCheck,
   Clock,
   Cpu,
   Factory,
@@ -11,6 +13,7 @@ import {
   PackageCheck,
   Phone,
   Plane,
+  Printer,
   Ruler,
   Scan,
   ShieldCheck,
@@ -23,8 +26,10 @@ import {
 
 const icons = {
   Aperture,
+  BadgePercent,
   Box,
   Car,
+  ClipboardCheck,
   Clock,
   Cpu,
   Factory,
@@ -35,6 +40,7 @@ const icons = {
   PackageCheck,
   Phone,
   Plane,
+  Printer,
   Ruler,
   Scan,
   ShieldCheck,
