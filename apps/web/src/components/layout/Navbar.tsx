@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button, cn } from "@cem/ui";
 import { BrandLockup } from "@/components/layout/BrandLockup";
-import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { NavTray, navTrayRowClass } from "@/components/layout/NavTray";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import { useSectionBackdrop } from "@/hooks/useSectionBackdrop";
@@ -17,7 +16,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [openTray, setOpenTray] = useState<"services" | "lang" | null>(null);
+  const [openTray, setOpenTray] = useState<"services" | null>(null);
   const { hidden, atTop } = useHideOnScroll({ disabled: mobileOpen });
   const backdrop = useSectionBackdrop(headerRef, pathname);
   const tray = hidden ? null : openTray;
@@ -91,21 +90,17 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-2">
-          <Button size="lg" render={<Link href={nav.cta.href} />} className="px-6 h-11 text-sm">
+          <Button size="lg" render={<Link href={nav.cta.href} />} className="px-6 h-11 text-base">
             {nav.cta.label}
           </Button>
           <Button
             size="lg"
             variant="outline"
             render={<Link href={nav.contactCta.href} />}
-            className="px-6 h-11 text-sm"
+            className="px-6 h-11 text-base"
           >
             {nav.contactCta.label}
           </Button>
-          <LanguageSwitch
-            open={tray === "lang"}
-            onOpenChange={(open) => setOpenTray(open ? "lang" : null)}
-          />
         </div>
 
         <button
@@ -144,7 +139,7 @@ export default function Navbar() {
             <Button
               render={<Link href={nav.cta.href} />}
               onClick={() => setMobileOpen(false)}
-              className="w-full h-12 text-sm"
+              className="w-full h-12 text-base"
             >
               {nav.cta.label}
             </Button>
@@ -152,11 +147,10 @@ export default function Navbar() {
               variant="outline"
               render={<Link href={nav.contactCta.href} />}
               onClick={() => setMobileOpen(false)}
-              className="w-full h-12 text-sm"
+              className="w-full h-12 text-base"
             >
               {nav.contactCta.label}
             </Button>
-            <LanguageSwitch />
           </div>
         </div>
       )}

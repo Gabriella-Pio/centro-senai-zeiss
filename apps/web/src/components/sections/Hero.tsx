@@ -80,7 +80,7 @@ export function Hero({
         ) : null}
 
         <div className={image ? "max-w-2xl" : undefined}>
-          <Eyebrow>{eyebrow}</Eyebrow>
+          <Eyebrow className="max-w-[min(100%,18rem)] text-balance sm:max-w-none">{eyebrow}</Eyebrow>
 
           <h1 className="mt-8 type-display-lg font-heading font-bold text-foreground">
             {brand.left} <span className="text-primary">×</span> {brand.right}
