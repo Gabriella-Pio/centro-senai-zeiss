@@ -63,6 +63,7 @@ export function MediaSwitch({
   const Icon = getIcon(current?.icon);
   const autoplayEnabled = count > 1 && !prefersReducedMotion;
   const isServiceList = listTrailing === "service-link";
+  const isContainPanel = Boolean(current.image && current.imageFit === "contain");
 
   const selectItem = useCallback((index: number) => {
     setActive(index);
@@ -139,34 +140,55 @@ export function MediaSwitch({
           <div
             className={cn(
               "media-switch__panel relative aspect-6/5 overflow-hidden rounded-(--radius) border border-border shadow-[0_24px_48px_-32px_rgb(0_87_184/0.2)] max-lg:order-1 lg:col-start-1 lg:row-start-1 lg:aspect-auto lg:h-full",
-              current.image && current.imageFit === "contain" ? "bg-foreground" : "bg-muted",
+              isContainPanel ? "bg-foreground" : "bg-muted",
             )}
           >
             {current.image ? (
-              <Image
-                key={publicAsset(current.image)}
-                src={publicAsset(current.image)}
-                alt={current.imageAlt ?? current.title}
-                fill
+              <div
+                key={active}
                 className={cn(
-                  "transition-opacity duration-500",
-                  current.imageFit === "contain"
-                    ? "object-contain p-5 sm:p-6"
-                    : mediaPhotoCoverClass,
+                  "media-switch__photo-layer",
+                  !prefersReducedMotion && "media-switch__photo-enter",
                 )}
-                style={current.imagePosition ? { objectPosition: current.imagePosition } : undefined}
-                sizes={mediaPhotoSizes.split}
-              />
+              >
+                <Image
+                  src={publicAsset(current.image)}
+                  alt={current.imageAlt ?? current.title}
+                  fill
+                  className={cn(
+                    isContainPanel ? "object-contain p-5 sm:p-6" : mediaPhotoCoverClass,
+                  )}
+                  style={current.imagePosition ? { objectPosition: current.imagePosition } : undefined}
+                  sizes={mediaPhotoSizes.split}
+                />
+              </div>
             ) : (
               <div className="flex h-full items-center justify-center">
                 {Icon && <Icon size={72} strokeWidth={1.25} className="text-primary" />}
               </div>
             )}
             {current.tag ? (
-              <span className="media-switch__photo-tag absolute top-4 left-4 rounded-(--radius) border border-primary/25 bg-card/90 px-2.5 py-1 font-normal text-primary uppercase backdrop-blur-sm">
+              <span className="media-switch__photo-tag absolute top-4 left-4 z-3 rounded-(--radius) border border-primary/25 bg-card/90 px-2.5 py-1 font-normal text-primary uppercase backdrop-blur-sm">
                 {current.tag}
               </span>
             ) : null}
+            <div
+              className={cn(
+                "media-switch__caption",
+                isContainPanel ? "media-switch__caption--contain" : "media-switch__caption--cover",
+              )}
+            >
+              <p
+                key={active}
+                className={cn(
+                  "media-switch__blurb line-clamp-3",
+                  isContainPanel ? "media-switch__blurb--contain" : "media-switch__blurb--cover",
+                  !prefersReducedMotion && "media-switch__blurb-enter",
+                )}
+              >
+                {current.description}
+              </p>
+            </div>
           </div>
 
           <ul
@@ -287,12 +309,6 @@ export function MediaSwitch({
               );
             })}
           </ul>
-
-          <div className="relative z-10 max-lg:order-3 lg:col-start-1 lg:row-start-2 lg:mt-(--ms-blurb-gap)">
-            <p className="media-switch__blurb text-muted-foreground transition-opacity duration-300">
-              {current.description}
-            </p>
-          </div>
         </div>
       </Container>
     </Section>
