@@ -11,3 +11,8 @@ export function getLocationLinks(query: string): LocationLinks {
     waze: `https://www.waze.com/ul?q=${encoded}&navigate=yes`,
   };
 }
+
+export function getGoogleMapsEmbedUrl(query: string): string {
+  const encoded = encodeURIComponent(query);
+  return `https://maps.google.com/maps?q=${encoded}&z=15&ie=UTF8&iwloc=&output=embed`;
+}

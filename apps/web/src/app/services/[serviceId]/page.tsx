@@ -39,6 +39,16 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       eyebrow={serviceDetail.eyebrow}
       title={service.label}
       body={service.description}
+      image={
+        service.cardImage
+          ? {
+              src: service.cardImage,
+              alt: service.cardImageAlt ?? service.label,
+              fit: service.cardImageFit,
+              position: service.cardImagePosition,
+            }
+          : undefined
+      }
       groups={groups}
       cta={{
         label: serviceDetail.ctaLabel,

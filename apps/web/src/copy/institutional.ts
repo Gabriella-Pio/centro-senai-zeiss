@@ -7,6 +7,11 @@ export const institutionalHeading: SectionCopy = {
     "Parceria entre o SENAI Goiás e a Carl Zeiss para levar metrologia industrial de referência à indústria brasileira — com serviços técnicos e formação de profissionais no mesmo ambiente.",
 };
 
+export const pillarsHeading: SectionCopy = {
+  eyebrow: "Pilares",
+  title: "Missão, visão e valores",
+};
+
 export const pillars: FeatureItem[] = [
   {
     title: "Missão",

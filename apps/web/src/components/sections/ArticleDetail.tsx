@@ -1,13 +1,24 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@cem/ui";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { mediaFrameClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
+import { publicAsset } from "@/lib/public-asset";
+import { cn } from "@cem/ui";
 import type { CtaCopy } from "@/copy/types";
 
 type DetailGroup =
   | { title: string; items: string[] }
   | { title: string; text: string };
+
+interface ArticleDetailImage {
+  src: string;
+  alt: string;
+  fit?: "cover" | "contain";
+  position?: string;
+}
 
 interface ArticleDetailProps {
   eyebrow: string;
@@ -15,12 +26,36 @@ interface ArticleDetailProps {
   body: string;
   groups: DetailGroup[];
   cta: CtaCopy;
+  image?: ArticleDetailImage;
 }
 
-export function ArticleDetail({ eyebrow, title, body, groups, cta }: ArticleDetailProps) {
+export function ArticleDetail({ eyebrow, title, body, groups, cta, image }: ArticleDetailProps) {
+  const isContain = image?.fit === "contain";
+
   return (
     <Section variant="default" clearNav>
-      <Container className="max-w-3xl flex flex-col gap-10">
+      <Container className="flex max-w-3xl flex-col gap-10">
+        {image ? (
+          <div
+            className={mediaFrameClass(
+              cn(
+                "relative -mx-6 aspect-21/9 w-[calc(100%+3rem)] max-w-none sm:mx-0 sm:w-full sm:max-w-none",
+                isContain ? "bg-foreground" : undefined,
+              ),
+            )}
+          >
+            <Image
+              src={publicAsset(image.src)}
+              alt={image.alt}
+              fill
+              className={isContain ? "object-contain p-6" : mediaPhotoCoverClass}
+              style={image.position ? { objectPosition: image.position } : undefined}
+              sizes={mediaPhotoSizes.split}
+              priority
+            />
+          </div>
+        ) : null}
+
         <div className="flex flex-col gap-4">
           <Eyebrow>{eyebrow}</Eyebrow>
           <h1 className="type-display-sm font-heading font-bold text-foreground">

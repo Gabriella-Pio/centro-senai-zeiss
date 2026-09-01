@@ -33,7 +33,7 @@ export {
   sectorsHeading,
   serviceHubHeading,
 } from "@/copy/home";
-export { history, infrastructure, infrastructureHeading, institutionalHeading, institutionalStats, pillars } from "@/copy/institutional";
+export { history, infrastructure, infrastructureHeading, institutionalHeading, institutionalStats, pillars, pillarsHeading } from "@/copy/institutional";
 export { contactCards, contactHeading, mapPlaceholder } from "@/copy/contact";
 export { quoteForm, quoteHeading } from "@/copy/quote";
 export { notFoundCopy } from "@/copy/not-found";
