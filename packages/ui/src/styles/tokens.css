@@ -43,6 +43,7 @@
   --text-switch-tag: 0.6875rem;
   --text-switch-index: 0.6875rem;
   --text-switch-blurb: clamp(1.0625rem, 1rem + 0.2vw, 1.1875rem);
+  --text-stat: clamp(1.875rem, 1.5rem + 1.5vw, 2.25rem);
 
   /* ── Ritmo tipográfico (entrelinha + tracking) ── */
   --leading-display-tight: 1.12;

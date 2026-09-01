@@ -53,6 +53,12 @@
   letter-spacing: var(--tracking-display);
 }
 
+.type-stat {
+  font-size: var(--text-stat);
+  line-height: var(--leading-display-tight);
+  letter-spacing: var(--tracking-display);
+}
+
 .type-band-title {
   font-size: var(--text-band-title);
   line-height: var(--leading-display-tight);

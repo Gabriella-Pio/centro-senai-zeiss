@@ -28,7 +28,7 @@ export function Section({
 }: SectionProps) {
   const bgClasses = {
     default: "bg-transparent",
-    muted: "bg-transparent",
+    muted: "bg-muted/30",
     accent: "bg-transparent",
     surface: "bg-card/85 backdrop-blur-sm",
   }

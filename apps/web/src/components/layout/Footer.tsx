@@ -117,12 +117,8 @@ export default function Footer() {
         <div className="site-footer-divider mt-(--section-stack) flex flex-col items-center justify-between gap-5 border-t pt-10 text-sm text-primary-foreground/45 sm:flex-row md:pt-12 md:text-base">
           <p>{footer.copyright}</p>
           <div className="flex gap-8">
-            <span className="cursor-pointer transition-colors hover:text-primary-foreground/80">
-              {footer.legal.terms}
-            </span>
-            <span className="cursor-pointer transition-colors hover:text-primary-foreground/80">
-              {footer.legal.privacy}
-            </span>
+            <span className="text-primary-foreground/45">{footer.legal.terms}</span>
+            <span className="text-primary-foreground/45">{footer.legal.privacy}</span>
           </div>
         </div>
       </Container>
