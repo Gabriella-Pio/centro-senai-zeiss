@@ -79,14 +79,16 @@ export const differentials: FeatureItem[] = [
     description:
       'Estrutura SENAI pensada para atender desde pequenas empresas até grandes indústrias — com condições compatíveis com o porte e a recorrência da demanda.',
     icon: 'BadgePercent',
-    image: '/lab/info.jpeg',
-    imageAlt: 'Vista do laboratório do centro, com ambiente preparado para atender diferentes portes de empresa.',
+    image: '/lab/ponteiras.jpeg',
+    imageAlt: 'Ponteiras e sensores em máquina de coordenadas — estrutura acessível para diferentes portes de empresa.',
   },
 ];
 
 export const sectorsHeading: SectionCopy = {
   eyebrow: 'Setores',
   title: 'Onde a medição faz diferença no produto',
+  description:
+    'Da linha de montagem ao componente crítico — metrologia aplicada conforme o risco e a tolerância de cada setor.',
 };
 
 export const sectors: FeatureItem[] = [
@@ -129,12 +131,14 @@ export const partners = {
       name: 'SENAI Goiás',
       logoSrc: '/brand/partners/senai-estendido.png',
       logoAlt: 'Logo SENAI Goiás — rede de educação profissional e serviços à indústria',
+      wide: true,
       href: 'https://goias.senai.br',
     },
     {
       name: 'FIEG',
       logoSrc: '/brand/partners/fieg.png',
       logoAlt: 'Logo FIEG — Federação das Indústrias do Estado de Goiás',
+      wide: true,
       href: 'https://www.fieg.com.br',
     },
     {

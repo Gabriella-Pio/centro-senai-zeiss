@@ -1,5 +1,18 @@
 /* LogoRow — dimensões dos logos parceiros. */
 
+.logo-row__grid > * {
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (width >= 40rem) {
+  .logo-row__grid > * {
+    min-height: 3rem;
+  }
+}
+
 .logo-row__logo {
   height: 2rem;
   width: auto;

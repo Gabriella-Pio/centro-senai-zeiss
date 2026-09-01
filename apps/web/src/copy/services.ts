@@ -21,12 +21,13 @@ export const servicesCatalog = {
   allServicesCta: { label: "Ver todos os serviços", href: "/services" },
 };
 
+/** Convenção de fotos de card: public/lab/services/{slug}.jpeg — substitua ao adicionar fotos definitivas. */
 export const services: ServiceContent[] = [
   {
     id: "controle-qualidade-dimensional",
     label: "Controle de qualidade dimensional",
     icon: "Ruler",
-    cardImage: "/lab/ponteiras.jpeg",
+    cardImage: "/lab/services/dimensional.jpeg",
     cardImageAlt:
       "Ponteiras e sensores ZEISS em máquina de coordenadas para medição dimensional.",
     shortDescription:
@@ -47,7 +48,7 @@ export const services: ServiceContent[] = [
     id: "digitalizacao-engenharia-reversa",
     label: "Digitalização e engenharia reversa",
     icon: "Scan",
-    cardImage: "/lab/relatorio.jpeg",
+    cardImage: "/lab/services/digitalizacao.jpeg",
     cardImageAlt: "Peça física e modelo CAD na tela durante reconstrução digital.",
     cardImagePosition: "50% 42%",
     shortDescription:
@@ -68,7 +69,7 @@ export const services: ServiceContent[] = [
     id: "inspecao-interna",
     label: "Inspeção interna (NDT)",
     icon: "Layers",
-    cardImage: "/equipment/bosello-max.png",
+    cardImage: "/lab/services/ndt.png",
     cardImageAlt: "Sistema ZEISS BOSELLO MAX para tomografia e raio-X industrial.",
     cardImageFit: "contain",
     shortDescription:
@@ -89,7 +90,7 @@ export const services: ServiceContent[] = [
     id: "prototipacao-3d",
     label: "Prototipação 3D",
     icon: "Printer",
-    cardImage: "/lab/cmm.jpeg",
+    cardImage: "/lab/services/prototipacao.jpeg",
     cardImageAlt: "Peça em validação dimensional após prototipagem.",
     shortDescription:
       "Impressão 3D de protótipos a partir de modelos CAD ou malhas digitalizadas no centro, para testes funcionais e geométricos.",
@@ -108,7 +109,7 @@ export const services: ServiceContent[] = [
     id: "consultoria-qualidade",
     label: "Consultoria em qualidade",
     icon: "ClipboardCheck",
-    cardImage: "/lab/tecnico.jpeg",
+    cardImage: "/lab/services/consultoria.jpeg",
     cardImageAlt: "Equipe técnica do centro em operação de medição.",
     cardImagePosition: "50% 40%",
     shortDescription:

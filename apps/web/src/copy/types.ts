@@ -14,6 +14,8 @@ export type PartnerLogo = {
   /** Omita quando não houver logo oficial — exibe o nome em tipografia institucional. */
   logoSrc?: string;
   logoAlt?: string;
+  /** Logo horizontal — altura menor, largura maior. */
+  wide?: boolean;
   href?: string;
 };
 
