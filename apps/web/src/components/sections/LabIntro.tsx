@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Section } from "@/components/ui/Section";
-import { SectionAtmosphere } from "@/components/ui/SectionAtmosphere";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HairlineLink } from "@/components/ui/HairlineLink";
@@ -18,9 +17,8 @@ interface LabIntroProps {
 
 export function LabIntro({ eyebrow, title, body, cta, image }: LabIntroProps) {
   return (
-    <Section variant="default" zone="intro">
-      <SectionAtmosphere tone="warm" />
-      <Container className="relative z-10 grid grid-cols-1 gap-(--section-stack) lg:grid-cols-2 lg:items-stretch lg:gap-x-(--section-inline) xl:gap-x-(--section-inline-lg)">
+    <Section sectionKey="lab-intro" surface="tint" pattern="none">
+      <Container className="grid grid-cols-1 gap-(--section-stack) lg:grid-cols-2 lg:items-stretch lg:gap-x-(--section-inline) xl:gap-x-(--section-inline-lg)">
         <div
           className={mediaFrameClass(
             "relative aspect-4/3 min-h-0 shadow-[0_24px_48px_-32px_rgb(0_87_184/0.15)] lg:aspect-auto lg:h-full"

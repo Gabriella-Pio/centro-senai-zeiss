@@ -49,7 +49,7 @@ export function HeroPhotoBackground({
 
       <div
         aria-hidden
-        className={`pointer-events-none absolute z-0 hidden lg:block ${style.shellClass ?? ""}`}
+        className={`pointer-events-none absolute z-[1] hidden lg:block ${style.shellClass ?? ""}`}
         style={style.shellStyle}
       >
         <div className="relative h-full w-full overflow-hidden bg-muted">

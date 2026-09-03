@@ -51,8 +51,6 @@ export function heroPhotoBlendStyle(blend: HeroPhotoBlend): BlendStyle {
           WebkitMaskImage: heroPhotoFeatherMask,
           maskImage: heroPhotoFeatherMask,
         },
-        bottomFadeClass:
-          "absolute inset-x-0 bottom-0 h-36 bg-linear-to-t from-background via-background/35 to-transparent",
       };
     case "diagonal":
       return {

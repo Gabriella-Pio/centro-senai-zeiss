@@ -40,137 +40,160 @@
     }
   }
 
-  /* Base global — creme + toques de azul fixos */
-  .site-backdrop {
-    background:
-      radial-gradient(
-        ellipse 140% 95% at 92% -12%,
-        color-mix(in srgb, var(--color-primary) 18%, transparent),
-        transparent 56%
-      ),
-      radial-gradient(
-        ellipse 110% 75% at -5% 108%,
-        color-mix(in srgb, var(--color-primary) 12%, transparent),
-        transparent 54%
-      ),
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--color-secondary) 35%, var(--color-background)) 0%,
-        var(--color-background) 38%,
-        var(--color-background) 62%,
-        color-mix(in srgb, var(--color-secondary) 28%, var(--color-background)) 100%
-      );
+  /* ── Superfícies por seção (substitui backdrop global + zonas) ── */
+  .section-surface[data-surface="cream"] {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
   }
 
-  /* Zonas por seção — variam conforme o scroll, sempre com fade vertical */
-  .section-zone-intro::before,
-  .section-zone-services::before,
-  .section-zone-proof::before,
-  .section-zone-catalog::before {
+  .section-surface[data-surface="white"] {
+    background-color: #ffffff;
+    color: var(--color-foreground);
+  }
+
+  /* Atmosfera — profundidade no branco, sem malha nem diagonal entre seções */
+  .section-surface[data-ambient="diagonal"] {
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-primary) 9%, #f3f8ff) 0%,
+        transparent 26%
+      ),
+      linear-gradient(
+        145deg,
+        transparent 50%,
+        color-mix(in srgb, var(--color-primary) 7%, #eef3fb) 100%
+      ),
+      linear-gradient(180deg, #ffffff 0%, #fffbf7 100%);
+  }
+
+  .section-surface[data-ambient="spotlight"] {
+    background:
+      radial-gradient(
+        ellipse 72% 58% at 90% 2%,
+        color-mix(in srgb, var(--color-primary) 16%, transparent),
+        transparent 54%
+      ),
+      radial-gradient(
+        ellipse 42% 32% at 4% 98%,
+        color-mix(in srgb, var(--color-primary) 6%, transparent),
+        transparent 48%
+      ),
+      linear-gradient(180deg, #ffffff 0%, #f3f6fb 100%);
+  }
+
+  /* Brilho de borda superior — luz de laboratório */
+  .section-surface[data-ambient="diagonal"]::after,
+  .section-surface[data-ambient="spotlight"]::after {
     content: "";
     pointer-events: none;
     position: absolute;
     inset: 0;
     z-index: -1;
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black var(--zone-fade),
-      black calc(100% - var(--zone-fade)),
-      transparent 100%
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-primary) 6%, transparent) 0%,
+      transparent 12%
     );
   }
 
-  .section-zone-intro::before {
-    background:
-      radial-gradient(
-        ellipse 95% 85% at 12% 45%,
-        color-mix(in srgb, var(--color-secondary) 88%, transparent),
-        transparent 62%
-      ),
-      radial-gradient(
-        ellipse 60% 50% at 88% 55%,
-        color-mix(in srgb, var(--color-secondary) 38%, transparent),
-        transparent 55%
-      );
+  .section-surface[data-surface="tint"] {
+    background-color: color-mix(in srgb, var(--color-primary) 6%, #ffffff);
+    color: var(--color-foreground);
   }
 
-  .section-zone-services::before {
-    background:
-      radial-gradient(
-        ellipse 100% 90% at 88% 22%,
-        color-mix(in srgb, var(--color-primary) 22%, transparent),
-        transparent 62%
-      ),
-      radial-gradient(
-        ellipse 70% 60% at 8% 78%,
-        color-mix(in srgb, var(--color-primary) 10%, transparent),
-        transparent 58%
-      );
+  .section-surface[data-surface="muted"] {
+    background-color: color-mix(in srgb, var(--color-secondary) 72%, var(--color-background));
+    color: var(--color-foreground);
   }
 
-  .section-zone-proof::before {
-    background:
-      radial-gradient(
-        ellipse 90% 75% at 50% 48%,
-        color-mix(in srgb, var(--color-secondary) 48%, transparent),
-        transparent 68%
-      ),
-      radial-gradient(
-        ellipse 70% 60% at 18% 82%,
-        color-mix(in srgb, var(--color-foreground) 9%, transparent),
-        transparent 58%
-      );
+  .section-surface[data-surface="dark"] {
+    --color-foreground: #f1f5f9;
+    --color-muted-foreground: #94a3b8;
+    --color-border: rgba(241, 245, 249, 0.14);
+    --color-card: #162033;
+    --color-card-foreground: #f1f5f9;
+    background-color: #0b132b;
+    color: #f1f5f9;
   }
 
-  .section-zone-catalog::before {
-    background:
-      radial-gradient(
-        ellipse 85% 80% at 78% 48%,
-        color-mix(in srgb, var(--color-primary) 16%, transparent),
-        transparent 58%
-      ),
-      radial-gradient(
-        ellipse 55% 45% at 12% 72%,
-        color-mix(in srgb, var(--color-primary) 8%, transparent),
-        transparent 52%
-      );
+  /* Tailwind v4 resolve tokens no elemento — reforço explícito no fundo escuro */
+  .section-surface[data-surface="dark"] :where(.text-foreground, .section-heading__title) {
+    color: #f1f5f9;
   }
 
-  .section-atmosphere-grid {
-    opacity: 0.5;
-    background-image: linear-gradient(
-        color-mix(in srgb, var(--color-primary) 14%, transparent) 1px,
+  .section-surface[data-surface="dark"] :where(.text-muted-foreground, .section-heading__description) {
+    color: #94a3b8;
+  }
+
+  .section-surface[data-surface="dark"] .ui-eyebrow {
+    border-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+    color: color-mix(in srgb, var(--color-primary) 78%, #ffffff);
+  }
+
+  /* Texturas locais — só na seção, sem camadas globais */
+  .section-surface[data-pattern]:not([data-pattern="none"])::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-repeat: repeat;
+  }
+
+  .section-surface[data-pattern="blueprint"]::before {
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--color-primary) 8%, transparent) 1px,
         transparent 1px
       ),
       linear-gradient(
         90deg,
-        color-mix(in srgb, var(--color-primary) 14%, transparent) 1px,
+        color-mix(in srgb, var(--color-primary) 8%, transparent) 1px,
         transparent 1px
       );
-    background-size: 44px 44px;
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black 22%,
-      black 78%,
-      transparent 100%
-    );
+    background-size: 32px 32px;
   }
 
-  .section-atmosphere-glow {
-    background: radial-gradient(
-      ellipse 70% 80% at 50% 50%,
-      color-mix(in srgb, var(--color-primary) 10%, transparent),
-      transparent 68%
+  .section-surface[data-surface="dark"][data-pattern="blueprint"]::before {
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+  }
+
+  .section-surface[data-pattern="crosshair"]::before {
+    background-image:
+      linear-gradient(
+        90deg,
+        transparent 49%,
+        color-mix(in srgb, var(--color-foreground) 10%, transparent) 49%,
+        color-mix(in srgb, var(--color-foreground) 10%, transparent) 51%,
+        transparent 51%
+      ),
+      linear-gradient(
+        transparent 49%,
+        color-mix(in srgb, var(--color-foreground) 10%, transparent) 49%,
+        color-mix(in srgb, var(--color-foreground) 10%, transparent) 51%,
+        transparent 51%
+      );
+    background-size: 60px 60px;
+  }
+
+  .section-surface[data-pattern="dots"]::before {
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--color-primary) 18%, transparent) 1.5px,
+      transparent 1.5px
     );
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black 22%,
-      black 78%,
-      transparent 100%
-    );
+    background-size: 28px 28px;
+  }
+
+  /* Linha-guia de transição — corte reto com precisão técnica */
+  .section-guide {
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 10%, transparent);
+  }
+
+  .section-surface[data-surface="dark"].section-guide {
+    border-bottom-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 
   .scrollbar-none {
@@ -180,15 +203,9 @@
     display: none;
   }
 
-  /* Faixa de contato — separada do rodapé */
-  .site-contact-cta {
-    border-top: 1px solid var(--color-border);
-    background: color-mix(in srgb, var(--color-secondary) 42%, var(--color-background));
-  }
-
-  /* Rodapé institucional */
+  /* Rodapé institucional — azul escuro de laboratório */
   .site-footer {
-    background: var(--color-primary);
+    background: #0b132b;
     color: var(--color-primary-foreground);
   }
 

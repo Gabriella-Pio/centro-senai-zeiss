@@ -44,7 +44,7 @@ export function CoverGrid({ heading, items }: CoverGridProps) {
   }
 
   return (
-    <Section zone="proof">
+    <Section sectionKey="differentials" surface="cream" pattern="blueprint">
       <Container className="flex flex-col gap-(--section-stack)">
         <SectionHeading align="left" {...heading} />
       </Container>

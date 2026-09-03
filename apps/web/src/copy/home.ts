@@ -1,4 +1,4 @@
-import type { FeatureItem, PartnerLogo, SectionCopy } from '@/copy/types';
+import type { FeatureItem, PartnerLogo, SectionCopy, SectorItem } from '@/copy/types';
 
 export const hero = {
   eyebrow: 'Centro de Excelência em Metrologia · Faculdade SENAI Ítalo Bologna',
@@ -12,7 +12,7 @@ export const hero = {
     alt: 'Vista do laboratório do Centro de Excelência em Metrologia SENAI ZEISS, com equipamentos ZEISS ao fundo.',
     objectPosition: '50% 40%',
   },
-  imageBlend: 'panel' as const,
+  imageBlend: 'feather' as const,
 };
 
 export const labIntro = {
@@ -91,30 +91,62 @@ export const sectorsHeading: SectionCopy = {
     'Da linha de montagem ao componente crítico — metrologia aplicada conforme o risco e a tolerância de cada setor.',
 };
 
-export const sectors: FeatureItem[] = [
+/** Convenção de fotos: public/lab/sectors/{id}.jpeg — substitua ao adicionar fotos definitivas por setor. */
+export const sectors: SectorItem[] = [
   {
+    id: 'automotivo',
     title: 'Automotivo',
     description:
       'Padronização dimensional, repetibilidade entre lotes, validação de reposição e engenharia reversa de componentes.',
     icon: 'Car',
+    image: '/lab/sectors/automotivo.jpeg',
+    imageAlt: 'Peça automotiva em medição dimensional no laboratório.',
+    imagePosition: '50% 42%',
+    relatedServices: [
+      'controle-qualidade-dimensional',
+      'digitalizacao-engenharia-reversa',
+      'prototipacao-3d',
+    ],
   },
   {
+    id: 'aeroespacial',
     title: 'Aeroespacial',
     description:
       'Inspeção de peças críticas pós-manutenção, com CMM, escaneamento 3D e raio-X para integridade interna.',
     icon: 'Plane',
+    image: '/lab/sectors/aeroespacial.png',
+    imageAlt: 'Inspeção por raio-X de componente crítico para o setor aeroespacial.',
+    imageFit: 'contain',
+    relatedServices: [
+      'inspecao-interna',
+      'controle-qualidade-dimensional',
+      'digitalizacao-engenharia-reversa',
+    ],
   },
   {
+    id: 'metalmecanico',
     title: 'Metalmecânico',
     description:
       'Controle de usinagem, ferramental, conformidade de peça e análise de falhas em manufatura.',
     icon: 'Factory',
+    image: '/lab/sectors/metalmecanico.jpeg',
+    imageAlt: 'Ferramental e componentes metalmecânicos em processo de medição.',
+    imagePosition: '50% 40%',
+    relatedServices: [
+      'controle-qualidade-dimensional',
+      'inspecao-interna',
+      'consultoria-qualidade',
+    ],
   },
   {
-    title: 'Farmacêutico e alimentício',
+    id: 'farmaceutico',
+    title: 'Farmacêutico',
     description:
-      'Apoio a qualidade e rastreabilidade de componentes, embalagens e dispositivos de processo.',
+      'Apoio a qualidade e rastreabilidade de componentes, embalagens e dispositivos de processo no setor alimentício.',
     icon: 'HeartPulse',
+    image: '/lab/sectors/farmaceutico.jpeg',
+    imageAlt: 'Relatório técnico de medição para controle de qualidade em processos regulados.',
+    relatedServices: ['controle-qualidade-dimensional', 'consultoria-qualidade'],
   },
 ];
 

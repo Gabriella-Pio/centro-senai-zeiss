@@ -39,6 +39,12 @@ export type FeatureItem = {
   href?: string;
 };
 
+/** Setor industrial atendido — tile com foto e links para serviços relacionados. */
+export type SectorItem = FeatureItem & {
+  id: string;
+  relatedServices: string[];
+};
+
 export type LinkCardItem = {
   title: string;
   description: string;

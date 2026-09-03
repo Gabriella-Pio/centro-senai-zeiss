@@ -1,23 +1,16 @@
+import "./coordinate-grid.css";
+
 type CoordinateGridProps = {
-  /** Fade the grid out toward the bottom so the next section stays cream. */
-  fade?: boolean;
+  /** Some a malha antes da zona de fade da foto (desktop). */
+  photoEdgeFade?: boolean;
 };
 
-/** T2 — grade de coordenadas. Só no Hero, atrás do texto, ~7%. */
-export function CoordinateGrid({ fade = false }: CoordinateGridProps) {
+/** Grade de coordenadas — Hero, ~7% de opacidade. */
+export function CoordinateGrid({ photoEdgeFade = false }: CoordinateGridProps) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 text-foreground"
-      style={{
-        opacity: 0.07,
-        ...(fade
-          ? {
-              maskImage: "linear-gradient(to bottom, #000 45%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to bottom, #000 45%, transparent 100%)",
-            }
-          : {}),
-      }}
+      className={`coordinate-grid pointer-events-none absolute inset-0 text-foreground${photoEdgeFade ? " coordinate-grid--photo-edge-fade" : ""}`}
     >
       <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
         <defs>

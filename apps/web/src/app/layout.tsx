@@ -4,8 +4,10 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import { ContactCtaBand } from "@/components/layout/ContactCtaBand";
 import Footer from "@/components/layout/Footer";
-import { SiteBackdrop } from "@/components/ui/SiteBackdrop";
+import { SectionSurfaceDevPanel } from "@/components/dev/SectionSurfaceDevPanel";
 import { siteMeta } from "@/copy/site";
+
+const isDev = process.env.NODE_ENV === "development";
 
 const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
@@ -41,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
       <body className={`${plexSans.className} min-h-screen flex flex-col bg-background text-foreground font-sans`}>
-        <SiteBackdrop />
+        {isDev ? <SectionSurfaceDevPanel /> : null}
         <Navbar />
         <main className="flex-1">{children}</main>
         <ContactCtaBand />

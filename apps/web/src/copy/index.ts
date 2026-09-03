@@ -7,6 +7,7 @@ export type {
   LinkCardItem,
   PartnerLogo,
   SectionCopy,
+  SectorItem,
   ServiceContent,
   StatItem,
 } from "@/copy/types";

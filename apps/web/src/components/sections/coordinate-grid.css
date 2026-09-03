@@ -1,0 +1,11 @@
+.coordinate-grid {
+  opacity: 0.07;
+}
+
+/* Alinha com o fade da foto (62vw à direita) — some antes da transição */
+@media (width >= 64rem) {
+  .coordinate-grid--photo-edge-fade {
+    mask-image: linear-gradient(to right, black 0%, black 34%, transparent 50%);
+    -webkit-mask-image: linear-gradient(to right, black 0%, black 34%, transparent 50%);
+  }
+}

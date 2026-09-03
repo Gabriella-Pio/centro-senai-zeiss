@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { contactBand } from "@/copy/site";
@@ -9,7 +10,7 @@ import "./contact-cta-band.css";
 
 export function ContactCtaBand() {
   return (
-    <section aria-labelledby="contact-cta-heading" className="site-contact-cta py-(--section-py) md:py-(--section-py-lg)">
+    <Section sectionKey="contact" surface="cream" pattern="none" aria-labelledby="contact-cta-heading">
       <Container>
         <Link
           href={contactBand.href}
@@ -38,6 +39,6 @@ export function ContactCtaBand() {
           </span>
         </Link>
       </Container>
-    </section>
+    </Section>
   );
 }

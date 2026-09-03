@@ -1,8 +1,28 @@
-/* Eyebrow — tipografia via variável, separada de text-primary (cor).
-   No Tailwind v4, utilitários text-* de tamanho e cor competem no mesmo slot. */
+/* Eyebrow — tipografia + cota horizontal (linha de régua acima do rótulo). */
 
 .ui-eyebrow {
+  position: relative;
+  padding-top: 0.625rem;
   font-family: var(--font-sans);
   font-size: var(--text-eyebrow);
   letter-spacing: var(--tracking-eyebrow);
+}
+
+.ui-eyebrow::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2.75rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-primary) 38%, transparent);
+}
+
+.section-surface[data-surface="dark"] .ui-eyebrow::before {
+  background: color-mix(in srgb, var(--color-primary) 55%, #ffffff);
+}
+
+.section-surface[data-surface="dark"] .ui-eyebrow {
+  border-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  color: color-mix(in srgb, var(--color-primary) 78%, #ffffff);
 }

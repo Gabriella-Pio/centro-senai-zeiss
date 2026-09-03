@@ -1,0 +1,14 @@
+.sector-grid__tile-title {
+  font-size: var(--text-card-title);
+  line-height: 1.2;
+}
+
+.sector-grid__tile-description {
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+}
+
+.sector-grid__chip {
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+}

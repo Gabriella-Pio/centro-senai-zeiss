@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { Section, type SectionZone } from "@/components/ui/Section";
-import { SectionAtmosphere } from "@/components/ui/SectionAtmosphere";
+import { Section } from "@/components/ui/Section";
+import type { SectionAmbient, SectionPattern, SectionSurface } from "@/lib/section-surfaces";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@cem/ui";
@@ -23,8 +23,10 @@ interface MediaSwitchProps {
   ctaLabel?: string;
   listTrailing?: "number" | "service-link";
   variant?: "default" | "muted" | "accent" | "surface";
-  zone?: SectionZone;
-  atmosphere?: "grid" | "glow" | "warm";
+  surface?: SectionSurface;
+  pattern?: SectionPattern;
+  ambient?: SectionAmbient;
+  sectionKey?: string;
   catalogCta?: CtaCopy;
 }
 
@@ -48,8 +50,10 @@ export function MediaSwitch({
   ctaLabel,
   listTrailing = "number",
   variant = "default",
-  zone = "catalog",
-  atmosphere,
+  surface = "white",
+  pattern = "none",
+  ambient = "none",
+  sectionKey,
   catalogCta,
 }: MediaSwitchProps) {
   const [active, setActive] = useState(0);
@@ -106,15 +110,15 @@ export function MediaSwitch({
   };
 
   return (
-    <Section variant={variant} zone={zone}>
-      {atmosphere ? <SectionAtmosphere tone={atmosphere} /> : null}
-      <Container className="media-switch relative flex flex-col gap-(--section-stack)">
-        <div
-          className={cn(
-            "flex flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10",
-            atmosphere && "relative z-10",
-          )}
-        >
+    <Section
+      variant={variant}
+      sectionKey={sectionKey}
+      surface={surface}
+      pattern={pattern}
+      ambient={ambient}
+    >
+      <Container className="media-switch flex flex-col gap-(--section-stack)">
+        <div className="flex flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
           <SectionHeading align="left" className="min-w-0 flex-1" {...heading} />
           {catalogCta ? (
             <Link
@@ -131,12 +135,7 @@ export function MediaSwitch({
           ) : null}
         </div>
 
-        <div
-          className={cn(
-            "relative z-10 grid grid-cols-1 gap-y-(--ms-gap) lg:grid-cols-2 lg:gap-x-(--ms-split) lg:gap-y-0 xl:gap-x-(--ms-split-lg)",
-            atmosphere && "relative z-10",
-          )}
-        >
+        <div className="relative z-10 grid grid-cols-1 gap-y-(--ms-gap) lg:grid-cols-2 lg:gap-x-(--ms-split) lg:gap-y-0 xl:gap-x-(--ms-split-lg)">
           <div
             className={cn(
               "media-switch__panel relative aspect-6/5 overflow-hidden rounded-(--radius) border border-border shadow-[0_24px_48px_-32px_rgb(0_87_184/0.2)] max-lg:order-1 lg:col-start-1 lg:row-start-1 lg:aspect-auto lg:h-full",

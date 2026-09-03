@@ -6,6 +6,7 @@ import { Button } from "@cem/ui";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { CoordinateGrid } from "@/components/sections/CoordinateGrid";
 import { HeroPhotoBackground } from "@/components/sections/HeroPhotoBackground";
+import { cn } from "@cem/ui";
 import { mediaFrameClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
 import { publicAsset } from "@/lib/public-asset";
 import type { HeroPhotoBlend } from "@/components/sections/hero-photo-blends";
@@ -36,7 +37,9 @@ export function Hero({
 }: HeroProps) {
   return (
     <Section
-      variant="default"
+      sectionKey="hero"
+      surface="cream"
+      pattern="none"
       className={
         image
           ? "relative overflow-hidden pb-(--section-after-hero)! md:pb-(--section-after-hero-lg)! lg:min-h-svh"
@@ -44,6 +47,10 @@ export function Hero({
       }
       clearNav
     >
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <CoordinateGrid photoEdgeFade={Boolean(image)} />
+      </div>
+
       {image ? (
         <HeroPhotoBackground
           src={publicAsset(image.src)}
@@ -54,17 +61,12 @@ export function Hero({
         />
       ) : null}
 
-      <div
-        className={
-          image
-            ? "pointer-events-none absolute inset-y-0 left-0 z-0 w-full max-w-[min(100%,46rem)] lg:max-w-[min(58%,52rem)]"
-            : "pointer-events-none absolute inset-0 z-0"
-        }
+      <Container
+        className={cn(
+          "relative z-10",
+          image && "lg:grid lg:min-h-[calc(100svh-var(--page-pad-top))] lg:grid-cols-2 lg:items-center",
+        )}
       >
-        <CoordinateGrid fade />
-      </div>
-
-      <Container className="relative z-10 text-left">
         {image ? (
           <div className={mediaFrameClass("relative mb-8 aspect-4/3 lg:hidden")}>
             <Image
@@ -79,7 +81,7 @@ export function Hero({
           </div>
         ) : null}
 
-        <div className={image ? "max-w-2xl" : undefined}>
+        <div className="max-w-2xl text-left">
           <Eyebrow className="max-w-[min(100%,18rem)] text-balance sm:max-w-none">{eyebrow}</Eyebrow>
 
           <h1 className="mt-8 type-display-lg font-heading font-bold text-foreground">
@@ -101,6 +103,8 @@ export function Hero({
             </Button>
           </div>
         </div>
+
+        {image ? <div aria-hidden className="hidden lg:block" /> : null}
       </Container>
     </Section>
   );

@@ -1,7 +1,7 @@
 import { Hero } from "@/components/sections/Hero";
 import { LabIntro } from "@/components/sections/LabIntro";
 import { CoverGrid } from "@/components/sections/CoverGrid";
-import { FeatureGrid } from "@/components/sections/FeatureGrid";
+import { SectorGrid } from "@/components/sections/SectorGrid";
 import { MediaSwitch } from "@/components/sections/MediaSwitch";
 import { LogoRow } from "@/components/sections/LogoRow";
 import {
@@ -39,8 +39,10 @@ export default function HomePage() {
       <MediaSwitch
         heading={serviceHubHeading}
         items={serviceItems}
-        zone="services"
-        atmosphere="grid"
+        sectionKey="services"
+        surface="white"
+        pattern="none"
+        ambient="diagonal"
         listTrailing="service-link"
         catalogCta={servicesCatalog.allServicesCta}
       />
@@ -48,11 +50,15 @@ export default function HomePage() {
       <MediaSwitch
         heading={equipmentHeading}
         items={equipment}
+        sectionKey="equipment"
+        surface="white"
+        pattern="none"
+        ambient="spotlight"
         ctaLabel="Ver serviço relacionado"
         listTrailing="number"
         catalogCta={equipmentCatalogCta}
       />
-      <FeatureGrid heading={sectorsHeading} items={sectors} zone="catalog" />
+      <SectorGrid heading={sectorsHeading} items={sectors} />
       <LogoRow title={partners.title} items={partners.items} />
     </>
   );
