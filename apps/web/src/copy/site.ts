@@ -1,7 +1,7 @@
 export const siteMeta = {
   title: "Centro de Excelência em Metrologia SENAI ZEISS | Goiânia",
   description:
-    "Primeiro Centro de Excelência em Metrologia SENAI ZEISS do Brasil. Medição dimensional, engenharia reversa, digitalização 3D e tomografia industrial na Faculdade SENAI Ítalo Bologna, em Goiânia.",
+    "Primeiro Centro de Excelência em Metrologia SENAI ZEISS do Brasil. Medimos, digitalizamos e inspecionamos peças industriais na Faculdade SENAI Ítalo Bologna, em Goiânia.",
 };
 
 export const brand = {
@@ -52,7 +52,7 @@ export const nav = {
 
 export const footer = {
   tagline:
-    "Centro de Excelência em Metrologia SENAI ZEISS, na Faculdade SENAI Ítalo Bologna, em Goiânia.",
+    "O laboratório de metrologia SENAI ZEISS na Faculdade SENAI Ítalo Bologna, em Goiânia.",
   visitTitle: "Visite-nos",
   servicesTitle: "Serviços",
   institutionalTitle: "Institucional",
@@ -77,9 +77,9 @@ export const footer = {
 
 export const contactBand = {
   eyebrow: "Contato",
-  title: "Fale com a equipe técnica",
+  title: "Fale com a nossa equipe",
   description:
-    "Solicite orçamento, agende visita ao laboratório ou tire dúvidas sobre medição e ensaios.",
+    "Peça orçamento, agende visita ao laboratório ou tire dúvidas sobre medição e ensaios.",
   primaryCta: { label: "Solicitar orçamento", href: "/quote" },
   secondaryCta: { label: "Ver endereço e horários", href: "/contact" },
 };
@@ -89,7 +89,7 @@ export const contactBandOnQuote = {
   eyebrow: "Contato",
   title: "Prefere falar primeiro?",
   description:
-    "Dúvida de recebimento, visita ou horário — o endereço e o telefone estão na página de contato.",
+    "Dúvida de recebimento, visita ou horário — endereço e telefone estão na página de contato.",
   primaryCta: { label: "Ver endereço e horários", href: "/contact" },
   secondaryCta: { label: "Ver os serviços", href: "/services" },
 };
@@ -97,26 +97,26 @@ export const contactBandOnQuote = {
 /** Na própria página de contato o secundário não pode apontar para ela mesma. */
 export const contactBandOnContact = {
   ...contactBand,
-  title: "Prefere uma proposta formal?",
+  title: "Prefere uma proposta por escrito?",
   description:
-    "Descreva a peça e o ensaio na página de orçamento. Para a origem do centro, a institucional.",
-  secondaryCta: { label: "Conhecer o centro", href: "/institutional" },
+    "Descreva a peça e o ensaio na página de orçamento. A origem do laboratório está na institucional.",
+  secondaryCta: { label: "Conheça o laboratório", href: "/institutional" },
 };
 
 export const legalPages = {
   terms: {
     title: "Termos de Uso",
     paragraphs: [
-      "Este site apresenta o Centro de Excelência em Metrologia SENAI ZEISS, na Faculdade SENAI Ítalo Bologna, em Goiânia. O conteúdo destina-se a informar a indústria sobre serviços, infraestrutura e formas de contato.",
-      "Orçamentos, prazos e condições técnicas são confirmados apenas após análise da demanda pela equipe do centro. Informações publicadas podem ser atualizadas sem aviso prévio para refletir equipamentos, horários e canais oficiais.",
+      "Este site apresenta o Centro de Excelência em Metrologia SENAI ZEISS, na Faculdade SENAI Ítalo Bologna, em Goiânia. O conteúdo informa a indústria sobre nossos serviços, infraestrutura e formas de contato.",
+      "Orçamentos, prazos e condições técnicas só se confirmam depois que analisamos a demanda. Informações publicadas podem ser atualizadas sem aviso prévio para refletir equipamentos, horários e canais oficiais.",
       "Ao solicitar orçamento ou enviar dados pelo formulário, você declara que as informações são verdadeiras e que está autorizado a representá-las perante o SENAI Goiás / FIEG.",
     ],
   },
   privacy: {
     title: "Política de Privacidade",
     paragraphs: [
-      "Dados enviados pelo formulário de orçamento ou pelos canais de contato (nome, empresa, CNPJ, e-mail, telefone e descrição da demanda) são usados exclusivamente para responder à solicitação e organizar o atendimento técnico.",
-      "Não vendemos dados pessoais. O compartilhamento ocorre apenas internamente, entre as equipes do centro e da Faculdade SENAI Ítalo Bologna necessárias ao orçamento, à logística da peça e ao laudo.",
+      "Usamos os dados enviados pelo formulário de orçamento ou pelos canais de contato (nome, empresa, CNPJ, e-mail, telefone e descrição da demanda) só para responder à solicitação e organizar o atendimento técnico.",
+      "Não vendemos dados pessoais. O compartilhamento ocorre apenas internamente, entre as nossas equipes e as da Faculdade SENAI Ítalo Bologna necessárias ao orçamento, à logística da peça e ao laudo.",
       "Para atualizar ou excluir informações enviadas, utilize o telefone ou o e-mail publicados na página de contato.",
     ],
   },

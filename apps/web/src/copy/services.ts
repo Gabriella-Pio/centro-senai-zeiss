@@ -1,18 +1,18 @@
 import type { SectionCopy, ServiceContent } from "@/copy/types";
 
 export const servicesHeading: SectionCopy = {
-  eyebrow: "Serviços",
-  title: "Serviços de metrologia industrial",
+  eyebrow: "Nossos serviços",
+  title: "O que fazemos no laboratório",
   description:
-    "Do controle dimensional ao apoio em conformidade — cada linha combina equipamentos ZEISS, metodologia e equipe técnica conforme a sua demanda.",
+    "Do controle dimensional à consultoria em qualidade. Em cada linha combinamos equipamentos ZEISS, método e a nossa equipe à peça e ao relatório.",
 };
 
 export const serviceDetail = {
   eyebrow: "Serviço",
-  backLabel: "Todos os serviços",
+  backLabel: "Todos os nossos serviços",
   applicationsLabel: "Aplicações",
-  audienceLabel: "Público-alvo",
-  equipmentLabel: "Equipamentos relacionados",
+  audienceLabel: "Para quem",
+  equipmentLabel: "Equipamentos que usamos",
   ctaLabel: "Solicitar orçamento para este serviço",
 };
 
@@ -55,7 +55,7 @@ export const services: ServiceContent[] = [
     shortDescription:
       "Escaneamento ATOS Q no laboratório ou T-SCAN in loco, com reconstrução CAD, malha 3D e comparação ao nominal.",
     description:
-      "Digitalização de alta densidade para documentar a geometria real, gerar nuvem de pontos e malha 3D, reconstruir modelos CAD e apoiar engenharia reversa — no centro ou no seu chão de fábrica.",
+      "Digitalizamos em alta densidade para documentar a geometria real, gerar nuvem de pontos e malha 3D, reconstruir modelos CAD e apoiar engenharia reversa — no laboratório ou no seu chão de fábrica.",
     applications: [
       "Documentação as-built e controle de superfícies complexas",
       "Engenharia reversa de peças sem desenho",
@@ -76,7 +76,7 @@ export const services: ServiceContent[] = [
     shortDescription:
       "Tomografia e raio-X industrial sem destruir a peça — porosidade, trincas, inclusões e geometrias internas.",
     description:
-      "Inspeção não destrutiva por raios X e tomografia computadorizada para avaliar o interior de componentes — descontinuidades, montagens fechadas e integridade estrutural — com laudo técnico.",
+      "Inspecionamos o interior de componentes por raios X e tomografia, sem destruir a peça — descontinuidades, montagens fechadas e integridade estrutural — e entregamos laudo técnico.",
     applications: [
       "Análise de porosidade e vides em fundidos e moldados",
       "Detecção de trincas e inclusões internas",
@@ -94,9 +94,9 @@ export const services: ServiceContent[] = [
     cardImage: "/lab/services/prototipacao.jpeg",
     cardImageAlt: "Peça em validação dimensional após prototipagem.",
     shortDescription:
-      "Impressão 3D de protótipos a partir de modelos CAD ou malhas digitalizadas no centro, para testes funcionais e geométricos.",
+      "Impressão 3D de protótipos a partir de modelos CAD ou malhas digitalizadas aqui, para testes funcionais e geométricos.",
     description:
-      "Fabricação aditiva de protótipos a partir de dados CAD ou de digitalizações realizadas no laboratório — para validar forma, encaixe e conceito antes da produção em série.",
+      "Fabricamos protótipos por adição a partir de CAD ou de digitalizações feitas aqui — para validar forma, encaixe e conceito antes da produção em série.",
     applications: [
       "Protótipos funcionais e geométricos para desenvolvimento",
       "Peças de reposição e ferramental simplificado",
@@ -116,7 +116,7 @@ export const services: ServiceContent[] = [
     shortDescription:
       "Apoio gerencial e técnico: planos de manutenção metrológica, conformidade com normas ISO e estruturação de processos de qualidade.",
     description:
-      "Consultoria da equipe gerencial e técnica do centro para estruturar e melhorar processos de qualidade — da definição de planos de manutenção de equipamentos à conformidade com normas e auditorias.",
+      "Nossa equipe gerencial e técnica apoia a estruturar e melhorar processos de qualidade — da definição de planos de manutenção de equipamentos à conformidade com normas e auditorias.",
     applications: [
       "Diagnóstico e estruturação de processos de metrologia",
       "Apoio à conformidade com normas ISO de qualidade",

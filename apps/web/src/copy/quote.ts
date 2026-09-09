@@ -2,13 +2,13 @@ import type { FieldCopy, SectionCopy } from "@/copy/types";
 
 export const quoteHeading: SectionCopy = {
   eyebrow: "Orçamento",
-  title: "Solicite um orçamento",
+  title: "Peça um orçamento",
   description:
-    "Informe a empresa, os serviços e o que precisa ser medido ou inspecionado. A equipe técnica retorna com uma proposta.",
+    "Conte a empresa, os serviços e o que precisa ser medido ou inspecionado. Respondemos com uma proposta — em até dois dias úteis.",
 };
 
 export const quoteNotes = {
-  heading: "Para a proposta sair mais rápida",
+  heading: "O que nos ajuda a responder mais rápido",
   items: [
     { label: "Peça", text: "Tipo, material e quantidade." },
     { label: "Ensaio", text: "O que precisa ser medido, digitalizado ou inspecionado." },
@@ -49,14 +49,14 @@ export const quoteForm = {
     submit: "Não foi possível enviar. Tente de novo ou fale pelo telefone da página de contato.",
   },
   privacy: {
-    before: "Os dados servem só para responder ao orçamento. Leia a ",
+    before: "Usamos os dados só para responder ao orçamento. Leia a ",
     link: "política de privacidade",
     href: "/privacy",
     after: ".",
   },
   success: {
-    title: "Solicitação recebida",
-    body: "Registramos o pedido. A equipe técnica entra em contato em até dois dias úteis.",
+    title: "Recebemos a solicitação",
+    body: "Registramos o pedido. Entramos em contato em até dois dias úteis.",
     again: "Enviar outra solicitação",
   },
 };

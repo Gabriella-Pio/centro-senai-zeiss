@@ -1,10 +1,10 @@
 import type { FeatureItem, SectionCopy } from "@/copy/types";
 
 export const equipmentHeading: SectionCopy = {
-  eyebrow: "Equipamentos",
-  title: "Parque ZEISS que sustenta cada ensaio",
+  eyebrow: "Nosso parque",
+  title: "As máquinas ZEISS de cada ensaio",
   description:
-    "Cada máquina tem um papel técnico claro. Na prática, um serviço pode combinar vários equipamentos — escolhemos o conjunto certo para a peça e o relatório.",
+    "Cada máquina tem um papel. Na prática, um serviço pode combinar várias — escolhemos o conjunto para a peça e o relatório.",
 };
 
 export const equipment: FeatureItem[] = [
@@ -56,7 +56,7 @@ export const equipment: FeatureItem[] = [
     title: "ZEISS T-SCAN hawk 2",
     tag: "Escaneamento in loco",
     description:
-      "Scanner portátil para peças grandes ou quando a peça não pode ser transportada ao centro.",
+      "Scanner portátil para peças grandes ou quando a peça não pode vir até nós.",
     icon: "Scan",
     image: "/equipment/t-scan-hawk-2.png",
     imageAlt: "Scanner portátil ZEISS T-SCAN hawk 2.",

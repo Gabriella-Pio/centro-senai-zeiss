@@ -4,9 +4,9 @@ export const hero = {
   eyebrow: 'Centro de Excelência em Metrologia',
   brand: { left: 'SENAI', right: 'ZEISS' },
   subtitle: 'O primeiro centro de excelência em metrologia SENAI ZEISS do Brasil.',
-  body: 'Controle de qualidade dimensional, digitalização, inspeção interna, prototipação 3D e consultoria em qualidade — com tecnologia ZEISS e equipe técnica SENAI.',
+  body: 'Medimos, digitalizamos e inspecionamos peças industriais — controle dimensional, inspeção interna, prototipação 3D e consultoria em qualidade. Tecnologia ZEISS, equipe SENAI.',
   primaryCta: { label: 'Solicitar orçamento', href: '/quote' },
-  secondaryCta: { label: 'Conhecer o centro', href: '/institutional' },
+  secondaryCta: { label: 'Conheça o laboratório', href: '/institutional' },
   image: {
     src: '/lab/lab-entrada.jpeg',
     alt: 'Vista do laboratório do Centro de Excelência em Metrologia SENAI ZEISS, com equipamentos ZEISS ao fundo.',
@@ -17,26 +17,26 @@ export const hero = {
 };
 
 export const labIntro = {
-  eyebrow: 'Sobre o centro',
-  title: 'Precisão alemã a serviço da indústria brasileira',
-  body: 'Instalado na Faculdade SENAI Ítalo Bologna, em Goiânia, o Centro de Excelência em Metrologia SENAI ZEISS reúne equipamentos ZEISS de última geração, salas climatizadas e equipe técnica especializada.\n\nAtendemos indústrias de Goiás e de outros estados na validação dimensional, análise de falhas, reconstrução CAD e inspeção não destrutiva — com o mesmo rigor exigido em qualidade, manutenção e desenvolvimento de produto.',
+  eyebrow: 'O laboratório',
+  title: 'Tecnologia ZEISS e equipe SENAI, em Goiânia',
+  body: 'Funcionamos na Faculdade SENAI Ítalo Bologna. Aqui estão nossos equipamentos ZEISS, as salas climatizadas e a equipe técnica do SENAI.\n\nAtendemos indústrias de Goiás e de outros estados na validação dimensional, análise de falhas, reconstrução CAD e inspeção não destrutiva — o mesmo rigor que qualidade, manutenção e desenvolvimento de produto exigem.',
   image: {
     src: '/lab/info.jpeg',
     alt: 'Vista do laboratório do Centro de Excelência em Metrologia SENAI ZEISS, com a sala de medição ao fundo.',
   },
-  cta: { label: 'Conhecer o centro', href: '/institutional' },
+  cta: { label: 'Conheça o laboratório', href: '/institutional' },
 };
 
 export const serviceHubHeading: SectionCopy = {
-  eyebrow: 'Serviços',
+  eyebrow: 'Nossos serviços',
   title: 'O que medimos e o que entregamos',
   description:
-    'Cinco linhas de atendimento — do laudo dimensional à consultoria em conformidade. Cada serviço combina equipamentos ZEISS conforme a peça e o relatório.',
+    'Do laudo dimensional à consultoria em qualidade, escolhemos as máquinas ZEISS conforme a peça e o que o relatório precisa responder.',
 };
 
 export const differentialsHeading: SectionCopy = {
-  eyebrow: 'Diferenciais',
-  title: 'Por que a indústria recorre ao centro',
+  eyebrow: 'Por que nos procuram',
+  title: 'Da peça que recebemos ao relatório que devolvemos',
   description:
     'Cada demanda segue um fluxo técnico — do recebimento da peça à entrega do relatório — com metodologia ZEISS e rastreabilidade das medições.',
 };
@@ -45,13 +45,13 @@ export const differentials: FeatureItem[] = [
   {
     value: '0,9µm',
     title: 'Precisão dimensional',
-    description: 'Tolerâncias apertadas para peças críticas de qualquer setor.',
+    description: 'Medimos tolerâncias apertadas em peças críticas.',
     icon: 'Target',
   },
   {
     value: '100%',
     title: 'Rastreabilidade',
-    description: 'Cadeia de medição documentada do recebimento ao relatório.',
+    description: 'Documentamos a cadeia de medição do recebimento ao relatório.',
     icon: 'FileCheck',
   },
   {
@@ -63,7 +63,7 @@ export const differentials: FeatureItem[] = [
   {
     value: '1º',
     title: 'Centro no Brasil',
-    description: 'Primeiro centro SENAI ZEISS do país.',
+    description: 'O primeiro centro SENAI ZEISS do país.',
     icon: 'Award',
   },
   {
@@ -75,14 +75,14 @@ export const differentials: FeatureItem[] = [
 ];
 
 export const sectorsCard = {
-  servicesLabel: 'Serviços comuns',
+  servicesLabel: 'Serviços que combinamos',
 };
 
 export const sectorsHeading: SectionCopy = {
-  eyebrow: 'Setores',
-  title: 'Onde a medição faz diferença no produto',
+  eyebrow: 'Setores que atendemos',
+  title: 'Onde a medição entra no produto',
   description:
-    'Da linha de montagem ao componente crítico — metrologia aplicada conforme o risco e a tolerância de cada setor.',
+    'Da linha de montagem ao componente crítico — aplicamos a metrologia conforme o risco e a tolerância de cada setor.',
 };
 
 export const sectors: SectorItem[] = [
@@ -102,7 +102,7 @@ export const sectors: SectorItem[] = [
     id: 'aeroespacial',
     title: 'Aeroespacial',
     description:
-      'Inspeção de peças críticas pós-manutenção, com CMM, escaneamento 3D e raio-X para integridade interna.',
+      'Inspecionamos peças críticas pós-manutenção — CMM, escaneamento 3D e raio-X para integridade interna.',
     icon: 'Plane',
     relatedServices: [
       'inspecao-interna',
@@ -126,17 +126,17 @@ export const sectors: SectorItem[] = [
     id: 'farmaceutico',
     title: 'Farmacêutico',
     description:
-      'Apoio à qualidade e à rastreabilidade de componentes, embalagens e dispositivos de processo no setor farmacêutico.',
+      'Apoiamos qualidade e rastreabilidade de componentes, embalagens e dispositivos de processo.',
     icon: 'HeartPulse',
     relatedServices: ['controle-qualidade-dimensional', 'consultoria-qualidade'],
   },
 ];
 
 export const partnersHeading: SectionCopy = {
-  eyebrow: 'Parceiros',
-  title: 'Quem sustenta o centro',
+  eyebrow: 'Quem nos sustenta',
+  title: 'As instituições por trás do laboratório',
   description:
-    'A estrutura institucional que mantém a metrologia ZEISS em Goiânia.',
+    'FIEG, SENAI Goiás, ZEISS e a Faculdade SENAI Ítalo Bologna — a estrutura que mantém a metrologia ZEISS em Goiânia.',
 };
 
 export const partners = [
