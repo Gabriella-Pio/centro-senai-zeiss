@@ -5,6 +5,8 @@ import Navbar from "@/components/layout/Navbar";
 import { ContactCtaBand } from "@/components/layout/ContactCtaBand";
 import Footer from "@/components/layout/Footer";
 import { SectionSurfaceDevPanel } from "@/components/dev/SectionSurfaceDevPanel";
+import { SkipLink } from "@/components/layout/SkipLink";
+import { PageScrollbar } from "@/components/layout/PageScrollbar";
 import { siteMeta } from "@/copy/site";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -42,10 +44,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
-      <body className={`${plexSans.className} min-h-screen flex flex-col bg-background text-foreground font-sans`}>
+      <body id="top" className={`${plexSans.className} min-h-screen flex flex-col bg-background text-foreground font-sans`}>
         {isDev ? <SectionSurfaceDevPanel /> : null}
+        <SkipLink />
+        <PageScrollbar />
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main id="conteudo" className="flex-1">
+          {children}
+        </main>
         <ContactCtaBand />
         <Footer />
       </body>

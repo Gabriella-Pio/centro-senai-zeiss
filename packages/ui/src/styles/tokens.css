@@ -60,7 +60,9 @@
   --tracking-switch-tag: 0.1em;
   --tracking-index: 0.12em;
 
-  --radius: 0.525rem;
+  /* Intent: 2px at 16px root. Controls use rounded-[var(--radius)] / border-radius: var(--radius).
+     Placas com crop marks ficam em 0 — o filete precisa de canto a 90°. */
+  --radius: 0.125rem;
 }
 
 :root {

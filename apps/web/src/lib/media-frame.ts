@@ -1,4 +1,10 @@
 import { cn } from "@cem/ui";
+import "./media-plate.css";
+
+/** Encosto técnico atrás da foto — mesma moldura, deslocada. Sem sombra. */
+export function mediaPlateClass(className?: string) {
+  return cn("media-plate", className);
+}
 
 /** Moldura padrão de foto em todo o site — hero panel, LabIntro, cards, drawer. */
 export function mediaFrameClass(className?: string) {

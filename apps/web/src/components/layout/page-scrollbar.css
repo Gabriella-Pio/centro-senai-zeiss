@@ -1,0 +1,60 @@
+html.has-page-scrollbar {
+  scrollbar-width: none;
+}
+
+html.has-page-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+}
+
+.page-scrollbar {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 40;
+  width: 36px;
+  padding: 8px 4px;
+  border: 0;
+  cursor: pointer;
+  pointer-events: none;
+}
+
+.page-scrollbar.is-visible {
+  pointer-events: auto;
+}
+
+.page-scrollbar__thumb {
+  width: 8px;
+  margin-inline: auto;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease, background 180ms ease;
+}
+
+.page-scrollbar.is-visible .page-scrollbar__thumb {
+  opacity: 1;
+}
+
+.page-scrollbar.is-visible:hover .page-scrollbar__thumb {
+  background: color-mix(in srgb, var(--color-primary) 78%, #000000);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-scrollbar__thumb {
+    transition: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .page-scrollbar {
+    display: none;
+  }
+}
+
+@media print {
+  .page-scrollbar {
+    display: none;
+  }
+}

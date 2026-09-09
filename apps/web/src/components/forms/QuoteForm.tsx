@@ -1,18 +1,35 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import {
-  Label,
-  Input,
-  Textarea,
-  Button,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@cem/ui";
+import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import Link from "next/link";
+import { Check } from "lucide-react";
+import { Label, Input, Textarea, Button } from "@cem/ui";
+import { apiRequest, ApiError } from "@/lib/api";
 import type { QuoteFormCopy } from "@/copy/quote";
+import "./quote-form.css";
+
+const FIELD_IDS = [
+  "company",
+  "cnpj",
+  "contactName",
+  "email",
+  "phone",
+  "service",
+  "otherDetail",
+  "description",
+] as const;
+
+type FieldId = (typeof FIELD_IDS)[number];
+type QuoteValues = {
+  company: string;
+  cnpj: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  otherDetail: string;
+  description: string;
+};
+type QuoteErrors = Partial<Record<FieldId, string>>;
 
 interface QuoteFormProps {
   defaultServiceId?: string;
@@ -20,96 +37,445 @@ interface QuoteFormProps {
   copy: QuoteFormCopy;
 }
 
-export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) {
-  const [serviceId, setServiceId] = useState(defaultServiceId ?? "");
-  const [submitted, setSubmitted] = useState(false);
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // TODO: integrar com o endpoint real (ex: POST /api/v1/budget) quando o
-  // backend estiver disponível. Por ora, apenas simula o envio no client.
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+const EMPTY_VALUES: QuoteValues = {
+  company: "",
+  cnpj: "",
+  contactName: "",
+  email: "",
+  phone: "",
+  otherDetail: "",
+  description: "",
+};
+
+function isValidBrPhone(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 10 || digits.length === 11) return true;
+  if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) return true;
+  return false;
+}
+
+function formatBrPhone(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length === 0) return "";
+  if (digits.length <= 2) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  if (digits.length <= 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
+function formatCnpj(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 14);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+  if (digits.length <= 8) {
+    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+  }
+  if (digits.length <= 12) {
+    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
+  }
+  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
+}
+
+function cnpjCheckDigit(digits: number[], weights: number[]) {
+  const sum = digits.reduce((total, digit, index) => total + digit * weights[index], 0);
+  const rest = sum % 11;
+  return rest < 2 ? 0 : 11 - rest;
+}
+
+function isValidCnpj(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(digits)) return false;
+
+  const numbers = digits.split("").map(Number);
+  const first = cnpjCheckDigit(numbers.slice(0, 12), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+  const second = cnpjCheckDigit(numbers.slice(0, 13), [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+  return first === numbers[12] && second === numbers[13];
+}
+
+function validateQuote(
+  values: QuoteValues,
+  serviceIds: string[],
+  copy: QuoteFormCopy,
+): QuoteErrors {
+  const required = copy.validation.required;
+  const errors: QuoteErrors = {};
+
+  if (!values.company.trim()) errors.company = required;
+  if (!values.cnpj.trim()) errors.cnpj = required;
+  else if (!isValidCnpj(values.cnpj)) errors.cnpj = copy.validation.cnpj;
+  if (!values.contactName.trim()) errors.contactName = required;
+
+  if (!values.email.trim()) errors.email = required;
+  else if (!EMAIL_PATTERN.test(values.email.trim())) errors.email = copy.validation.email;
+
+  if (!values.phone.trim()) errors.phone = required;
+  else if (!isValidBrPhone(values.phone)) errors.phone = copy.validation.phone;
+
+  if (serviceIds.length === 0) errors.service = copy.validation.service;
+
+  if (serviceIds.includes(copy.otherService.id) && !values.otherDetail.trim()) {
+    errors.otherDetail = required;
+  }
+
+  if (!values.description.trim()) errors.description = required;
+
+  return errors;
+}
+
+function toLeadPayload(
+  values: QuoteValues,
+  serviceIds: string[],
+  serviceOptions: { id: string; label: string }[],
+) {
+  const labels = serviceIds.map(
+    (id) => serviceOptions.find((item) => item.id === id)?.label ?? id,
+  );
+  const lines = [`CNPJ: ${values.cnpj.trim()}`, `Serviços: ${labels.join(", ")}`];
+
+  if (values.otherDetail.trim()) {
+    lines.push(`Outro serviço: ${values.otherDetail.trim()}`);
+  }
+  lines.push(values.description.trim());
+
+  return {
+    name: values.contactName.trim(),
+    email: values.email.trim(),
+    company: values.company.trim(),
+    phone: values.phone.trim(),
+    service: serviceIds.join(",").slice(0, 120),
+    message: lines.join("\n"),
+  };
+}
+
+export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) {
+  const serviceOptions = [...services, copy.otherService];
+  const initialServiceIds = serviceOptions.some((item) => item.id === defaultServiceId)
+    ? [defaultServiceId!]
+    : [];
+  const formId = useId();
+  const alertRef = useRef<HTMLDivElement>(null);
+  const [values, setValues] = useState<QuoteValues>(EMPTY_VALUES);
+  const [serviceIds, setServiceIds] = useState<string[]>(initialServiceIds);
+  const [errors, setErrors] = useState<QuoteErrors>({});
+  const [attempted, setAttempted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const otherSelected = serviceIds.includes(copy.otherService.id);
+  const errorEntries = FIELD_IDS.filter((id) => errors[id]);
+
+  function applyValidation(nextValues: QuoteValues, nextServiceIds: string[]) {
+    if (attempted) {
+      setErrors(validateQuote(nextValues, nextServiceIds, copy));
+    }
+  }
+
+  function setField<K extends keyof QuoteValues>(id: K, value: QuoteValues[K]) {
+    const nextValues = { ...values, [id]: value };
+    setValues(nextValues);
+    applyValidation(nextValues, serviceIds);
+  }
+
+  function toggleService(id: string) {
+    const nextServiceIds = serviceIds.includes(id)
+      ? serviceIds.filter((item) => item !== id)
+      : [...serviceIds, id];
+    const nextValues =
+      id === copy.otherService.id && !nextServiceIds.includes(id)
+        ? { ...values, otherDetail: "" }
+        : values;
+    setServiceIds(nextServiceIds);
+    if (nextValues !== values) setValues(nextValues);
+    applyValidation(nextValues, nextServiceIds);
+  }
+
+  function resetForm() {
+    setSubmitted(false);
+    setAttempted(false);
+    setPending(false);
+    setSubmitError("");
+    setValues(EMPTY_VALUES);
+    setServiceIds([]);
+    setErrors({});
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    setAttempted(true);
+    setSubmitError("");
+    const nextErrors = validateQuote(values, serviceIds, copy);
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      requestAnimationFrame(() => alertRef.current?.focus());
+      return;
+    }
+
+    setPending(true);
+    try {
+      await apiRequest("leads", {
+        method: "POST",
+        body: toLeadPayload(values, serviceIds, serviceOptions),
+      });
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(error instanceof ApiError ? error.message : copy.validation.submit);
+      requestAnimationFrame(() => alertRef.current?.focus());
+    } finally {
+      setPending(false);
+    }
   }
 
   if (submitted) {
     return (
-      <div className="flex flex-col items-center gap-3 py-16 text-center">
-        <h2 className="type-band-title font-heading font-semibold text-foreground">{copy.success.title}</h2>
-        <p className="type-caption max-w-sm text-muted-foreground">{copy.success.body}</p>
+      <div className="quote-form quote-form--success" role="status">
+        <h2 className="quote-form__success-title">{copy.success.title}</h2>
+        <p className="quote-form__success-body">{copy.success.body}</p>
+        <Button type="button" size="xl" variant="outline" className="quote-form__submit" onClick={resetForm}>
+          {copy.success.again}
+        </Button>
       </div>
     );
   }
 
   const { fields } = copy;
+  const showAlert = errorEntries.length > 0 || Boolean(submitError);
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="company">{fields.company.label}</Label>
-          <Input id="company" name="company" required placeholder={fields.company.placeholder} />
+    <form onSubmit={handleSubmit} className="quote-form" noValidate>
+      <p className="quote-form__legend">
+        <span className="quote-form__required" aria-hidden="true">
+          *
+        </span>{" "}
+        {copy.requiredLegend}
+      </p>
+
+      {showAlert ? (
+        <div
+          ref={alertRef}
+          className="quote-form__alert"
+          role="alert"
+          tabIndex={-1}
+          aria-labelledby={`${formId}-alert-title`}
+        >
+          <p id={`${formId}-alert-title`} className="quote-form__alert-title">
+            {submitError || copy.validation.summary}
+          </p>
+          {errorEntries.length > 0 ? (
+            <ul className="quote-form__alert-list">
+              {errorEntries.map((id) => (
+                <li key={id}>
+                  <a
+                    href={`#${id}`}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      document.getElementById(id)?.focus();
+                    }}
+                  >
+                    {fields[id].label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="contactName">{fields.contactName.label}</Label>
+      ) : null}
+
+      <div className="quote-form__grid">
+        <QuoteField id="company" label={fields.company.label} error={errors.company}>
+          <Input
+            id="company"
+            name="company"
+            value={values.company}
+            onChange={(event) => setField("company", event.target.value)}
+            placeholder={fields.company.placeholder}
+            autoComplete="organization"
+            aria-required="true"
+            aria-invalid={Boolean(errors.company)}
+            aria-describedby={errors.company ? "company-error" : undefined}
+          />
+        </QuoteField>
+        <QuoteField id="cnpj" label={fields.cnpj.label} error={errors.cnpj}>
+          <Input
+            id="cnpj"
+            name="cnpj"
+            inputMode="numeric"
+            value={values.cnpj}
+            onChange={(event) => setField("cnpj", formatCnpj(event.target.value))}
+            placeholder={fields.cnpj.placeholder}
+            autoComplete="off"
+            aria-required="true"
+            aria-invalid={Boolean(errors.cnpj)}
+            aria-describedby={errors.cnpj ? "cnpj-error" : undefined}
+          />
+        </QuoteField>
+        <QuoteField
+          id="contactName"
+          label={fields.contactName.label}
+          error={errors.contactName}
+          className="quote-form__field--span"
+        >
           <Input
             id="contactName"
             name="contactName"
-            required
+            value={values.contactName}
+            onChange={(event) => setField("contactName", event.target.value)}
             placeholder={fields.contactName.placeholder}
+            autoComplete="name"
+            aria-required="true"
+            aria-invalid={Boolean(errors.contactName)}
+            aria-describedby={errors.contactName ? "contactName-error" : undefined}
           />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="email">{fields.email.label}</Label>
+        </QuoteField>
+        <QuoteField id="email" label={fields.email.label} error={errors.email}>
           <Input
             id="email"
             name="email"
             type="email"
-            required
+            inputMode="email"
+            value={values.email}
+            onChange={(event) => setField("email", event.target.value)}
             placeholder={fields.email.placeholder}
+            autoComplete="email"
+            aria-required="true"
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? "email-error" : undefined}
           />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="phone">{fields.phone.label}</Label>
-          <Input id="phone" name="phone" type="tel" required placeholder={fields.phone.placeholder} />
-        </div>
+        </QuoteField>
+        <QuoteField id="phone" label={fields.phone.label} error={errors.phone}>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            value={values.phone}
+            onChange={(event) => setField("phone", formatBrPhone(event.target.value))}
+            placeholder={fields.phone.placeholder}
+            autoComplete="tel"
+            aria-required="true"
+            aria-invalid={Boolean(errors.phone)}
+            aria-describedby={errors.phone ? "phone-error" : undefined}
+          />
+        </QuoteField>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="service">{fields.service.label}</Label>
-        <Select
-          value={serviceId}
-          onValueChange={(value) => {
-            if (value) setServiceId(value);
-          }}
-          name="service"
+      <fieldset className="quote-form__field quote-form__services">
+        <legend className="quote-form__label">
+          {fields.service.label}
+          <span className="quote-form__required" aria-hidden="true">
+            *
+          </span>
+        </legend>
+        <div
+          className="quote-form__chips"
+          role="group"
+          aria-describedby={errors.service ? "service-error" : undefined}
+          aria-invalid={Boolean(errors.service) || undefined}
         >
-          <SelectTrigger id="service" className="w-full">
-            <SelectValue placeholder={fields.service.placeholder} />
-          </SelectTrigger>
-          <SelectContent>
-            {services.map((service) => (
-              <SelectItem key={service.id} value={service.id}>
+          {serviceOptions.map((service, index) => {
+            const selected = serviceIds.includes(service.id);
+            return (
+              <button
+                key={service.id}
+                type="button"
+                id={index === 0 ? "service" : undefined}
+                className={selected ? "quote-form__chip quote-form__chip--on" : "quote-form__chip"}
+                role="checkbox"
+                aria-checked={selected}
+                onClick={() => toggleService(service.id)}
+              >
+                <span className="quote-form__check" aria-hidden>
+                  {selected ? <Check strokeWidth={2.75} /> : null}
+                </span>
                 {service.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+              </button>
+            );
+          })}
+        </div>
+        {errors.service ? (
+          <p id="service-error" className="quote-form__error">
+            {errors.service}
+          </p>
+        ) : null}
+      </fieldset>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="description">{fields.description.label}</Label>
+      {otherSelected ? (
+        <QuoteField id="otherDetail" label={fields.otherDetail.label} error={errors.otherDetail}>
+          <Input
+            id="otherDetail"
+            name="otherDetail"
+            value={values.otherDetail}
+            onChange={(event) => setField("otherDetail", event.target.value)}
+            placeholder={fields.otherDetail.placeholder}
+            aria-required="true"
+            aria-invalid={Boolean(errors.otherDetail)}
+            aria-describedby={errors.otherDetail ? "otherDetail-error" : undefined}
+          />
+        </QuoteField>
+      ) : null}
+
+      <QuoteField id="description" label={fields.description.label} error={errors.description}>
         <Textarea
           id="description"
           name="description"
-          required
+          value={values.description}
+          onChange={(event) => setField("description", event.target.value)}
           placeholder={fields.description.placeholder}
-          className="min-h-32"
+          aria-required="true"
+          aria-invalid={Boolean(errors.description)}
+          aria-describedby={errors.description ? "description-error" : undefined}
         />
-      </div>
+      </QuoteField>
 
-      <Button type="submit" size="lg" className="self-start">
-        {copy.submit}
+      <Button type="submit" size="xl" className="quote-form__submit" disabled={pending}>
+        {pending ? copy.submitPending : copy.submit}
       </Button>
+
+      <p className="quote-form__privacy">
+        {copy.privacy.before}
+        <Link href={copy.privacy.href}>{copy.privacy.link}</Link>{copy.privacy.after}
+      </p>
     </form>
+  );
+}
+
+function QuoteField({
+  id,
+  label,
+  error,
+  required = true,
+  className,
+  children,
+}: {
+  id: string;
+  label: string;
+  error?: string;
+  required?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={["quote-form__field", className].filter(Boolean).join(" ")}>
+      <Label htmlFor={id} className="quote-form__label">
+        {label}
+        {required ? (
+          <span className="quote-form__required" aria-hidden="true">
+            *
+          </span>
+        ) : null}
+      </Label>
+      {children}
+      {error ? (
+        <p id={`${id}-error`} className="quote-form__error">
+          {error}
+        </p>
+      ) : null}
+    </div>
   );
 }

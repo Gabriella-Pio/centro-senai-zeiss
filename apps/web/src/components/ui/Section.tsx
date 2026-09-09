@@ -40,7 +40,8 @@ export function Section({
       data-pattern={pattern}
       data-ambient={ambient}
       className={cn(
-        "section-surface relative isolate py-(--section-py) md:py-(--section-py-lg)",
+        "section-surface relative isolate pb-(--section-py) md:pb-(--section-py-lg)",
+        clearNav ? "pt-(--page-pad-top)" : "pt-(--section-py) md:pt-(--section-py-lg)",
         guide && "section-guide",
         bgClasses[variant],
         className,

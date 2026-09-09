@@ -1,24 +1,36 @@
-import { InstitutionalHero } from "@/components/sections/InstitutionalHero";
-import { FeatureGrid } from "@/components/sections/FeatureGrid";
-import { ProseSection } from "@/components/sections/ProseSection";
-import { StatRow } from "@/components/sections/StatRow";
+import type { Metadata } from "next";
+import { Hero } from "@/components/sections/Hero";
+import { HistorySection } from "@/components/sections/HistorySection";
+import { PurposeSection } from "@/components/sections/PurposeSection";
+import { TeamGrid } from "@/components/sections/TeamGrid";
+import { LogoRow } from "@/components/sections/LogoRow";
 import {
-  history,
-  infrastructure,
-  infrastructureHeading,
-  institutionalStats,
-  pillars,
-  pillarsHeading,
+  historyFacts,
+  historyHeading,
+  historyParagraphs,
+  institutionalHero,
+  partners,
+  partnersHeading,
+  purposeHeading,
+  purposeItems,
+  team,
+  teamHeading,
 } from "@/copy";
+
+export const metadata: Metadata = {
+  title: "Institucional | Centro de Excelência em Metrologia SENAI ZEISS",
+  description:
+    "História, missão, visão e quem fez o primeiro Centro de Excelência em Metrologia SENAI ZEISS do Brasil, na Faculdade SENAI Ítalo Bologna, em Goiânia.",
+};
 
 export default function InstitutionalPage() {
   return (
     <>
-      <InstitutionalHero />
-      <FeatureGrid heading={pillarsHeading} items={pillars} columns={3} />
-      <StatRow items={institutionalStats} variant="muted" />
-      <FeatureGrid heading={infrastructureHeading} items={infrastructure} columns={3} variant="muted" />
-      <ProseSection title={history.title} paragraphs={history.paragraphs} variant="default" />
+      <Hero {...institutionalHero} sectionKey="institutional-hero" />
+      <HistorySection heading={historyHeading} facts={historyFacts} paragraphs={historyParagraphs} />
+      <PurposeSection heading={purposeHeading} items={purposeItems} />
+      <TeamGrid heading={teamHeading} members={team} />
+      <LogoRow heading={partnersHeading} items={partners} sectionKey="institutional-partners" />
     </>
   );
 }

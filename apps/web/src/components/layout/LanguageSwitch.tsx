@@ -8,12 +8,18 @@ import { nav } from "@/copy/site";
 
 interface LanguageSwitchProps {
   className?: string;
+  align?: "start" | "end";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
 /** Só o controle visual. A troca real de idioma entra quando o copy estiver fechado. */
-export function LanguageSwitch({ className, open: openProp, onOpenChange }: LanguageSwitchProps) {
+export function LanguageSwitch({
+  className,
+  align = "end",
+  open: openProp,
+  onOpenChange,
+}: LanguageSwitchProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [code, setCode] = useState(nav.languages.defaultCode);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -53,8 +59,8 @@ export function LanguageSwitch({ className, open: openProp, onOpenChange }: Lang
         aria-haspopup="listbox"
         onClick={() => setOpen(!open)}
         className={cn(
-          "flex h-11 items-center gap-1.5 px-3 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors",
-          open && "bg-muted text-foreground",
+          "site-nav-lang flex h-11 items-center gap-1.5 border border-border bg-background px-3 text-sm font-medium text-foreground hover:bg-muted hover:text-foreground transition-colors",
+          open && "bg-muted",
           className,
         )}
       >
@@ -68,7 +74,7 @@ export function LanguageSwitch({ className, open: openProp, onOpenChange }: Lang
       </button>
 
       {open && (
-        <NavTray align="start" role="listbox" aria-label={nav.languages.ariaLabel} className="w-44">
+        <NavTray align={align} role="listbox" aria-label={nav.languages.ariaLabel} className="w-44">
           {nav.languages.options.map((option) => {
             const selected = option.code === code;
             return (

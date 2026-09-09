@@ -8,9 +8,10 @@
 
 @layer base {
   :root {
-    --max-width-content: 95rem;
-    --nav-height: 7rem;
-    --page-pad-top: calc(var(--nav-height) + 4rem);
+    --max-width-content: 80rem;
+    --max-width-wide: 95rem;
+    --nav-height: 6.5rem;
+    --page-pad-top: calc(var(--nav-height) + 2.75rem);
     --section-py: 4rem;
     --section-py-lg: 5.5rem;
     --section-after-hero: 3.5rem;
@@ -29,7 +30,7 @@
   }
   @media (width >= 48rem) {
     :root {
-      --page-pad-top: calc(var(--nav-height) + 8rem);
+      --page-pad-top: calc(var(--nav-height) + 4.75rem);
       --atmosphere-inset: 3.5rem;
       --zone-fade: 11%;
     }
@@ -203,27 +204,27 @@
     display: none;
   }
 
-  /* Rodapé institucional — azul escuro de laboratório */
+  /* Rodapé institucional — mesmo azul escuro das superfícies dark */
   .site-footer {
     background: #0b132b;
     color: var(--color-primary-foreground);
-  }
-
-  .site-footer-glow {
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--color-primary-foreground) 8%, transparent) 0%,
-      transparent 42%,
-      color-mix(in srgb, var(--color-foreground) 14%, transparent) 100%
-    );
+    border-top: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 
   .site-footer-divider {
-    border-color: color-mix(in srgb, var(--color-primary-foreground) 15%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary-foreground) 12%, transparent);
   }
 
   * {
     @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground;

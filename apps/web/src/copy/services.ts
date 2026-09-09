@@ -9,6 +9,7 @@ export const servicesHeading: SectionCopy = {
 
 export const serviceDetail = {
   eyebrow: "Serviço",
+  backLabel: "Todos os serviços",
   applicationsLabel: "Aplicações",
   audienceLabel: "Público-alvo",
   equipmentLabel: "Equipamentos relacionados",
@@ -27,7 +28,7 @@ export const services: ServiceContent[] = [
     id: "controle-qualidade-dimensional",
     label: "Controle de qualidade dimensional",
     icon: "Ruler",
-    cardImage: "/lab/services/dimensional.jpeg",
+    cardImage: "/lab/services/duramax.jpeg",
     cardImageAlt:
       "Ponteiras e sensores ZEISS em máquina de coordenadas para medição dimensional.",
     shortDescription:
@@ -48,7 +49,7 @@ export const services: ServiceContent[] = [
     id: "digitalizacao-engenharia-reversa",
     label: "Digitalização e engenharia reversa",
     icon: "Scan",
-    cardImage: "/lab/services/digitalizacao.jpeg",
+    cardImage: "/lab/services/atosq.jpeg",
     cardImageAlt: "Peça física e modelo CAD na tela durante reconstrução digital.",
     cardImagePosition: "50% 42%",
     shortDescription:
@@ -69,9 +70,9 @@ export const services: ServiceContent[] = [
     id: "inspecao-interna",
     label: "Inspeção interna (NDT)",
     icon: "Layers",
-    cardImage: "/lab/services/ndt.png",
+    cardImage: "/lab/services/bosello-front.jpeg",
     cardImageAlt: "Sistema ZEISS BOSELLO MAX para tomografia e raio-X industrial.",
-    cardImageFit: "contain",
+    cardImagePosition: "50% 40%",
     shortDescription:
       "Tomografia e raio-X industrial sem destruir a peça — porosidade, trincas, inclusões e geometrias internas.",
     description:

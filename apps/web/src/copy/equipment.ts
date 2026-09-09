@@ -80,3 +80,7 @@ export const equipmentCatalogCta = {
   label: "Ver todos os serviços",
   href: "/services",
 };
+
+export const equipmentCard = {
+  usedIn: "Usado em",
+};

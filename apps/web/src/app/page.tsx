@@ -1,18 +1,19 @@
 import { Hero } from "@/components/sections/Hero";
 import { LabIntro } from "@/components/sections/LabIntro";
-import { CoverGrid } from "@/components/sections/CoverGrid";
+import { DiffGrid } from "@/components/sections/DiffGrid";
 import { SectorGrid } from "@/components/sections/SectorGrid";
+import { EquipmentCarousel } from "@/components/sections/EquipmentCarousel";
 import { MediaSwitch } from "@/components/sections/MediaSwitch";
 import { LogoRow } from "@/components/sections/LogoRow";
 import {
   differentials,
   differentialsHeading,
   equipment,
-  equipmentCatalogCta,
   equipmentHeading,
   hero,
   labIntro,
   partners,
+  partnersHeading,
   sectors,
   sectorsHeading,
   serviceHubHeading,
@@ -46,20 +47,10 @@ export default function HomePage() {
         listTrailing="service-link"
         catalogCta={servicesCatalog.allServicesCta}
       />
-      <CoverGrid heading={differentialsHeading} items={differentials} />
-      <MediaSwitch
-        heading={equipmentHeading}
-        items={equipment}
-        sectionKey="equipment"
-        surface="white"
-        pattern="none"
-        ambient="spotlight"
-        ctaLabel="Ver serviço relacionado"
-        listTrailing="number"
-        catalogCta={equipmentCatalogCta}
-      />
+      <DiffGrid heading={differentialsHeading} items={differentials} />
+      <EquipmentCarousel heading={equipmentHeading} items={equipment} />
       <SectorGrid heading={sectorsHeading} items={sectors} />
-      <LogoRow title={partners.title} items={partners.items} />
+      <LogoRow heading={partnersHeading} items={partners} />
     </>
   );
 }

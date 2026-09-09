@@ -1,11 +1,13 @@
 import {
   Aperture,
+  Award,
   BadgePercent,
   Box,
   ClipboardCheck,
   Clock,
   Cpu,
   Factory,
+  FileCheck,
   HeartPulse,
   Layers,
   Mail,
@@ -26,12 +28,14 @@ import {
 
 const icons = {
   Aperture,
+  Award,
   BadgePercent,
   Box,
   Car,
   ClipboardCheck,
   Clock,
   Cpu,
+  FileCheck,
   Factory,
   HeartPulse,
   Layers,

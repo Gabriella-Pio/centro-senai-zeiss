@@ -10,9 +10,10 @@ export type {
   SectorItem,
   ServiceContent,
   StatItem,
+  TeamMember,
 } from "@/copy/types";
 
-export { brand, contactBand, footer, location, nav, siteMeta } from "@/copy/site";
+export { brand, contactBand, footer, legalPages, location, nav, siteMeta } from "@/copy/site";
 export {
   serviceDetail,
   services,
@@ -21,6 +22,7 @@ export {
 } from "@/copy/services";
 export {
   equipment,
+  equipmentCard,
   equipmentCatalogCta,
   equipmentHeading,
 } from "@/copy/equipment";
@@ -30,11 +32,22 @@ export {
   hero,
   labIntro,
   partners,
+  partnersHeading,
   sectors,
+  sectorsCard,
   sectorsHeading,
   serviceHubHeading,
 } from "@/copy/home";
-export { history, infrastructure, infrastructureHeading, institutionalHeading, institutionalStats, pillars, pillarsHeading } from "@/copy/institutional";
-export { contactCards, contactHeading, mapPlaceholder } from "@/copy/contact";
-export { quoteForm, quoteHeading } from "@/copy/quote";
+export {
+  historyFacts,
+  historyHeading,
+  historyParagraphs,
+  institutionalHero,
+  purposeHeading,
+  purposeItems,
+  team,
+  teamHeading,
+} from "@/copy/institutional";
+export { contactHeading } from "@/copy/contact";
+export { quoteForm, quoteHeading, quoteNotes } from "@/copy/quote";
 export { notFoundCopy } from "@/copy/not-found";

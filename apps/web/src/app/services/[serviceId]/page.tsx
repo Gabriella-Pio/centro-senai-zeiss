@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { ArticleDetail } from "@/components/sections/ArticleDetail";
 import { equipment } from "@/copy/equipment";
 import { serviceDetail, services } from "@/copy/services";
@@ -9,6 +10,17 @@ interface ServicePageProps {
 
 export function generateStaticParams() {
   return services.map((service) => ({ serviceId: service.id }));
+}
+
+export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
+  const { serviceId } = await params;
+  const service = services.find((item) => item.id === serviceId);
+  if (!service) return { title: "Serviço | Centro de Excelência em Metrologia SENAI ZEISS" };
+
+  return {
+    title: `${service.label} | Centro de Excelência em Metrologia SENAI ZEISS`,
+    description: service.shortDescription,
+  };
 }
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
@@ -36,6 +48,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
   return (
     <ArticleDetail
+      back={{ label: serviceDetail.backLabel, href: "/services" }}
       eyebrow={serviceDetail.eyebrow}
       title={service.label}
       body={service.description}

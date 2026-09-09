@@ -1,0 +1,30 @@
+.contact-map__frame {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--color-muted);
+  background-image:
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground));
+  background-size: 12px 1px, 1px 12px, 12px 1px, 1px 12px, 12px 1px, 1px 12px, 12px 1px, 1px 12px;
+  background-position:
+    top left, top left,
+    top right, top right,
+    bottom left, bottom left,
+    bottom right, bottom right;
+  background-repeat: no-repeat;
+}
+
+.contact-map__iframe {
+  position: absolute;
+  inset: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  border: 0;
+}

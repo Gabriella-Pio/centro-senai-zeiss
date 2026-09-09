@@ -8,9 +8,10 @@ import { Section } from "@/components/ui/Section";
 import type { SectionAmbient, SectionPattern, SectionSurface } from "@/lib/section-surfaces";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { SectionTextCta } from "@/components/ui/SectionTextCta";
 import { cn } from "@cem/ui";
 import { getIcon } from "@/lib/icons";
-import { mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
+import { mediaPhotoCoverClass, mediaPhotoSizes, mediaPlateClass } from "@/lib/media-frame";
 import { publicAsset } from "@/lib/public-asset";
 import type { CtaCopy, FeatureItem, SectionCopy } from "@/copy/types";
 import "./media-switch.css";
@@ -120,28 +121,21 @@ export function MediaSwitch({
       <Container className="media-switch flex flex-col gap-(--section-stack)">
         <div className="flex flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
           <SectionHeading align="left" className="min-w-0 flex-1" {...heading} />
-          {catalogCta ? (
-            <Link
-              href={catalogCta.href}
-              className="group media-switch__header-cta inline-flex shrink-0 items-center gap-2 self-start font-semibold text-primary transition-colors hover:text-primary/80 lg:self-end"
-            >
-              {catalogCta.label}
-              <ArrowUpRight
-                size={20}
-                strokeWidth={1.75}
-                className="transition-transform group-hover:-translate-y-px group-hover:translate-x-px"
-              />
-            </Link>
-          ) : null}
+          {catalogCta ? <SectionTextCta href={catalogCta.href}>{catalogCta.label}</SectionTextCta> : null}
         </div>
 
         <div className="relative z-10 grid grid-cols-1 gap-y-(--ms-gap) lg:grid-cols-2 lg:gap-x-(--ms-split) lg:gap-y-0 xl:gap-x-(--ms-split-lg)">
           <div
-            className={cn(
-              "media-switch__panel relative aspect-6/5 overflow-hidden rounded-(--radius) border border-border shadow-[0_24px_48px_-32px_rgb(0_87_184/0.2)] max-lg:order-1 lg:col-start-1 lg:row-start-1 lg:aspect-auto lg:h-full",
-              isContainPanel ? "bg-foreground" : "bg-muted",
+            className={mediaPlateClass(
+              "max-lg:order-1 lg:col-start-1 lg:row-start-1 lg:h-full",
             )}
           >
+            <div
+              className={cn(
+                "media-switch__panel relative aspect-6/5 overflow-hidden rounded-(--radius) border border-border max-lg:h-full lg:aspect-auto lg:h-full",
+                isContainPanel ? "bg-foreground" : "bg-muted",
+              )}
+            >
             {current.image ? (
               <div
                 key={active}
@@ -187,6 +181,7 @@ export function MediaSwitch({
               >
                 {current.description}
               </p>
+            </div>
             </div>
           </div>
 

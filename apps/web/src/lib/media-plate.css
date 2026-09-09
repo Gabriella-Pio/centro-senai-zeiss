@@ -1,0 +1,29 @@
+/* Segunda placa — encosto técnico, sem sombra.
+   Sombra desfoca e “levanta”; o offset ancora no plano. */
+
+.media-plate {
+  --plate-offset: 0.75rem;
+  position: relative;
+  isolation: isolate;
+  padding-right: var(--plate-offset);
+  padding-bottom: var(--plate-offset);
+}
+
+.media-plate::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: var(--plate-offset);
+  right: 0;
+  bottom: 0;
+  left: var(--plate-offset);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 8%, #ffffff);
+  border-radius: var(--radius);
+  pointer-events: none;
+}
+
+.media-plate > * {
+  position: relative;
+  z-index: 1;
+}

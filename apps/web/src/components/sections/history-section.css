@@ -1,0 +1,108 @@
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-stack);
+}
+
+.history-frame {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--section-stack);
+  align-items: start;
+}
+
+.history-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin: 0;
+  padding: 0 0 0 1.75rem;
+  list-style: none;
+  border-left: 1px solid var(--color-primary);
+}
+
+.history-facts__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.history-facts__item::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  left: calc(-1.75rem - 4px);
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--color-primary);
+  background: #ffffff;
+}
+
+.history-facts__index {
+  font-family: var(--font-mono);
+  font-size: var(--text-switch-tag);
+  letter-spacing: var(--tracking-switch-tag);
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.history-facts__value {
+  margin-top: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-display-md);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-display-tight);
+  color: var(--color-foreground);
+}
+
+.history-facts__value::after {
+  content: "";
+  display: block;
+  width: 1.5rem;
+  height: 1px;
+  margin-top: 0.8rem;
+  background: var(--color-primary);
+}
+
+.history-facts__label {
+  margin-top: 0.75rem;
+  max-width: 18rem;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  color: var(--color-muted-foreground);
+}
+
+.history-prose {
+  display: flex;
+  max-width: 38rem;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.15rem;
+}
+
+.history-prose p {
+  font-size: var(--text-lead);
+  line-height: var(--leading-lead);
+  font-weight: 300;
+  color: var(--color-muted-foreground);
+}
+
+@media (width >= 64rem) {
+  .history-frame {
+    grid-template-columns: minmax(16.5rem, 0.72fr) minmax(0, 1.28fr);
+    gap: var(--section-inline);
+    align-items: stretch;
+  }
+
+  .history-facts {
+    gap: 3.75rem;
+    padding-top: 0.2rem;
+  }
+
+  .history-prose {
+    max-width: 36rem;
+    padding-top: 0.35rem;
+  }
+}

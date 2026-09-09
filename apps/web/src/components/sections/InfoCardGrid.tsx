@@ -30,7 +30,16 @@ export function InfoCardGrid({ items, columns = 2 }: InfoCardGridProps) {
               <CardTitle className="type-card-title font-heading font-semibold">{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="type-caption whitespace-pre-line text-muted-foreground">{item.value}</p>
+              {item.href ? (
+                <a
+                  href={item.href}
+                  className="type-caption whitespace-pre-line text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {item.value}
+                </a>
+              ) : (
+                <p className="type-caption whitespace-pre-line text-muted-foreground">{item.value}</p>
+              )}
             </CardContent>
           </Card>
         );

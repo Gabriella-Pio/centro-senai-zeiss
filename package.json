@@ -9,6 +9,7 @@
     "dev:web": "npm run dev -w @cem/web",
     "dev:app": "npm run dev -w @cem/app",
     "dev:api": "npm run start:dev -w @cem/api",
-    "db:migrate": "npm run prisma:migrate -w @cem/api"
+    "db:migrate": "npm run prisma:migrate -w @cem/api",
+    "convert:heif": "npm run convert:heif -w @cem/web"
   }
 }

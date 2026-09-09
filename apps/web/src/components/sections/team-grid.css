@@ -1,0 +1,97 @@
+.team-grid__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-grid__item {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 16%, var(--color-border));
+  background: #ffffff;
+}
+
+.team-grid__portrait {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-primary) 6%, #ffffff);
+  background-image:
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground)),
+    linear-gradient(var(--color-foreground), var(--color-foreground));
+  background-size: 10px 1px, 1px 10px, 10px 1px, 1px 10px, 10px 1px, 1px 10px, 10px 1px, 1px 10px;
+  background-position:
+    top left, top left,
+    top right, top right,
+    bottom left, bottom left,
+    bottom right, bottom right;
+  background-repeat: no-repeat;
+}
+
+.team-grid__initials {
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+  color: color-mix(in srgb, var(--color-primary) 55%, var(--color-foreground));
+}
+
+.team-grid__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.8rem 0.85rem 0.95rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-primary) 12%, var(--color-border));
+}
+
+.team-grid__name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: -0.015em;
+  color: var(--color-foreground);
+}
+
+.team-grid__role {
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  color: var(--color-muted-foreground);
+}
+
+.team-grid__org {
+  margin-top: 0.15rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-switch-tag);
+  letter-spacing: var(--tracking-switch-tag);
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.team-grid__note {
+  margin-top: 0.35rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  font-style: italic;
+  line-height: var(--leading-caption);
+  color: var(--color-muted-foreground);
+}
+
+@media (width >= 48rem) {
+  .team-grid__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}

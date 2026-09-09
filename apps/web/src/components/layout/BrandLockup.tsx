@@ -22,7 +22,7 @@ export function BrandLockup({ variant = "nav", inverted = false }: BrandLockupPr
         height={95}
         unoptimized
         className={cn(
-          isNav ? "h-8 w-auto sm:h-9" : "h-8 w-auto max-w-full sm:h-9",
+          isNav ? "h-9 w-auto sm:h-10" : "h-8 w-auto max-w-full sm:h-9",
           inverted && "brightness-0 invert",
         )}
         priority={isNav}

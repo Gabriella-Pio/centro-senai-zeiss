@@ -2,12 +2,17 @@
 
 import { useEffect, useState, type RefObject } from "react";
 
-/** Cor de fundo da <section> que está atrás da navbar. */
+export type SectionBackdrop = {
+  color?: string;
+  onDark: boolean;
+};
+
+/** Cor e tom da superfície que está atrás da navbar. */
 export function useSectionBackdrop(
   headerRef: RefObject<HTMLElement | null>,
   key?: string,
-) {
-  const [color, setColor] = useState<string>();
+): SectionBackdrop {
+  const [state, setState] = useState<SectionBackdrop>({ onDark: false });
 
   useEffect(() => {
     let frame = 0;
@@ -19,11 +24,16 @@ export function useSectionBackdrop(
       if (header) header.style.pointerEvents = "none";
       const stack = document.elementsFromPoint(x, y);
       if (header) header.style.pointerEvents = "";
-      const section = stack.find(
-        (el): el is HTMLElement => el instanceof HTMLElement && el.tagName === "SECTION",
+      const surfaceEl = stack.find(
+        (el): el is HTMLElement => el instanceof HTMLElement && el.dataset.surface != null,
       );
-      const next = solidBackground(section ?? document.body);
-      setColor((prev) => (prev === next ? prev : next));
+      const next: SectionBackdrop = {
+        color: solidBackground(surfaceEl ?? document.body),
+        onDark: surfaceEl?.dataset.surface === "dark",
+      };
+      setState((prev) =>
+        prev.color === next.color && prev.onDark === next.onDark ? prev : next,
+      );
     };
 
     const onScroll = () => {
@@ -41,7 +51,7 @@ export function useSectionBackdrop(
     };
   }, [headerRef, key]);
 
-  return color;
+  return state;
 }
 
 let mixCanvas: HTMLCanvasElement | undefined;

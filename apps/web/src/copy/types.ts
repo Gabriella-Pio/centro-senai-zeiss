@@ -16,7 +16,20 @@ export type PartnerLogo = {
   logoAlt?: string;
   /** Logo horizontal — altura menor, largura maior. */
   wide?: boolean;
+  /** Linha auxiliar sob o logo ou o wordmark (ex.: unidade). */
+  caption?: string;
   href?: string;
+};
+
+export type TeamMember = {
+  name: string;
+  role: string;
+  /** Instituição ou unidade (ex.: FIEG, ZEISS). */
+  org?: string;
+  /** Linha curta sob o cargo (ex.: In memoriam). */
+  note?: string;
+  image?: string;
+  imageAlt?: string;
 };
 
 export type StatItem = {
@@ -27,6 +40,8 @@ export type StatItem = {
 export type FeatureItem = {
   title: string;
   description: string;
+  /** Dado em destaque no card (ex.: 0,9µm). */
+  value?: string;
   icon?: string;
   /** Foto de equipamento/peça, quando o laboratório autorizar. Sem arquivo, o bloco usa o ícone. */
   image?: string;
@@ -39,7 +54,7 @@ export type FeatureItem = {
   href?: string;
 };
 
-/** Setor industrial atendido — tile com foto e links para serviços relacionados. */
+/** Setor industrial atendido — tile com ícone e links para serviços relacionados. */
 export type SectorItem = FeatureItem & {
   id: string;
   relatedServices: string[];
@@ -71,6 +86,7 @@ export type InfoCardItem = {
   title: string;
   value: string;
   icon: string;
+  href?: string;
 };
 
 export type ServiceContent = {

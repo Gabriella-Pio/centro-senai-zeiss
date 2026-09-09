@@ -1,21 +1,13 @@
-import { Section } from "@/components/ui/Section";
-import { Container } from "@/components/ui/Container";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { InfoCardGrid } from "@/components/sections/InfoCardGrid";
-import { MapEmbed } from "@/components/sections/MapEmbed";
-import { contactCards, contactHeading } from "@/copy";
+import type { Metadata } from "next";
+import { ContactChannels } from "@/components/sections/ContactChannels";
+import { contactHeading } from "@/copy";
+
+export const metadata: Metadata = {
+  title: "Contato | Centro de Excelência em Metrologia SENAI ZEISS",
+  description:
+    "Endereço, telefone, e-mail e mapa do Centro de Excelência em Metrologia SENAI ZEISS na Faculdade SENAI Ítalo Bologna, em Goiânia.",
+};
 
 export default function ContactPage() {
-  return (
-    <Section variant="default" clearNav>
-      <Container className="flex flex-col gap-(--section-stack-lg)">
-        <SectionHeading {...contactHeading} />
-
-        <div className="grid grid-cols-1 gap-(--section-stack) lg:grid-cols-2">
-          <InfoCardGrid items={contactCards} />
-          <MapEmbed />
-        </div>
-      </Container>
-    </Section>
-  );
+  return <ContactChannels heading={contactHeading} />;
 }

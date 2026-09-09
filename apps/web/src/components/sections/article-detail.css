@@ -1,0 +1,105 @@
+.article-detail {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--section-stack);
+}
+
+.article-detail__copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.article-detail__back {
+  margin-bottom: 1.25rem;
+  font-size: var(--text-link);
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.article-detail__back:hover,
+.article-detail__back:focus-visible {
+  color: var(--color-foreground);
+}
+
+.article-detail__title {
+  margin-top: 1rem;
+  font-size: var(--text-display-sm);
+  line-height: var(--leading-display-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-foreground);
+}
+
+.article-detail__lead {
+  margin-top: 1.15rem;
+  max-width: 38rem;
+  font-size: var(--text-lead);
+  line-height: var(--leading-lead);
+  font-weight: 300;
+  color: var(--color-muted-foreground);
+}
+
+.article-detail__group {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  width: 100%;
+  max-width: 38rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+}
+
+.article-detail__group h2 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  font-weight: 500;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.article-detail__group ul,
+.article-detail__group p {
+  margin: 0.65rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-foreground);
+}
+
+.article-detail__group li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+.article-detail__group li + li {
+  margin-top: 0.45rem;
+}
+
+.article-detail__group li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--color-primary);
+}
+
+.article-detail__cta {
+  margin-top: 2rem;
+}
+
+@media (width >= 64rem) {
+  .article-detail {
+    grid-template-columns: minmax(20rem, 0.95fr) minmax(0, 1.05fr);
+    gap: var(--section-inline);
+    align-items: stretch;
+  }
+
+  .article-detail__photo {
+    min-height: 28rem;
+  }
+}

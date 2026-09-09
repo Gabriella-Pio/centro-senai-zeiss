@@ -1,15 +1,16 @@
 import Image from "next/image";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@cem/ui";
 import { publicAsset } from "@/lib/public-asset";
-import type { PartnerLogo } from "@/copy/types";
+import type { PartnerLogo, SectionCopy } from "@/copy/types";
 import "./logo-row.css";
 
 interface LogoRowProps {
-  title: string;
+  heading: SectionCopy;
   items: PartnerLogo[];
-  variant?: "default" | "muted" | "surface";
+  sectionKey?: string;
 }
 
 function PartnerLogoItem({ partner }: { partner: PartnerLogo }) {
@@ -24,10 +25,13 @@ function PartnerLogoItem({ partner }: { partner: PartnerLogo }) {
         (partner.wide || partner.logoSrc?.endsWith(".svg")) && "logo-row__logo--wide",
       )}
     />
-  ) : (
-    <span className="logo-row__text text-center font-semibold tracking-tight text-foreground">
-      {partner.name}
+  ) : partner.caption ? (
+    <span className="logo-row__lockup">
+      <span className="logo-row__lockup-kicker">SENAI</span>
+      <span className="logo-row__lockup-name">{partner.caption}</span>
     </span>
+  ) : (
+    <span className="logo-row__text">{partner.name}</span>
   );
 
   if (partner.href) {
@@ -37,22 +41,22 @@ function PartnerLogoItem({ partner }: { partner: PartnerLogo }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={partner.name}
-        className="inline-flex max-w-[11rem] items-center justify-center px-2 outline-none focus-visible:ring-1 focus-visible:ring-ring sm:max-w-[13rem]"
+        className="logo-row__item"
       >
         {content}
       </a>
     );
   }
 
-  return <span className="inline-flex items-center justify-center">{content}</span>;
+  return <span className="logo-row__item">{content}</span>;
 }
 
-export function LogoRow({ title, items, variant = "muted" }: LogoRowProps) {
+export function LogoRow({ heading, items, sectionKey = "partners" }: LogoRowProps) {
   return (
-    <Section sectionKey="partners" surface="muted" pattern="none" className="py-(--section-py)! md:py-(--section-py-lg)!">
-      <Container className="flex flex-col items-center gap-10">
-        <h3 className="type-meta font-bold uppercase text-muted-foreground">{title}</h3>
-        <div className="logo-row__grid grid w-full max-w-4xl grid-cols-2 items-center justify-items-center gap-x-8 gap-y-8 sm:grid-cols-4 sm:gap-x-10 sm:gap-y-10">
+    <Section sectionKey={sectionKey} surface="muted" pattern="none">
+      <Container className="flex flex-col gap-(--section-stack)">
+        <SectionHeading align="left" {...heading} />
+        <div className="logo-row__list">
           {items.map((partner) => (
             <PartnerLogoItem key={partner.name} partner={partner} />
           ))}

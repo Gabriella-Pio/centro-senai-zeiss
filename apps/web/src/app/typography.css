@@ -24,6 +24,12 @@
   font-size: var(--text-link);
 }
 
+.type-hero-subtitle {
+  font-size: var(--text-hero-subtitle);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
 .type-hero-lead {
   font-size: var(--text-hero-lead);
   line-height: var(--leading-lead);
