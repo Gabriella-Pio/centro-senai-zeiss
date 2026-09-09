@@ -136,57 +136,40 @@ export function MediaSwitch({
                 isContainPanel ? "bg-foreground" : "bg-muted",
               )}
             >
-            {current.image ? (
-              <div
-                key={active}
-                className={cn(
-                  "media-switch__photo-layer",
-                  !prefersReducedMotion && "media-switch__photo-enter",
-                )}
-              >
-                <Image
-                  src={publicAsset(current.image)}
-                  alt={current.imageAlt ?? current.title}
-                  fill
+              {current.image ? (
+                <div
+                  key={active}
                   className={cn(
-                    isContainPanel ? "object-contain p-5 sm:p-6" : mediaPhotoCoverClass,
+                    "media-switch__photo-layer",
+                    !prefersReducedMotion && "media-switch__photo-enter",
                   )}
-                  style={current.imagePosition ? { objectPosition: current.imagePosition } : undefined}
-                  sizes={mediaPhotoSizes.split}
-                />
-              </div>
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                {Icon && <Icon size={72} strokeWidth={1.25} className="text-primary" />}
-              </div>
-            )}
-            {current.tag ? (
-              <span className="media-switch__photo-tag absolute top-4 left-4 z-3 rounded-(--radius) border border-primary/25 bg-card/90 px-2.5 py-1 font-normal text-primary uppercase backdrop-blur-sm">
-                {current.tag}
-              </span>
-            ) : null}
-            <div
-              className={cn(
-                "media-switch__caption",
-                isContainPanel ? "media-switch__caption--contain" : "media-switch__caption--cover",
+                >
+                  <Image
+                    src={publicAsset(current.image)}
+                    alt={current.imageAlt ?? current.title}
+                    fill
+                    className={cn(
+                      isContainPanel ? "object-contain p-5 sm:p-6" : mediaPhotoCoverClass,
+                    )}
+                    style={current.imagePosition ? { objectPosition: current.imagePosition } : undefined}
+                    sizes={mediaPhotoSizes.split}
+                  />
+                </div>
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  {Icon && <Icon size={72} strokeWidth={1.25} className="text-primary" />}
+                </div>
               )}
-            >
-              <p
-                key={active}
-                className={cn(
-                  "media-switch__blurb line-clamp-3",
-                  isContainPanel ? "media-switch__blurb--contain" : "media-switch__blurb--cover",
-                  !prefersReducedMotion && "media-switch__blurb-enter",
-                )}
-              >
-                {current.description}
-              </p>
-            </div>
+              {current.tag ? (
+                <span className="media-switch__photo-tag absolute top-4 left-4 z-3 rounded-(--radius) border border-primary/25 bg-card/90 px-2.5 py-1 font-normal text-primary uppercase backdrop-blur-sm">
+                  {current.tag}
+                </span>
+              ) : null}
             </div>
           </div>
 
           <ul
-            className="media-switch__panel relative z-10 flex flex-col max-lg:order-2 lg:col-start-2 lg:row-start-1 lg:h-full"
+            className="media-switch__panel relative z-10 flex flex-col max-lg:order-2 lg:col-start-2 lg:row-start-1 lg:h-full lg:justify-center"
             onMouseLeave={() => setPaused(false)}
           >
             {items.map((item, index) => {
@@ -234,7 +217,7 @@ export function MediaSwitch({
                 <li
                   key={item.title}
                   className={cn(
-                    "relative flex flex-col border-b lg:min-h-0 lg:flex-1",
+                    "relative flex flex-col border-b",
                     isActive ? "border-transparent" : "border-border/60",
                   )}
                 >
@@ -245,23 +228,35 @@ export function MediaSwitch({
                       onMouseEnter={() => handleItemFocus(index)}
                       onFocus={() => handleItemFocus(index)}
                       className={cn(
-                        "flex min-h-13 w-full flex-1 touch-manipulation items-center justify-between gap-4 py-3.5 text-left outline-none transition-colors focus-visible:ring-1 focus-visible:ring-ring active:bg-muted/40 sm:min-h-14 lg:min-h-0 lg:py-(--ms-row-py)",
+                        "flex min-h-13 w-full touch-manipulation flex-col justify-center gap-2 py-3.5 text-left outline-none transition-colors focus-visible:ring-1 focus-visible:ring-ring active:bg-muted/40 sm:min-h-14 lg:py-(--ms-row-py)",
                         isActive && "text-foreground",
                       )}
                     >
-                      {titleBlock}
-                      <ArrowUpRight
-                        size={18}
-                        strokeWidth={1.75}
-                        className={cn(
-                          "shrink-0 transition-colors duration-300",
-                          isActive ? "text-primary" : "text-muted-foreground",
-                        )}
-                      />
+                      <span className="flex items-center justify-between gap-4">
+                        {titleBlock}
+                        <ArrowUpRight
+                          size={18}
+                          strokeWidth={1.75}
+                          className={cn(
+                            "shrink-0 transition-colors duration-300",
+                            isActive ? "text-primary" : "text-muted-foreground",
+                          )}
+                        />
+                      </span>
+                      {isActive && item.description ? (
+                        <p
+                          className={cn(
+                            "media-switch__item-blurb",
+                            !prefersReducedMotion && "media-switch__blurb-enter",
+                          )}
+                        >
+                          {item.description}
+                        </p>
+                      ) : null}
                     </Link>
                   ) : (
                     <div
-                      className="flex min-h-13 w-full flex-1 items-center sm:min-h-14 lg:min-h-0"
+                      className="flex min-h-13 w-full items-start sm:min-h-14"
                       onMouseEnter={() => handleItemFocus(index)}
                     >
                       <button
@@ -269,23 +264,35 @@ export function MediaSwitch({
                         aria-pressed={isActive}
                         onFocus={() => handleItemFocus(index)}
                         onClick={() => selectItem(index)}
-                        className="flex w-full touch-manipulation items-center gap-3 py-3.5 text-left outline-none focus-visible:ring-1 focus-visible:ring-ring active:bg-muted/40 sm:gap-4 lg:py-(--ms-row-py)"
+                        className="flex w-full touch-manipulation flex-col gap-2 py-3.5 text-left outline-none focus-visible:ring-1 focus-visible:ring-ring active:bg-muted/40 lg:py-(--ms-row-py)"
                       >
-                        <span className="min-w-0 flex-1">{titleBlock}</span>
-                        <span className="flex shrink-0 flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-4">
-                          {relatedServiceLink}
-                          {listTrailing === "number" ? (
-                            <span
-                              aria-hidden
-                              className={cn(
-                                "media-switch__item-index font-normal tabular-nums transition-colors duration-300",
-                                isActive ? "text-primary/80" : "text-muted-foreground/60",
-                              )}
-                            >
-                              {n}
-                            </span>
-                          ) : null}
+                        <span className="flex items-center gap-3 sm:gap-4">
+                          <span className="min-w-0 flex-1">{titleBlock}</span>
+                          <span className="flex shrink-0 flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-4">
+                            {relatedServiceLink}
+                            {listTrailing === "number" ? (
+                              <span
+                                aria-hidden
+                                className={cn(
+                                  "media-switch__item-index font-normal tabular-nums transition-colors duration-300",
+                                  isActive ? "text-primary/80" : "text-muted-foreground/60",
+                                )}
+                              >
+                                {n}
+                              </span>
+                            ) : null}
+                          </span>
                         </span>
+                        {isActive && item.description ? (
+                          <p
+                            className={cn(
+                              "media-switch__item-blurb",
+                              !prefersReducedMotion && "media-switch__blurb-enter",
+                            )}
+                          >
+                            {item.description}
+                          </p>
+                        ) : null}
                       </button>
                     </div>
                   )}
