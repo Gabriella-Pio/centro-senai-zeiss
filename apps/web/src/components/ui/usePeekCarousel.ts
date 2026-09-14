@@ -3,10 +3,29 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 const PEEK_DESKTOP = 0.22;
-const PEEK_MOBILE = 0.48;
+const PEEK_SIDE_FULL = 1;
+const PEEK_SIDE_MID = 0.24;
+const PEEK_SIDE_MIN = 0.1;
 const EASE = "transform .55s cubic-bezier(0.45, 0, 0.15, 1)";
-const MOBILE_MQ = "(max-width: 768px)";
-const TWO_CARD_MQ = "(max-width: 64rem)";
+const TRIPLE_MQ = "(min-width: 64rem)";
+const PEEK_RANGE_MAX = 1024;
+const PEEK_RANGE_MID = 700;
+const PEEK_RANGE_MIN = 360;
+
+function sidePeek(viewportWidth: number) {
+  if (viewportWidth >= PEEK_RANGE_MID) {
+    const t = (PEEK_RANGE_MAX - viewportWidth) / (PEEK_RANGE_MAX - PEEK_RANGE_MID);
+    const clamped = Math.min(1, Math.max(0, t));
+    return PEEK_SIDE_FULL + clamped * (PEEK_SIDE_MID - PEEK_SIDE_FULL);
+  }
+  const t = (PEEK_RANGE_MID - viewportWidth) / (PEEK_RANGE_MID - PEEK_RANGE_MIN);
+  const clamped = Math.min(1, Math.max(0, t));
+  return PEEK_SIDE_MID + clamped * (PEEK_SIDE_MIN - PEEK_SIDE_MID);
+}
+
+function focusOffset(focusCount: number) {
+  return focusCount % 2 === 0 ? 0 : Math.floor((focusCount - 1) / 2);
+}
 
 export function peekSlides<T>(items: T[], keyOf: (item: T, index: number) => string) {
   return [0, 1, 2].flatMap((copy) =>
@@ -20,8 +39,7 @@ export function peekSlides<T>(items: T[], keyOf: (item: T, index: number) => str
 }
 
 function centeredPos(count: number, index: number, focusCount: number) {
-  const centerOffset = focusCount % 2 === 0 ? 0 : Math.floor((focusCount - 1) / 2);
-  return count + index - centerOffset;
+  return count + index - focusOffset(focusCount);
 }
 
 interface UsePeekCarouselOptions {
@@ -57,24 +75,26 @@ export function usePeekCarousel({
   const startPos = getStartPos(count, initialIndex, centerInitial);
   const posRef = useRef(startPos);
   const pausedRef = useRef(false);
+  const measuredRef = useRef(false);
   const metricsRef = useRef({ step: 0, cardW: 0, focusCount: 3, peek: PEEK_DESKTOP });
   const [pos, setPos] = useState(startPos);
   const [paused, setPaused] = useState(false);
   const [focusCount, setFocusCount] = useState(3);
+  const [peek, setPeek] = useState(PEEK_DESKTOP);
 
   const measure = useCallback(() => {
     const viewport = viewportRef.current;
     const track = trackRef.current;
     if (!viewport || !track) return;
 
-    const mobile = window.matchMedia(MOBILE_MQ).matches;
-    const twoCards = window.matchMedia(TWO_CARD_MQ).matches;
-    const nextFocus = mobile ? 1 : twoCards ? 2 : 3;
-    const peek = mobile ? PEEK_MOBILE : PEEK_DESKTOP;
+    const triple = window.matchMedia(TRIPLE_MQ).matches;
+    const nextFocus = triple ? 3 : 1;
+    const nextPeek = triple ? PEEK_DESKTOP : sidePeek(window.innerWidth);
     const gap =
       Number.parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 12;
     const visible = nextFocus + 2;
-    const width = (viewport.clientWidth - (visible - 1) * gap) / (nextFocus + 2 * peek);
+    const width =
+      (viewport.clientWidth - Math.max(visible - 1, 0) * gap) / (nextFocus + 2 * nextPeek);
 
     for (const card of track.children) {
       (card as HTMLElement).style.flex = `0 0 ${width}px`;
@@ -84,8 +104,16 @@ export function usePeekCarousel({
     const second = track.children[1] as HTMLElement | undefined;
     const step = first && second ? second.offsetLeft - first.offsetLeft : width + gap;
     const cardW = first ? first.getBoundingClientRect().width : width;
-    metricsRef.current = { step, cardW, focusCount: nextFocus, peek };
+    const prevFocus = metricsRef.current.focusCount;
+    if (measuredRef.current && prevFocus !== nextFocus) {
+      const shifted = posRef.current + focusOffset(prevFocus) - focusOffset(nextFocus);
+      posRef.current = shifted;
+      setPos(shifted);
+    }
+    measuredRef.current = true;
+    metricsRef.current = { step, cardW, focusCount: nextFocus, peek: nextPeek };
     setFocusCount(nextFocus);
+    setPeek(nextPeek);
   }, []);
 
   const apply = useCallback(
@@ -130,7 +158,7 @@ export function usePeekCarousel({
       if (count < 2) return;
       measure();
       const n = metricsRef.current.focusCount;
-      const offset = n % 2 === 0 ? 0 : Math.floor((n - 1) / 2);
+      const offset = focusOffset(n);
       let next = posRef.current;
       if (next >= 2 * count) snap(next - count);
       if (next < count) snap(next + count);
@@ -196,8 +224,8 @@ export function usePeekCarousel({
   }, [autoplay, count, intervalMs, paused, pos, reduceMotion]);
 
   const leftPeek = pos - 1;
-  const centerOffset = focusCount % 2 === 0 ? 0 : Math.floor((focusCount - 1) / 2);
-  const centerRel = focusCount % 2 === 0 ? -1 : 1 + centerOffset;
+  const centerOffset = focusOffset(focusCount);
+  const centerRel = 1 + centerOffset;
   const centerIndex = (((pos + centerOffset) % count) + count) % count;
 
   const slideState = useCallback(
@@ -226,11 +254,12 @@ export function usePeekCarousel({
       intervalMs,
       setPaused,
       focusCount,
+      peek,
       centerIndex,
       go,
       goTo,
       slideState,
     }),
-    [centerIndex, focusCount, go, goTo, intervalMs, playing, pos, paused, slideState],
+    [centerIndex, focusCount, go, goTo, intervalMs, peek, playing, pos, paused, slideState],
   );
 }

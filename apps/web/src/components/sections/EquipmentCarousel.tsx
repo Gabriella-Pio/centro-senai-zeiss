@@ -11,6 +11,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { peekSlides, usePeekCarousel } from "@/components/ui/usePeekCarousel";
 import { publicAsset } from "@/lib/public-asset";
+import { mediaPhotoSizes } from "@/lib/media-frame";
 import { ServiceChips, chipForServiceHref } from "@/components/ui/ServiceChips";
 import { equipmentCard } from "@/copy/equipment";
 import type { CtaCopy, FeatureItem, SectionCopy } from "@/copy/types";
@@ -60,6 +61,7 @@ export function EquipmentCarousel({
     go,
     goTo,
     slideState,
+    focusCount,
   } = usePeekCarousel({ count, reduceMotion: reduce });
   const slides = useMemo(() => peekSlides(items, (item) => item.title), [items]);
 
@@ -87,6 +89,7 @@ export function EquipmentCarousel({
       <div
         ref={stageRef}
         className="equip-stage"
+        data-focus={focusCount}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onFocusCapture={() => setPaused(true)}
@@ -201,6 +204,7 @@ function EquipCardMedia({
             alt={decorative ? "" : (item.imageAlt ?? item.title)}
             width={640}
             height={480}
+            sizes={mediaPhotoSizes.equipment}
           />
         ) : null}
       </div>

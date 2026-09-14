@@ -14,6 +14,7 @@
 }
 
 .equip-frame {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -58,7 +59,7 @@
 
 .equip-track {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 1.5rem;
   width: max-content;
   will-change: transform;
@@ -98,9 +99,19 @@
 .equip-card.is-center {
   --equip-fill: #ffffff;
   z-index: 2;
-  transform: scale(1.07);
   border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-border));
   background: #ffffff;
+}
+
+/* Tablet/celular: um nítido + dois com blur. Sem zoom abaixo de 48rem — o do meio já ganha largura. */
+.equip-stage[data-focus="1"] .equip-card.is-center {
+  transform: scale(1.07);
+}
+
+@media (width < 48rem) {
+  .equip-stage[data-focus="1"] .equip-card.is-center {
+    transform: none;
+  }
 }
 
 .equip-card.is-peek {
@@ -156,6 +167,7 @@
   font-weight: 600;
   font-size: var(--text-card-title);
   letter-spacing: -0.02em;
+  min-height: 2.3em;
 }
 
 .equip-spec {
@@ -249,15 +261,60 @@
   .equip-stage {
     padding: 0 0.75rem;
   }
+}
+
+/* Abaixo de 700px: setas sobre o tiquinho, miolo mais compacto, laterais sem blur. */
+@media (width < 43.75rem) {
+  .equip-frame {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+  }
 
   .equip-viewport {
-    mask-image: linear-gradient(
-      90deg,
-      transparent 0,
-      #000 1.5rem,
-      #000 calc(100% - 1.5rem),
-      transparent 100%
-    );
+    grid-column: 1;
+  }
+
+  .equip-arrow {
+    position: absolute;
+    z-index: 4;
+    top: 50%;
+    margin-top: 0;
+    translate: 0 -50%;
+  }
+
+  .equip-arrow--prev {
+    grid-column: 1;
+    left: 0.2rem;
+  }
+
+  .equip-arrow--next {
+    grid-column: 1;
+    right: 0.2rem;
+  }
+
+  .equip-card.is-peek {
+    filter: none;
+    opacity: 0.38;
+  }
+
+  .equip-card-img {
+    padding: 1rem 0.9rem;
+  }
+
+  .equip-card-body {
+    padding: 1.05rem 1.1rem 1.15rem;
+  }
+
+  .equip-name {
+    font-size: 1.0625rem;
+  }
+
+  .equip-card .service-chips {
+    padding-top: 0.5rem;
+  }
+
+  .equip-card .service-chips__chip {
+    padding: 0.22rem 0.4rem 0.22rem 0.45rem;
   }
 }
 
