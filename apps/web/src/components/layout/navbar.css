@@ -276,18 +276,33 @@
   color: #f1f5f9 !important;
 }
 
-/* Placa própria: o globo fica sobre a foto do hero, não sobre o cream amostrado no centro. */
-.site-header[data-on-dark] .site-nav-lang {
+/* Sobre a foto do hero: placa cream para o globo não se perder na imagem. */
+.site-header[data-on-dark]:not([data-solid]) .site-nav-lang {
   background-color: var(--color-background);
   color: var(--color-foreground);
   border-color: var(--color-border);
 }
 
-.site-header[data-on-dark] .site-nav-lang:hover,
-.site-header[data-on-dark] .site-nav-lang:focus-visible,
-.site-header[data-on-dark] .site-nav-lang[aria-expanded="true"] {
+.site-header[data-on-dark]:not([data-solid]) .site-nav-lang:hover,
+.site-header[data-on-dark]:not([data-solid]) .site-nav-lang:focus-visible,
+.site-header[data-on-dark]:not([data-solid]) .site-nav-lang[aria-expanded="true"] {
   background-color: var(--color-muted);
   color: var(--color-foreground);
+}
+
+/* Barra já é navy — o idioma acompanha o sanduíche, sem placa cream. */
+.site-header[data-on-dark][data-solid] .site-nav-lang {
+  background-color: transparent;
+  color: #f1f5f9;
+  border-color: rgba(241, 245, 249, 0.22);
+}
+
+.site-header[data-on-dark][data-solid] .site-nav-lang:hover,
+.site-header[data-on-dark][data-solid] .site-nav-lang:focus-visible,
+.site-header[data-on-dark][data-solid] .site-nav-lang[aria-expanded="true"] {
+  background-color: rgba(241, 245, 249, 0.12);
+  color: #f8fafc;
+  border-color: rgba(241, 245, 249, 0.34);
 }
 
 @media (width < 40rem) {

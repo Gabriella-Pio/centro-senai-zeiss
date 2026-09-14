@@ -3,7 +3,7 @@
 
 .diff-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   margin-top: var(--section-stack);
   border-top: 1px solid var(--color-border);
 }
@@ -13,11 +13,60 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 1.35rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid var(--color-border);
 }
 
-.diff-item:last-child {
+.diff-item:nth-child(even) {
+  padding-right: 1.1rem;
+  border-right: 1px solid var(--color-border);
+}
+
+.diff-item:nth-child(odd) {
+  padding-left: 1.1rem;
+}
+
+.diff-copy {
+  display: contents;
+}
+
+.diff-item:first-child {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 0;
+  padding: 1.75rem 0;
+  border-right: none;
+}
+
+.diff-item:first-child .diff-icon-bg {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.diff-item:first-child .diff-val {
+  grid-column: 1;
+  grid-row: 1;
+  padding-right: 1.1rem;
+  border-right: 1px solid var(--color-border);
+  font-size: clamp(2.5rem, 1.8rem + 3.2vw, 3.25rem);
+}
+
+.diff-item:first-child .diff-copy {
+  display: flex;
+  flex-direction: column;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  padding-left: 1.1rem;
+}
+
+.diff-item:first-child .diff-desc {
+  max-width: none;
+}
+
+.diff-item:nth-last-child(-n + 2) {
   border-bottom: none;
 }
 
@@ -25,10 +74,10 @@
   position: absolute;
   z-index: 0;
   pointer-events: none;
-  right: -28%;
+  right: -32%;
   bottom: -22%;
-  width: 13rem;
-  height: 13rem;
+  width: 9.5rem;
+  height: 9.5rem;
   color: var(--color-primary);
   opacity: 0.16;
   filter: blur(8px);
@@ -85,7 +134,9 @@
     grid-template-columns: repeat(5, 1fr);
   }
 
-  .diff-item {
+  .diff-item,
+  .diff-item:nth-child(odd),
+  .diff-item:nth-child(even) {
     padding: 2.25rem 1.6rem 2.35rem 0;
     border-right: 1px solid var(--color-border);
     border-bottom: none;
@@ -95,9 +146,51 @@
     padding-left: 1.6rem;
   }
 
+  .diff-item:first-child {
+    display: flex;
+    grid-column: auto;
+    grid-template-columns: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 2.25rem 1.6rem 2.35rem 0;
+  }
+
+  .diff-item:first-child .diff-copy {
+    display: contents;
+    padding-left: 0;
+  }
+
+  .diff-item:first-child .diff-icon-bg {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .diff-item:first-child .diff-val {
+    grid-column: auto;
+    grid-row: auto;
+    padding-right: 0;
+    border-right: none;
+    font-size: clamp(2.125rem, 1.7rem + 1.5vw, 2.75rem);
+  }
+
+  .diff-item:first-child .diff-desc {
+    max-width: 16rem;
+  }
+
+  .diff-item:nth-last-child(-n + 2) {
+    border-bottom: none;
+  }
+
   .diff-item:last-child {
     border-right: none;
     padding-right: 0;
+  }
+
+  .diff-icon-bg {
+    right: -28%;
+    width: 13rem;
+    height: 13rem;
   }
 }
 

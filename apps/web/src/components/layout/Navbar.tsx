@@ -82,6 +82,7 @@ export default function Navbar() {
         hidden ? "-translate-y-full" : "translate-y-0",
       )}
       data-on-dark={inverted ? "" : undefined}
+      data-solid={solid ? "" : undefined}
       style={!mobileOpen && solid && backdrop ? { backgroundColor: backdrop } : undefined}
     >
       <div className="site-header-bar flex h-(--nav-height) items-center justify-between">

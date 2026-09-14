@@ -34,8 +34,10 @@ function DiffCard({ item }: { item: FeatureItem }) {
         <Icon className="diff-icon-bg" strokeWidth={1.15} aria-hidden />
       ) : null}
       {item.value ? <p className="diff-val">{item.value}</p> : null}
-      <h3 className="diff-label">{item.title}</h3>
-      <p className="diff-desc">{item.description}</p>
+      <div className="diff-copy">
+        <h3 className="diff-label">{item.title}</h3>
+        <p className="diff-desc">{item.description}</p>
+      </div>
     </article>
   );
 }
