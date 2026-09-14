@@ -11,3 +11,28 @@
     transparent 100%
   );
 }
+
+/* Abaixo de lg: foto no fluxo, recuada das duas laterais, placa como o resto do site. */
+.hero-photo-mobile {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 1.25rem;
+  margin-inline: 1.5rem;
+}
+
+@media (min-width: 40rem) {
+  .hero-photo-mobile {
+    margin-bottom: 1.5rem;
+    margin-inline: 2rem;
+  }
+}
+
+.hero-photo-mobile__frame {
+  aspect-ratio: 16 / 9;
+}
+
+@media (min-width: 40rem) {
+  .hero-photo-mobile__frame {
+    aspect-ratio: 2 / 1;
+  }
+}

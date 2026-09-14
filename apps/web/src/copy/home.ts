@@ -21,7 +21,7 @@ export const labIntro = {
   title: 'Tecnologia ZEISS e equipe SENAI, em Goiânia',
   body: 'Funcionamos na Faculdade SENAI Ítalo Bologna. Aqui estão as máquinas do parque, as salas climatizadas e a equipe técnica do SENAI.\n\nAtendemos indústrias de Goiás e de outros estados na validação dimensional, análise de falhas, reconstrução CAD, inspeção não destrutiva e prototipação 3D — o mesmo rigor que qualidade, manutenção e desenvolvimento de produto exigem.',
   image: {
-    src: '/lab/info.jpeg',
+    src: '/lab/lab-int-2.jpeg',
     alt: 'Vista do laboratório do Centro de Excelência em Metrologia SENAI ZEISS, com a sala de medição ao fundo.',
   },
   cta: { label: 'Conheça o laboratório', href: '/institutional' },

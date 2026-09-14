@@ -11,6 +11,7 @@ import { HeroPhotoBackground } from "@/components/sections/HeroPhotoBackground";
 import { cn } from "@cem/ui";
 import { mediaFrameClass, mediaPhotoCoverClass, mediaPhotoSizes, mediaPlateClass } from "@/lib/media-frame";
 import { publicAsset } from "@/lib/public-asset";
+import "./hero-photo.css";
 import type { HeroPhotoBlend } from "@/components/sections/hero-photo-blends";
 import type { CtaCopy } from "@/copy/types";
 
@@ -78,15 +79,10 @@ export function Hero({
         />
       ) : null}
 
-      <Container
-        className={cn(
-          "relative z-10",
-          image && "lg:grid lg:min-h-[calc(100svh-var(--nav-height)-3.5rem-var(--section-after-hero-lg))] lg:grid-cols-2 lg:items-center",
-        )}
-      >
-        {image ? (
-          <div className={mediaPlateClass("mb-4 sm:mb-6 lg:hidden")}>
-            <div className={mediaFrameClass("relative aspect-16/9 sm:aspect-3/2")}>
+      {image ? (
+        <div className="hero-photo-mobile lg:hidden">
+          <div className={mediaPlateClass()}>
+            <div className={mediaFrameClass("hero-photo-mobile__frame relative")}>
               <Image
                 src={publicAsset(image.src)}
                 alt={image.alt}
@@ -98,7 +94,15 @@ export function Hero({
               />
             </div>
           </div>
-        ) : null}
+        </div>
+      ) : null}
+
+      <Container
+        className={cn(
+          "relative z-10",
+          image && "lg:grid lg:min-h-[calc(100svh-var(--nav-height)-3.5rem-var(--section-after-hero-lg))] lg:grid-cols-2 lg:items-center",
+        )}
+      >
 
         <div className="max-w-2xl text-left">
           <Eyebrow className="max-w-[min(100%,18rem)] text-balance sm:max-w-none">{eyebrow}</Eyebrow>

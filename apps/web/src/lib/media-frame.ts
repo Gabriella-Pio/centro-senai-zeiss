@@ -21,5 +21,6 @@ export const mediaPhotoSizes = {
   heroDesktop: "(min-width: 1024px) 62vw, 0px",
   heroMobile: "100vw",
   split: "(min-width: 1024px) 50vw, 100vw",
+  splitDesktop: "(min-width: 1024px) 50vw, 0px",
   drawer: "36rem",
 } as const;

@@ -31,7 +31,7 @@ export function LabIntro({
   return (
     <Section sectionKey={sectionKey} surface={surface} pattern="none">
       <Container className="grid grid-cols-1 gap-(--section-stack) lg:grid-cols-2 lg:items-stretch lg:gap-x-(--section-inline) xl:gap-x-(--section-inline-lg)">
-        <div className={mediaPlateClass("min-h-0 lg:h-full")}>
+        <div className={mediaPlateClass("hidden min-h-0 lg:block lg:h-full")}>
           <div className={mediaFrameClass("relative aspect-4/3 min-h-0 lg:aspect-auto lg:h-full")}>
             <Image
               src={publicAsset(image.src)}
@@ -39,7 +39,7 @@ export function LabIntro({
               fill
               className={mediaPhotoCoverClass}
               style={{ objectPosition: image.objectPosition ?? "50% 42%" }}
-              sizes={mediaPhotoSizes.split}
+              sizes={mediaPhotoSizes.splitDesktop}
             />
           </div>
         </div>
