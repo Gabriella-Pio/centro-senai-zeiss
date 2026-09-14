@@ -3,8 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronDown } from "lucide-react";
-import { Button, cn } from "@cem/ui";
+import { ChevronDown } from "lucide-react";
+import { Button, cn, Sheet, SheetContent, SheetTitle } from "@cem/ui";
 import { BrandLockup } from "@/components/layout/BrandLockup";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { NavTray, navTrayRowClass } from "@/components/layout/NavTray";
@@ -42,6 +42,15 @@ export default function Navbar() {
 
   useEffect(() => () => window.clearTimeout(trayTimer.current), []);
 
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 90rem)");
+    const close = () => {
+      if (mq.matches) setMobileOpen(false);
+    };
+    mq.addEventListener("change", close);
+    return () => mq.removeEventListener("change", close);
+  }, []);
+
   const openServicesTray = () => {
     window.clearTimeout(trayTimer.current);
     trayTimer.current = window.setTimeout(() => setOpenTray("services"), 160);
@@ -57,8 +66,14 @@ export default function Navbar() {
     setOpenTray(next ? "languages" : null);
   };
 
+  const setMenuOpen = (open: boolean) => {
+    setOpenTray(null);
+    setMobileOpen(open);
+  };
+
   return (
-    <header
+    <>
+      <header
       ref={headerRef}
       className={cn(
         "site-header fixed top-0 right-0 left-0 z-50",
@@ -74,7 +89,7 @@ export default function Navbar() {
           <BrandLockup variant="nav" inverted={inverted} />
         </div>
 
-        <nav className="site-header-nav hidden items-center gap-8 lg:flex">
+        <nav className="site-header-nav items-center gap-8">
           <Link
             href={nav.home.href}
             aria-current={navPathActive(pathname, nav.home.href) ? "page" : undefined}
@@ -166,96 +181,128 @@ export default function Navbar() {
         </nav>
 
         <div className="site-header-actions flex items-center gap-3">
-          <div className="hidden lg:block">
+          <div className="site-header-cta">
             <Button size="lg" render={<Link href={nav.cta.href} />} className="h-11 px-6 text-base">
               {nav.cta.label}
             </Button>
           </div>
           <LanguageSwitch open={tray === "languages"} onOpenChange={setLanguageOpen} />
           <button
-            className="site-nav-toggle p-2 text-foreground/80 hover:text-foreground lg:hidden"
-            onClick={() => {
-              setOpenTray(null);
-              setMobileOpen(!mobileOpen);
-            }}
+            type="button"
+            className="site-nav-toggle p-2 text-foreground/80 hover:text-foreground"
+            onClick={() => setMenuOpen(!mobileOpen)}
+            aria-expanded={mobileOpen}
+            aria-controls="site-nav-drawer"
             aria-label={mobileOpen ? nav.closeMenu : nav.openMenu}
           >
-            {mobileOpen ? <X size={26} /> : <Menu size={26} />}
+            <span className="site-nav-toggle__icon" aria-hidden>
+              <span className="site-nav-toggle__bar" />
+              <span className="site-nav-toggle__bar" />
+              <span className="site-nav-toggle__bar" />
+            </span>
           </button>
         </div>
       </div>
+    </header>
 
-      {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-background px-6 py-6 flex flex-col gap-2 animate-in fade-in-0 slide-in-from-top-2 duration-200 motion-reduce:animate-none">
-          <Link
-            href={nav.home.href}
-            onClick={() => setMobileOpen(false)}
-            aria-current={navPathActive(pathname, nav.home.href) ? "page" : undefined}
-            className={cn(
-              "px-3 py-2.5 text-base font-medium hover:text-foreground",
-              navPathActive(pathname, nav.home.href) ? "text-primary" : "text-foreground/70",
-            )}
-          >
-            {nav.home.label}
-          </Link>
-          {navTextLinks.map((link) => (
+      <Sheet open={mobileOpen} onOpenChange={setMenuOpen}>
+        <SheetContent
+          id="site-nav-drawer"
+          side="right"
+          showCloseButton={false}
+          overlayClassName="site-nav-scrim z-40 bg-foreground/40 supports-backdrop-filter:backdrop-blur-[16px]"
+          className="site-nav-sheet"
+        >
+          <SheetTitle className="sr-only">{nav.menuLabel}</SheetTitle>
+          <nav className="site-nav-sheet__body" aria-label={nav.menuLabel}>
             <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              aria-current={navPathActive(pathname, link.href) ? "page" : undefined}
+              href={nav.home.href}
+              onClick={() => setMenuOpen(false)}
+              aria-current={navPathActive(pathname, nav.home.href) ? "page" : undefined}
               className={cn(
                 "px-3 py-2.5 text-base font-medium hover:text-foreground",
-                navPathActive(pathname, link.href) ? "text-primary" : "text-foreground/70",
+                navPathActive(pathname, nav.home.href) ? "text-primary" : "text-foreground/70",
               )}
             >
-              {link.label}
+              {nav.home.label}
             </Link>
-          ))}
-          <Link
-            href={nav.contactCta.href}
-            onClick={() => setMobileOpen(false)}
-            aria-current={navPathActive(pathname, nav.contactCta.href) ? "page" : undefined}
-            className={cn(
-              "px-3 py-2.5 text-base font-medium hover:text-foreground",
-              navPathActive(pathname, nav.contactCta.href) ? "text-primary" : "text-foreground/70",
-            )}
-          >
-            {nav.contactCta.label}
-          </Link>
-          <div className="h-px bg-border my-2" />
-          <p className="px-3 pb-1 font-medium uppercase tracking-[0.12em] text-primary type-meta">
-            {nav.servicesLabel}
-          </p>
-          <Link
-            href={nav.servicesHref}
-            onClick={() => setMobileOpen(false)}
-            aria-current={pathname === nav.servicesHref ? "page" : undefined}
-            className="px-3 py-2.5 text-base font-medium text-foreground/70 hover:text-foreground"
-          >
-            {nav.servicesAllLabel}
-          </Link>
-          {services.map((s) => (
+            {navTextLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                aria-current={navPathActive(pathname, link.href) ? "page" : undefined}
+                className={cn(
+                  "px-3 py-2.5 text-base font-medium hover:text-foreground",
+                  navPathActive(pathname, link.href) ? "text-primary" : "text-foreground/70",
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
             <Link
-              key={s.id}
-              href={`/services/${s.id}`}
-              onClick={() => setMobileOpen(false)}
-              className="px-3 py-2.5 text-base text-foreground/70 hover:text-foreground"
+              href={nav.contactCta.href}
+              onClick={() => setMenuOpen(false)}
+              aria-current={navPathActive(pathname, nav.contactCta.href) ? "page" : undefined}
+              className={cn(
+                "px-3 py-2.5 text-base font-medium hover:text-foreground",
+                navPathActive(pathname, nav.contactCta.href) ? "text-primary" : "text-foreground/70",
+              )}
             >
-              {s.label}
+              {nav.contactCta.label}
             </Link>
-          ))}
-          <div className="flex flex-col gap-2 pt-4">
+            <div className="site-nav-sheet__catalog">
+              <p className="site-nav-sheet__kicker type-meta font-medium text-primary uppercase">
+                {nav.servicesLabel}
+              </p>
+              <Link
+                href={nav.servicesHref}
+                onClick={() => setMenuOpen(false)}
+                aria-current={pathname === nav.servicesHref ? "page" : undefined}
+                className={cn(
+                  "site-nav-sheet__all",
+                  pathname === nav.servicesHref && "site-nav-sheet__all--current",
+                )}
+              >
+                {nav.servicesAllLabel}
+              </Link>
+              <ol className="site-nav-sheet__index">
+                {services.map((s, index) => {
+                  const href = `/services/${s.id}`;
+                  const current = pathname === href;
+                  return (
+                    <li key={s.id}>
+                      <Link
+                        href={href}
+                        onClick={() => setMenuOpen(false)}
+                        aria-current={current ? "page" : undefined}
+                        className={cn(
+                          "site-nav-sheet__row",
+                          current && "site-nav-sheet__row--current",
+                        )}
+                      >
+                        <span className="site-nav-sheet__num" aria-hidden>
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span>{s.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </nav>
+          <div className="site-nav-sheet__cta">
             <Button
               render={<Link href={nav.cta.href} />}
-              onClick={() => setMobileOpen(false)}
-              className="w-full h-12 text-base"
+              onClick={() => setMenuOpen(false)}
+              className="h-12 w-full text-base"
             >
               {nav.cta.label}
             </Button>
           </div>
-        </div>
-      )}
-    </header>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

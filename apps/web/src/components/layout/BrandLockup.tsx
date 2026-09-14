@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@cem/ui";
 import { brand } from "@/copy/site";
+import "./brand-lockup.css";
 
 type BrandLockupProps = {
   /** "nav" é um pouco maior; "footer" compacto. */
@@ -14,17 +15,18 @@ export function BrandLockup({ variant = "nav", inverted = false }: BrandLockupPr
   const isNav = variant === "nav";
 
   return (
-    <Link href="/" aria-label={brand.ariaLabel} className="flex min-w-0 shrink-0 items-center">
+    <Link
+      href="/"
+      aria-label={brand.ariaLabel}
+      className={cn("brand-lockup", isNav ? "brand-lockup--nav" : "brand-lockup--footer")}
+    >
       <Image
         src="/brand/logo-senai.png"
         alt=""
-        width={1024}
-        height={95}
+        width={4692}
+        height={436}
         unoptimized
-        className={cn(
-          isNav ? "h-9 w-auto sm:h-10" : "h-8 w-auto max-w-full sm:h-9",
-          inverted && "brightness-0 invert",
-        )}
+        className={cn("brand-lockup__mark", inverted && "brightness-0 invert")}
         priority={isNav}
       />
     </Link>

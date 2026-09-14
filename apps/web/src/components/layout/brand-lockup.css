@@ -1,0 +1,22 @@
+.brand-lockup {
+  display: block;
+  max-width: 100%;
+}
+
+.brand-lockup__mark {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+  aspect-ratio: 4692 / 436;
+}
+
+.brand-lockup--nav .brand-lockup__mark {
+  max-height: 2.5rem;
+}
+
+.brand-lockup--footer .brand-lockup__mark {
+  max-height: 2.25rem;
+}

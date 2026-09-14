@@ -34,6 +34,7 @@ export const nav = {
   contactCta: { label: "Contato", href: "/contact" },
   openMenu: "Abrir menu",
   closeMenu: "Fechar menu",
+  menuLabel: "Menu",
   languages: {
     ariaLabel: "Idioma",
     defaultCode: "pt",

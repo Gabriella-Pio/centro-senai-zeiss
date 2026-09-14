@@ -16,7 +16,7 @@ interface LanguageSwitchProps {
 /** Só o controle visual. A troca real de idioma entra quando o copy estiver fechado. */
 export function LanguageSwitch({
   className,
-  align = "end",
+  align = "start",
   open: openProp,
   onOpenChange,
 }: LanguageSwitchProps) {
@@ -65,16 +65,21 @@ export function LanguageSwitch({
         )}
       >
         <Globe size={16} strokeWidth={1.75} />
-        <span className="font-mono text-xs uppercase tracking-wide">{current?.code ?? code}</span>
+        <span className="site-nav-lang-code font-mono text-xs uppercase tracking-wide">
+          {current?.code ?? code}
+        </span>
         <ChevronDown
           size={14}
           strokeWidth={1.75}
-          className={cn("transition-transform duration-200", open && "rotate-180")}
+          className={cn(
+            "site-nav-lang-chevron transition-transform duration-200",
+            open && "rotate-180",
+          )}
         />
       </button>
 
       {open && (
-        <NavTray align={align} role="listbox" aria-label={nav.languages.ariaLabel} className="w-44">
+        <NavTray align={align} role="listbox" aria-label={nav.languages.ariaLabel} className="w-40">
           {nav.languages.options.map((option) => {
             const selected = option.code === code;
             return (
