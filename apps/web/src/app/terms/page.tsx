@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { ProseSection } from "@/components/sections/ProseSection";
+import { LegalDoc } from "@/components/sections/LegalDoc";
 import { legalPages } from "@/copy";
 
 export const metadata: Metadata = {
   title: "Termos de Uso | Centro de Excelência em Metrologia SENAI ZEISS",
+  description: legalPages.terms.description,
 };
 
 export default function TermsPage() {
-  return <ProseSection clearNav title={legalPages.terms.title} paragraphs={legalPages.terms.paragraphs} />;
+  return <LegalDoc sectionKey="legal-terms" {...legalPages.terms} />;
 }

@@ -45,6 +45,21 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
+function ItemBlurb({ description, isActive }: { description?: string; isActive: boolean }) {
+  if (!description) return null;
+
+  return (
+    <div
+      className={cn("media-switch__item-blurb-slot", isActive && "is-open")}
+      aria-hidden={!isActive}
+    >
+      <div className="media-switch__item-blurb-clip">
+        <p className="media-switch__item-blurb">{description}</p>
+      </div>
+    </div>
+  );
+}
+
 export function MediaSwitch({
   heading,
   items,
@@ -169,7 +184,7 @@ export function MediaSwitch({
           </div>
 
           <ul
-            className="media-switch__panel relative z-10 flex flex-col max-lg:order-2 lg:col-start-2 lg:row-start-1 lg:h-full lg:justify-center"
+            className="media-switch__panel relative z-10 flex flex-col max-lg:order-2 lg:col-start-2 lg:row-start-1 lg:h-full lg:pb-[var(--plate-offset,0.75rem)]"
             onMouseLeave={() => setPaused(false)}
           >
             {items.map((item, index) => {
@@ -217,7 +232,7 @@ export function MediaSwitch({
                 <li
                   key={item.title}
                   className={cn(
-                    "relative flex flex-col border-b",
+                    "relative flex min-h-0 flex-col border-b lg:flex-1",
                     isActive ? "border-transparent" : "border-border/60",
                   )}
                 >
@@ -228,35 +243,27 @@ export function MediaSwitch({
                       onMouseEnter={() => handleItemFocus(index)}
                       onFocus={() => handleItemFocus(index)}
                       className={cn(
-                        "flex min-h-13 w-full touch-manipulation flex-col justify-center gap-2 py-3.5 text-left outline-none transition-colors focus-visible:ring-1 focus-visible:ring-ring active:bg-muted/40 sm:min-h-14 lg:py-(--ms-row-py)",
+                        "flex min-h-13 w-full flex-1 touch-manipulation flex-col justify-center py-3.5 text-left outline-none transition-colors focus-visible:ring-1 focus-visible:ring-ring active:bg-muted/40 sm:min-h-14 lg:min-h-0 lg:py-(--ms-row-py)",
                         isActive && "text-foreground",
                       )}
                     >
                       <span className="flex items-center justify-between gap-4">
                         {titleBlock}
                         <ArrowUpRight
-                          size={18}
-                          strokeWidth={1.75}
+                          aria-hidden
+                          size={22}
+                          strokeWidth={2.25}
                           className={cn(
-                            "shrink-0 transition-colors duration-300",
-                            isActive ? "text-primary" : "text-muted-foreground",
+                            "media-switch__item-arrow shrink-0",
+                            isActive && "media-switch__item-arrow--active",
                           )}
                         />
                       </span>
-                      {isActive && item.description ? (
-                        <p
-                          className={cn(
-                            "media-switch__item-blurb",
-                            !prefersReducedMotion && "media-switch__blurb-enter",
-                          )}
-                        >
-                          {item.description}
-                        </p>
-                      ) : null}
+                      <ItemBlurb description={item.description} isActive={isActive} />
                     </Link>
                   ) : (
                     <div
-                      className="flex min-h-13 w-full items-start sm:min-h-14"
+                      className="flex min-h-13 w-full flex-1 items-stretch sm:min-h-14 lg:min-h-0"
                       onMouseEnter={() => handleItemFocus(index)}
                     >
                       <button
@@ -264,7 +271,7 @@ export function MediaSwitch({
                         aria-pressed={isActive}
                         onFocus={() => handleItemFocus(index)}
                         onClick={() => selectItem(index)}
-                        className="flex w-full touch-manipulation flex-col gap-2 py-3.5 text-left outline-none focus-visible:ring-1 focus-visible:ring-ring active:bg-muted/40 lg:py-(--ms-row-py)"
+                        className="flex w-full touch-manipulation flex-col justify-center py-3.5 text-left outline-none focus-visible:ring-1 focus-visible:ring-ring active:bg-muted/40 lg:py-(--ms-row-py)"
                       >
                         <span className="flex items-center gap-3 sm:gap-4">
                           <span className="min-w-0 flex-1">{titleBlock}</span>
@@ -283,16 +290,7 @@ export function MediaSwitch({
                             ) : null}
                           </span>
                         </span>
-                        {isActive && item.description ? (
-                          <p
-                            className={cn(
-                              "media-switch__item-blurb",
-                              !prefersReducedMotion && "media-switch__blurb-enter",
-                            )}
-                          >
-                            {item.description}
-                          </p>
-                        ) : null}
+                        <ItemBlurb description={item.description} isActive={isActive} />
                       </button>
                     </div>
                   )}

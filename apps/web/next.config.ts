@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
       { pathname: "/lab/**" },
       { pathname: "/equipment/**" },
       { pathname: "/brand/**" },
+      { pathname: "/team/**" },
     ],
   },
   turbopack: {

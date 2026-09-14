@@ -29,7 +29,7 @@ export const historyFacts: StatItem[] = [
 ];
 
 export const historyParagraphs = [
-  "Em 25 de novembro de 2024, a FIEG inaugurou na Faculdade SENAI Ítalo Bologna o primeiro Centro de Excelência em Metrologia SENAI ZEISS do Brasil. A parceria com a Carl Zeiss — referência mundial em metrologia industrial — montou um complexo com CMM, medição óptica, sistemas multissensores, escaneamento 3D e raio-X.",
+  "Em 25 de novembro de 2024, a FIEG inaugurou na Faculdade SENAI Ítalo Bologna o primeiro Centro de Excelência em Metrologia SENAI ZEISS do Brasil. A parceria com a Carl Zeiss — referência mundial em metrologia industrial — montou um complexo com CMM, medição óptica, sistemas multissensores, escaneamento 3D, raio-X e impressão 3D.",
   "O investimento de R$ 40 milhões destina o laboratório a dois papéis: prestar serviços de alta precisão às empresas e formar profissionais capazes de operar essas tecnologias. A expectativa institucional é atender mais de 300 empresas em cinco anos, apoiando qualidade de produto, manutenção e transformação tecnológica da indústria.",
 ];
 
@@ -68,7 +68,7 @@ export const teamHeading: SectionCopy = {
   eyebrow: "Quem fez acontecer",
   title: "Quem pensou, viabilizou e inaugurou o centro",
   description:
-    "A FIEG viabilizou o investimento, a Faculdade SENAI Ítalo Bologna abriga o complexo, a ZEISS traz a tecnologia. Retratos entram quando o material oficial chegar — até lá, o recorte é o mesmo dos equipamentos.",
+    "A FIEG viabilizou o investimento, a Faculdade SENAI Ítalo Bologna abriga o complexo, a ZEISS traz a tecnologia.",
 };
 
 export const team: TeamMember[] = [
@@ -76,32 +76,57 @@ export const team: TeamMember[] = [
     name: "Sandro Mabel",
     role: "Presidente da FIEG e dos Conselhos Regionais do SENAI e SESI",
     org: "FIEG",
+    image: "/team/sandro-mabel.jpg",
+    imageAlt: "Sandro Mabel, presidente da FIEG.",
+    imagePosition: "50% 12%",
   },
   {
     name: "Dario Queija de Siqueira",
     role: "Diretor da Faculdade SENAI Ítalo Bologna",
     org: "SENAI Goiás",
+    image: "/team/dario-siqueira.jpg",
+    imageAlt: "Dario Queija de Siqueira, diretor da Faculdade SENAI Ítalo Bologna.",
+    imagePosition: "50% 18%",
   },
   {
     name: "Claudemir Bonatto",
     role: "Diretor regional do SENAI",
     org: "SENAI Goiás",
+    image: "/team/claudemir-bonatto.jpg",
+    imageAlt: "Claudemir Bonatto, diretor regional do SENAI Goiás.",
+  },
+  {
+    name: "Rolando Vargas Vallejos",
+    role: "Gerente de Tecnologia e Inovação",
+    org: "SENAI Goiás",
+    image: "/team/rolando.jpg",
+    imageAlt: "Rolando Vargas Vallejos, gerente de Tecnologia e Inovação do SENAI Goiás.",
+    imagePosition: "50% 20%",
   },
   {
     name: "Paulo Vargas",
     role: "Diretor regional do SENAI e superintendente do SESI na inauguração",
     org: "SENAI / SESI",
     note: "In memoriam",
+    image: "/team/paulo-vargas.jpg",
+    imageAlt: "Paulo Vargas, diretor regional do SENAI e superintendente do SESI.",
+    imagePosition: "50% 12%",
   },
   {
     name: "Alan Tonietti",
     role: "Diretor",
     org: "ZEISS",
     note: "Na inauguração",
+    image: "/team/alan-tonietti.jpg",
+    imageAlt: "Alan Tonietti, diretor da ZEISS, na inauguração do centro.",
+    imagePosition: "50% 18%",
   },
   {
     name: "Jochen Weinisch",
     role: "Vice-presidente de Vendas",
     org: "ZEISS",
+    image: "/team/jochen-weinisch.jpg",
+    imageAlt: "Jochen Weinisch, vice-presidente de Vendas da ZEISS.",
+    imagePosition: "50% 20%",
   },
 ];

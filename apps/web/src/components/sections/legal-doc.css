@@ -1,44 +1,39 @@
-.quote-page {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--section-stack);
-}
-
-.quote-page__copy {
+.legal-doc {
   display: flex;
-  min-width: 0;
   flex-direction: column;
   gap: var(--section-stack);
 }
 
-.quote-page__notes {
-  margin: 0;
+.legal-doc__body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--section-stack-tight);
 }
 
-.quote-page__notes-title {
-  margin: 0 0 0.85rem;
-  font-family: var(--font-heading);
-  font-size: var(--text-card-title);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-  color: var(--color-foreground);
+.legal-doc .section-heading {
+  max-width: 40rem;
 }
 
-.quote-page__notes dl {
+.legal-doc__list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  width: 100%;
   margin: 0;
   padding: 0;
   border-top: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
 }
 
-.quote-page__note {
+.legal-doc__item {
   display: grid;
   gap: 0.4rem;
+  margin: 0;
   padding: 1.1rem 0 1.15rem;
   border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
 }
 
-.quote-page__note dt {
+.legal-doc__item dt {
   font-family: var(--font-sans);
   font-size: var(--text-eyebrow);
   font-weight: 500;
@@ -47,7 +42,15 @@
   color: var(--color-primary);
 }
 
-.quote-page__note dd {
+.legal-doc__item dd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.legal-doc__item dd p {
   margin: 0;
   font-size: var(--text-body);
   line-height: var(--leading-body);
@@ -55,14 +58,30 @@
   color: var(--color-foreground);
 }
 
-.quote-page form {
-  min-width: 0;
+.legal-doc__item .section-text-cta {
+  align-self: flex-start;
+}
+
+.legal-doc__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem 1.75rem;
+}
+
+.legal-doc__actions .section-text-cta {
+  align-self: baseline;
 }
 
 @media (width >= 64rem) {
-  .quote-page {
+  .legal-doc {
+    display: grid;
     grid-template-columns: minmax(18rem, 0.92fr) minmax(0, 1.08fr);
     gap: var(--section-inline);
     align-items: start;
+  }
+
+  .legal-doc .section-heading {
+    max-width: none;
   }
 }

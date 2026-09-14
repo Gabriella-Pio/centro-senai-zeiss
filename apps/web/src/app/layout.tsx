@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
+import "./motion.css";
 import Navbar from "@/components/layout/Navbar";
 import { ContactCtaBand } from "@/components/layout/ContactCtaBand";
 import Footer from "@/components/layout/Footer";

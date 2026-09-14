@@ -1,0 +1,25 @@
+.copy-value-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.copy-value-btn:hover,
+.copy-value-btn:focus-visible {
+  color: color-mix(in srgb, var(--color-primary) 80%, transparent);
+}
+
+.copy-value-btn:focus-visible {
+  outline: 1px solid var(--color-ring);
+  outline-offset: 4px;
+}

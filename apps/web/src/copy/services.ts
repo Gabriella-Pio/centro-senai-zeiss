@@ -4,7 +4,7 @@ export const servicesHeading: SectionCopy = {
   eyebrow: "Nossos serviços",
   title: "O que fazemos no laboratório",
   description:
-    "Do controle dimensional à consultoria em qualidade. Em cada linha combinamos equipamentos ZEISS, método e a nossa equipe à peça e ao relatório.",
+    "Do controle dimensional à consultoria em qualidade. Em cada linha combinamos as máquinas do parque, método e a nossa equipe à peça e ao relatório.",
 };
 
 export const serviceDetail = {

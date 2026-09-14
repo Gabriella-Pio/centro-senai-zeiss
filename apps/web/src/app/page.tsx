@@ -41,9 +41,9 @@ export default function HomePage() {
         heading={serviceHubHeading}
         items={serviceItems}
         sectionKey="services"
-        surface="white"
+        surface="cream"
         pattern="none"
-        ambient="diagonal"
+        ambient="none"
         listTrailing="service-link"
         catalogCta={servicesCatalog.allServicesCta}
       />

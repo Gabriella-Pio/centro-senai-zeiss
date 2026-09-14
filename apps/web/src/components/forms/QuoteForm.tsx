@@ -1,9 +1,9 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
-import { Label, Input, Textarea, Button } from "@cem/ui";
+import { Label, Input, Textarea, Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@cem/ui";
 import { apiRequest, ApiError } from "@/lib/api";
 import type { QuoteFormCopy } from "@/copy/quote";
 import "./quote-form.css";
@@ -157,7 +157,6 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
   const initialServiceIds = serviceOptions.some((item) => item.id === defaultServiceId)
     ? [defaultServiceId!]
     : [];
-  const formId = useId();
   const alertRef = useRef<HTMLDivElement>(null);
   const [values, setValues] = useState<QuoteValues>(EMPTY_VALUES);
   const [serviceIds, setServiceIds] = useState<string[]>(initialServiceIds);
@@ -168,7 +167,6 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
   const [submitError, setSubmitError] = useState("");
 
   const otherSelected = serviceIds.includes(copy.otherService.id);
-  const errorEntries = FIELD_IDS.filter((id) => errors[id]);
 
   function applyValidation(nextValues: QuoteValues, nextServiceIds: string[]) {
     if (attempted) {
@@ -213,7 +211,10 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
-      requestAnimationFrame(() => alertRef.current?.focus());
+      const firstId = FIELD_IDS.find((id) => nextErrors[id]);
+      requestAnimationFrame(() => {
+        if (firstId) document.getElementById(firstId)?.focus();
+      });
       return;
     }
 
@@ -223,6 +224,10 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
         method: "POST",
         body: toLeadPayload(values, serviceIds, serviceOptions),
       });
+      setValues(EMPTY_VALUES);
+      setServiceIds([]);
+      setAttempted(false);
+      setErrors({});
       setSubmitted(true);
     } catch (error) {
       setSubmitError(error instanceof ApiError ? error.message : copy.validation.submit);
@@ -232,22 +237,10 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
     }
   }
 
-  if (submitted) {
-    return (
-      <div className="quote-form quote-form--success" role="status">
-        <h2 className="quote-form__success-title">{copy.success.title}</h2>
-        <p className="quote-form__success-body">{copy.success.body}</p>
-        <Button type="button" size="xl" variant="outline" className="quote-form__submit" onClick={resetForm}>
-          {copy.success.again}
-        </Button>
-      </div>
-    );
-  }
-
   const { fields } = copy;
-  const showAlert = errorEntries.length > 0 || Boolean(submitError);
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="quote-form" noValidate>
       <p className="quote-form__legend">
         <span className="quote-form__required" aria-hidden="true">
@@ -256,34 +249,9 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
         {copy.requiredLegend}
       </p>
 
-      {showAlert ? (
-        <div
-          ref={alertRef}
-          className="quote-form__alert"
-          role="alert"
-          tabIndex={-1}
-          aria-labelledby={`${formId}-alert-title`}
-        >
-          <p id={`${formId}-alert-title`} className="quote-form__alert-title">
-            {submitError || copy.validation.summary}
-          </p>
-          {errorEntries.length > 0 ? (
-            <ul className="quote-form__alert-list">
-              {errorEntries.map((id) => (
-                <li key={id}>
-                  <a
-                    href={`#${id}`}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      document.getElementById(id)?.focus();
-                    }}
-                  >
-                    {fields[id].label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+      {submitError ? (
+        <div ref={alertRef} className="quote-form__alert" role="alert" tabIndex={-1}>
+          <p className="quote-form__alert-title">{submitError}</p>
         </div>
       ) : null}
 
@@ -442,6 +410,22 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
         <Link href={copy.privacy.href}>{copy.privacy.link}</Link>{copy.privacy.after}
       </p>
     </form>
+    <Dialog open={submitted} onOpenChange={(open) => { if (!open) resetForm(); }}>
+      <DialogContent className="quote-form__dialog" showCloseButton={false}>
+        <DialogHeader>
+          <DialogTitle className="quote-form__success-title">{copy.success.title}</DialogTitle>
+          <DialogDescription className="quote-form__success-body">
+            {copy.success.body}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button type="button" size="xl" className="quote-form__dialog-close" onClick={resetForm}>
+            {copy.success.close}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
 

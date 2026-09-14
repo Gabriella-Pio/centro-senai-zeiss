@@ -48,6 +48,6 @@ export {
   team,
   teamHeading,
 } from "@/copy/institutional";
-export { contactHeading } from "@/copy/contact";
+export { contactCopyActions, contactHeading } from "@/copy/contact";
 export { quoteForm, quoteHeading, quoteNotes } from "@/copy/quote";
 export { notFoundCopy } from "@/copy/not-found";

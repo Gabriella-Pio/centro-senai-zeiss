@@ -19,7 +19,7 @@ export const hero = {
 export const labIntro = {
   eyebrow: 'O laboratório',
   title: 'Tecnologia ZEISS e equipe SENAI, em Goiânia',
-  body: 'Funcionamos na Faculdade SENAI Ítalo Bologna. Aqui estão nossos equipamentos ZEISS, as salas climatizadas e a equipe técnica do SENAI.\n\nAtendemos indústrias de Goiás e de outros estados na validação dimensional, análise de falhas, reconstrução CAD e inspeção não destrutiva — o mesmo rigor que qualidade, manutenção e desenvolvimento de produto exigem.',
+  body: 'Funcionamos na Faculdade SENAI Ítalo Bologna. Aqui estão as máquinas do parque, as salas climatizadas e a equipe técnica do SENAI.\n\nAtendemos indústrias de Goiás e de outros estados na validação dimensional, análise de falhas, reconstrução CAD, inspeção não destrutiva e prototipação 3D — o mesmo rigor que qualidade, manutenção e desenvolvimento de produto exigem.',
   image: {
     src: '/lab/info.jpeg',
     alt: 'Vista do laboratório do Centro de Excelência em Metrologia SENAI ZEISS, com a sala de medição ao fundo.',
@@ -31,7 +31,7 @@ export const serviceHubHeading: SectionCopy = {
   eyebrow: 'Nossos serviços',
   title: 'O que medimos e o que entregamos',
   description:
-    'Do laudo dimensional à consultoria em qualidade, escolhemos as máquinas ZEISS conforme a peça e o que o relatório precisa responder.',
+    'Do laudo dimensional à consultoria em qualidade, escolhemos as máquinas conforme a peça e o que o relatório precisa responder.',
 };
 
 export const differentialsHeading: SectionCopy = {
@@ -55,9 +55,9 @@ export const differentials: FeatureItem[] = [
     icon: 'FileCheck',
   },
   {
-    value: '8',
-    title: 'Máquinas ZEISS',
-    description: 'CMM, óptico, multisensor, scanner 3D e raio-X.',
+    value: '7',
+    title: 'Máquinas no parque',
+    description: 'CMM, óptico, scanner, raio-X e impressão 3D.',
     icon: 'Cpu',
   },
   {
@@ -76,6 +76,9 @@ export const differentials: FeatureItem[] = [
 
 export const sectorsCard = {
   servicesLabel: 'Serviços que combinamos',
+  colSector: 'Setor',
+  colApplication: 'No produto',
+  colServices: 'Serviços',
 };
 
 export const sectorsHeading: SectionCopy = {

@@ -21,9 +21,9 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
 
   return (
     <Section id="orcamento" sectionKey="quote" surface="cream" pattern="none" ambient="none" clearNav>
-      <Container>
-        <SectionHeading align="left" level={1} className="quote-page__heading" {...quoteHeading} />
-        <div className="quote-page">
+      <Container className="quote-page">
+        <div className="quote-page__copy">
+          <SectionHeading align="left" level={1} {...quoteHeading} />
           <div className="quote-page__notes">
             <h2 className="quote-page__notes-title">{quoteNotes.heading}</h2>
             <dl>
@@ -35,13 +35,13 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
               ))}
             </dl>
           </div>
-
-          <QuoteForm
-            defaultServiceId={service}
-            services={services.map((item) => ({ id: item.id, label: item.label }))}
-            copy={quoteForm}
-          />
         </div>
+
+        <QuoteForm
+          defaultServiceId={service}
+          services={services.map((item) => ({ id: item.id, label: item.label }))}
+          copy={quoteForm}
+        />
       </Container>
     </Section>
   );

@@ -6,8 +6,8 @@
   --ms-gap: 2.5rem;
   --ms-split: 5.5rem;
   --ms-split-lg: 7.5rem;
-  --ms-height: 34rem;
-  --ms-row-py: 0.75rem;
+  --ms-height: 42rem;
+  --ms-row-py: 2.5rem;
 }
 
 .media-switch__header-cta {
@@ -53,9 +53,42 @@
   font-size: var(--text-caption);
 }
 
+.media-switch__item-arrow {
+  color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  transition: color 300ms ease;
+}
+
+.media-switch__item-arrow--active {
+  color: var(--color-primary);
+  animation: media-switch-arrow-nudge 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.media-switch__item-blurb-slot {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 280ms ease;
+}
+
+.media-switch__item-blurb-slot.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 380ms 60ms ease;
+}
+
+.media-switch__item-blurb-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
 .media-switch__item-blurb {
   max-width: 38rem;
   margin: 0;
+  padding-top: 0.5rem;
   font-size: var(--text-switch-blurb);
   line-height: var(--leading-switch-blurb);
   color: var(--color-muted-foreground);
@@ -77,14 +110,13 @@
   }
 }
 
-@keyframes media-switch-blurb-enter {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
+@keyframes media-switch-arrow-nudge {
+  0%,
+  100% {
+    transform: translate(0, 0);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  50% {
+    transform: translate(3px, -3px);
   }
 }
 
@@ -92,14 +124,18 @@
   animation: media-switch-photo-enter 450ms cubic-bezier(0.45, 0, 0.55, 1) both;
 }
 
-.media-switch__blurb-enter {
-  animation: media-switch-blurb-enter 450ms cubic-bezier(0.45, 0, 0.55, 1) both;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .media-switch__photo-enter,
-  .media-switch__blurb-enter {
+  .media-switch__photo-enter {
     animation: none;
+  }
+
+  .media-switch__item-arrow--active {
+    animation: none;
+  }
+
+  .media-switch__item-blurb-slot,
+  .media-switch__item-blurb-slot.is-open {
+    transition: none;
   }
 }
 

@@ -34,8 +34,18 @@ export function TeamGrid({ heading, members }: TeamGridProps) {
                     src={publicAsset(member.image)}
                     alt={member.imageAlt ?? member.name}
                     fill
-                    className={mediaPhotoCoverClass}
-                    sizes="(min-width: 1024px) 18rem, 45vw"
+                    quality={90}
+                    className={
+                      member.imageFit === "contain"
+                        ? "object-contain p-1.5"
+                        : mediaPhotoCoverClass
+                    }
+                    style={
+                      member.imagePosition
+                        ? { objectPosition: member.imagePosition }
+                        : undefined
+                    }
+                    sizes="(min-width: 48rem) 22vw, 45vw"
                   />
                 ) : (
                   <span className="team-grid__initials" aria-hidden>

@@ -6,7 +6,7 @@ import "./section-heading.css";
 interface SectionHeadingProps {
   eyebrow?: string;
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   align?: "left" | "center";
   className?: string;
   /** Use 1 on page titles (contato, serviços, orçamento). */

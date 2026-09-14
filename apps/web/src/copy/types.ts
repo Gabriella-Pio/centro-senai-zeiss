@@ -30,6 +30,8 @@ export type TeamMember = {
   note?: string;
   image?: string;
   imageAlt?: string;
+  imageFit?: "cover" | "contain";
+  imagePosition?: string;
 };
 
 export type StatItem = {

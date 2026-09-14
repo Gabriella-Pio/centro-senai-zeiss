@@ -33,11 +33,11 @@ export const SECTION_FLOW_LABELS: Record<SectionFlowKey, string> = {
 export const SECTION_FLOW_SUGGESTED: Record<SectionFlowKey, SectionSurfaceConfig> = {
   hero: { surface: "cream", pattern: "none" },
   "lab-intro": { surface: "tint", pattern: "none" },
-  services: { surface: "white", pattern: "none" },
+  services: { surface: "cream", pattern: "none" },
   differentials: { surface: "dark", pattern: "blueprint" },
   equipment: { surface: "white", pattern: "none" },
   sectors: { surface: "cream", pattern: "none" },
-  partners: { surface: "muted", pattern: "none" },
+  partners: { surface: "white", pattern: "none" },
   contact: { surface: "dark", pattern: "none" },
 };
 

@@ -44,24 +44,6 @@
   color: var(--color-foreground);
 }
 
-.quote-form__alert-list {
-  margin: 0.55rem 0 0;
-  padding-left: 1.15rem;
-  font-size: var(--text-caption);
-  line-height: 1.55;
-  color: var(--color-foreground);
-}
-
-.quote-form__alert-list a {
-  color: var(--quote-error);
-  text-decoration: underline;
-  text-underline-offset: 0.12em;
-}
-
-.quote-form__alert-list a:hover {
-  color: color-mix(in srgb, var(--quote-error) 80%, black);
-}
-
 .quote-form__error {
   margin: 0;
   font-size: var(--text-caption);
@@ -220,10 +202,13 @@
   width: 100%;
 }
 
-.quote-form--success {
-  justify-content: center;
-  gap: 0.75rem;
-  min-height: 16rem;
+.quote-form__dialog {
+  gap: 1.25rem;
+  width: min(28rem, calc(100% - 2rem));
+  max-width: 28rem;
+  padding: 1.5rem 1.5rem 1.35rem;
+  background: var(--color-card);
+  color: var(--color-foreground);
 }
 
 .quote-form__success-title {
@@ -236,11 +221,15 @@
 }
 
 .quote-form__success-body {
-  margin: 0;
-  max-width: 28rem;
+  margin: 0.35rem 0 0;
+  max-width: none;
   font-size: var(--text-body);
   line-height: var(--leading-body);
   color: var(--color-muted-foreground);
+}
+
+.quote-form__dialog-close {
+  width: 100%;
 }
 
 @media (width >= 40rem) {

@@ -53,7 +53,7 @@ function PartnerLogoItem({ partner }: { partner: PartnerLogo }) {
 
 export function LogoRow({ heading, items, sectionKey = "partners" }: LogoRowProps) {
   return (
-    <Section sectionKey={sectionKey} surface="muted" pattern="none">
+    <Section sectionKey={sectionKey} surface="white" pattern="none" ambient="diagonal">
       <Container className="flex flex-col gap-(--section-stack)">
         <SectionHeading align="left" {...heading} />
         <div className="logo-row__list">

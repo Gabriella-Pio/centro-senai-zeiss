@@ -2,7 +2,7 @@ import type { FeatureItem, SectionCopy } from "@/copy/types";
 
 export const equipmentHeading: SectionCopy = {
   eyebrow: "Nosso parque",
-  title: "As máquinas ZEISS de cada ensaio",
+  title: "As máquinas de cada ensaio",
   description:
     "Cada máquina tem um papel. Na prática, um serviço pode combinar várias — escolhemos o conjunto para a peça e o relatório.",
 };
@@ -73,6 +73,17 @@ export const equipment: FeatureItem[] = [
     imageAlt: "Sistema ZEISS BOSELLO MAX.",
     imageFit: "contain",
     href: "/services/inspecao-interna",
+  },
+  {
+    title: "Bambu Lab A1",
+    tag: "Impressão 3D",
+    description:
+      "Prototipação por adição a partir de CAD ou de malhas digitalizadas no laboratório.",
+    icon: "Printer",
+    image: "/equipment/bambu-lab-a1.png",
+    imageAlt: "Impressora 3D Bambu Lab A1 com sistema de filamentos.",
+    imageFit: "contain",
+    href: "/services/prototipacao-3d",
   },
 ];
 

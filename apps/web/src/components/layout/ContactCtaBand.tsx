@@ -20,7 +20,14 @@ export function ContactCtaBand() {
   const band = bandForPath(pathname);
 
   return (
-    <Section sectionKey="contact" surface="dark" pattern="none" guide={false} aria-label={band.title}>
+    <Section
+      sectionKey="contact"
+      surface="dark"
+      pattern="none"
+      guide={false}
+      reveal={false}
+      aria-label={band.title}
+    >
       <Container className="flex flex-col items-center gap-(--section-stack)">
         <SectionHeading
           align="center"

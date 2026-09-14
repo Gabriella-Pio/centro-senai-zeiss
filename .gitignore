@@ -58,3 +58,10 @@ docs/
 
 # Prova de tipo local (Archivo / Plex / etc.). Não vai para o produto.
 apps/web/src/app/type-test/
+
+# Masters HEIF/HEIC — o site serve JPEG. Ver apps/web/scripts/convert-lab-heif.mjs
+apps/web/public/**/*.heif
+apps/web/public/**/*.heic
+
+# Playground HTML local — não entra no produto
+/prototype/

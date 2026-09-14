@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { ProseSection } from "@/components/sections/ProseSection";
+import { LegalDoc } from "@/components/sections/LegalDoc";
 import { legalPages } from "@/copy";
 
 export const metadata: Metadata = {
   title: "Política de Privacidade | Centro de Excelência em Metrologia SENAI ZEISS",
+  description: legalPages.privacy.description,
 };
 
 export default function PrivacyPage() {
-  return <ProseSection clearNav title={legalPages.privacy.title} paragraphs={legalPages.privacy.paragraphs} />;
+  return <LegalDoc sectionKey="legal-privacy" {...legalPages.privacy} />;
 }
