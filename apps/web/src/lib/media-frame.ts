@@ -20,7 +20,7 @@ export const mediaPhotoSizes = {
   card: "(min-width: 1024px) 22rem, 45vw",
   heroDesktop: "(min-width: 1024px) 62vw, 0px",
   heroMobile: "100vw",
-  split: "(min-width: 1024px) 50vw, 100vw",
+  split: "(min-width: 768px) 50vw, 0px",
   splitDesktop: "(min-width: 1024px) 50vw, 0px",
   drawer: "36rem",
 } as const;

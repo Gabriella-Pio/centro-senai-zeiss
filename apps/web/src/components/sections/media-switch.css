@@ -3,11 +3,29 @@
    para não conflitar com text-primary / text-muted-foreground (Tailwind v4). */
 
 .media-switch {
-  --ms-gap: 2.5rem;
-  --ms-split: 5.5rem;
+  --ms-gap: 1.25rem;
+  --ms-split: 2rem;
   --ms-split-lg: 7.5rem;
   --ms-height: 42rem;
   --ms-row-py: 2.5rem;
+}
+
+@media (width >= 64rem) {
+  .media-switch {
+    --ms-gap: 2.5rem;
+    --ms-split: 5.5rem;
+  }
+}
+
+/* Tablet: retrato ao lado da lista. Desktop: coluna esticada. Celular: só a lista. */
+.media-switch__photo {
+  aspect-ratio: 4 / 5;
+}
+
+@media (width >= 64rem) {
+  .media-switch__photo {
+    aspect-ratio: auto;
+  }
 }
 
 .media-switch__header-cta {
@@ -89,6 +107,7 @@
   max-width: 38rem;
   margin: 0;
   padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   font-size: var(--text-switch-blurb);
   line-height: var(--leading-switch-blurb);
   color: var(--color-muted-foreground);

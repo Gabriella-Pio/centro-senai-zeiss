@@ -139,52 +139,50 @@ export function MediaSwitch({
           {catalogCta ? <SectionTextCta href={catalogCta.href}>{catalogCta.label}</SectionTextCta> : null}
         </div>
 
-        <div className="relative z-10 grid grid-cols-1 gap-y-(--ms-gap) lg:grid-cols-2 lg:gap-x-(--ms-split) lg:gap-y-0 xl:gap-x-(--ms-split-lg)">
-          <div
-            className={mediaPlateClass(
-              "max-lg:order-1 lg:col-start-1 lg:row-start-1 lg:h-full",
-            )}
-          >
-            <div
-              className={cn(
-                "media-switch__panel relative aspect-6/5 overflow-hidden rounded-(--radius) border border-border max-lg:h-full lg:aspect-auto lg:h-full",
-                isContainPanel ? "bg-foreground" : "bg-muted",
-              )}
-            >
-              {current.image ? (
-                <div
-                  key={active}
-                  className={cn(
-                    "media-switch__photo-layer",
-                    !prefersReducedMotion && "media-switch__photo-enter",
-                  )}
-                >
-                  <Image
-                    src={publicAsset(current.image)}
-                    alt={current.imageAlt ?? current.title}
-                    fill
+        <div className="relative z-10 grid grid-cols-1 gap-y-(--ms-gap) md:grid-cols-2 md:items-stretch md:gap-x-(--ms-split) md:gap-y-0 xl:gap-x-(--ms-split-lg)">
+          <div className="media-switch__photo-slot max-md:hidden md:col-start-1 md:row-start-1 lg:h-full">
+            <div className={mediaPlateClass("min-h-0 lg:h-full")}>
+              <div
+                className={cn(
+                  "media-switch__panel media-switch__photo relative overflow-hidden rounded-(--radius) border border-border lg:h-full",
+                  isContainPanel ? "bg-foreground" : "bg-muted",
+                )}
+              >
+                {current.image ? (
+                  <div
+                    key={active}
                     className={cn(
-                      isContainPanel ? "object-contain p-5 sm:p-6" : mediaPhotoCoverClass,
+                      "media-switch__photo-layer",
+                      !prefersReducedMotion && "media-switch__photo-enter",
                     )}
-                    style={current.imagePosition ? { objectPosition: current.imagePosition } : undefined}
-                    sizes={mediaPhotoSizes.split}
-                  />
-                </div>
-              ) : (
-                <div className="flex h-full items-center justify-center">
-                  {Icon && <Icon size={72} strokeWidth={1.25} className="text-primary" />}
-                </div>
-              )}
-              {current.tag ? (
-                <span className="media-switch__photo-tag absolute top-4 left-4 z-3 rounded-(--radius) border border-primary/25 bg-card/90 px-2.5 py-1 font-normal text-primary uppercase backdrop-blur-sm">
-                  {current.tag}
-                </span>
-              ) : null}
+                  >
+                    <Image
+                      src={publicAsset(current.image)}
+                      alt={current.imageAlt ?? current.title}
+                      fill
+                      className={cn(
+                        isContainPanel ? "object-contain p-5 sm:p-6" : mediaPhotoCoverClass,
+                      )}
+                      style={current.imagePosition ? { objectPosition: current.imagePosition } : undefined}
+                      sizes={mediaPhotoSizes.split}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-full items-center justify-center">
+                    {Icon && <Icon size={72} strokeWidth={1.25} className="text-primary" />}
+                  </div>
+                )}
+                {current.tag ? (
+                  <span className="media-switch__photo-tag absolute top-4 left-4 z-3 rounded-(--radius) border border-primary/25 bg-card/90 px-2.5 py-1 font-normal text-primary uppercase backdrop-blur-sm">
+                    {current.tag}
+                  </span>
+                ) : null}
+              </div>
             </div>
           </div>
 
           <ul
-            className="media-switch__panel relative z-10 flex flex-col max-lg:order-2 lg:col-start-2 lg:row-start-1 lg:h-full lg:pb-[var(--plate-offset,0.75rem)]"
+            className="media-switch__panel relative z-10 flex min-h-0 flex-col md:col-start-2 md:row-start-1 md:h-full md:pb-[var(--plate-offset,0.75rem)]"
             onMouseLeave={() => setPaused(false)}
           >
             {items.map((item, index) => {
@@ -232,7 +230,7 @@ export function MediaSwitch({
                 <li
                   key={item.title}
                   className={cn(
-                    "relative flex min-h-0 flex-col border-b lg:flex-1",
+                    "relative flex min-h-min flex-col border-b md:flex-1",
                     isActive ? "border-transparent" : "border-border/60",
                   )}
                 >
