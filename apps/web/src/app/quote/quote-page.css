@@ -12,7 +12,7 @@
 }
 
 .quote-page__notes {
-  margin: 0;
+  display: none;
 }
 
 .quote-page__notes-title {
@@ -59,10 +59,47 @@
   min-width: 0;
 }
 
+@media (width >= 48rem) {
+  .quote-page__notes {
+    display: block;
+    margin: 0;
+  }
+
+  .quote-page__notes dl {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .quote-page__note {
+    padding: 1.1rem 1.35rem 1.15rem;
+    border-bottom: none;
+    border-right: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+  }
+
+  .quote-page__note:first-child {
+    padding-left: 0;
+  }
+
+  .quote-page__note:last-child {
+    padding-right: 0;
+    border-right: none;
+  }
+}
+
 @media (width >= 64rem) {
   .quote-page {
     grid-template-columns: minmax(18rem, 0.92fr) minmax(0, 1.08fr);
     gap: var(--section-inline);
     align-items: start;
+  }
+
+  .quote-page__notes dl {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-page__note {
+    padding: 1.1rem 0 1.15rem;
+    border-right: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
   }
 }
