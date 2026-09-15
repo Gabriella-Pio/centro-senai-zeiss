@@ -1,5 +1,4 @@
-/* SectorGrid — matriz de ensaio: setor | no produto | serviços.
-   Filetes do catálogo; chips das máquinas; cabeçalho só no desktop. */
+/* SectorGrid — celular: 1 coluna. 576–1023: 2×2. Desktop: ledger setor | produto | serviços. */
 
 .sector-grid {
   --sg-cols: 1fr;
@@ -10,8 +9,8 @@
 }
 
 .sector-grid__list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -21,6 +20,7 @@
 .sector-grid__item {
   display: grid;
   grid-template-columns: var(--sg-cols);
+  align-content: start;
   gap: 0.5rem 1.5rem;
   padding: 1.35rem 0 1.4rem;
   border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
@@ -28,6 +28,25 @@
 
 .sector-grid__item:last-child {
   border-bottom: none;
+}
+
+@media (width >= 36rem) {
+  .sector-grid__list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sector-grid__item:nth-child(odd) {
+    padding-right: 1.1rem;
+    border-right: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+  }
+
+  .sector-grid__item:nth-child(even) {
+    padding-left: 1.1rem;
+  }
+
+  .sector-grid__item:nth-last-child(-n + 2) {
+    border-bottom: none;
+  }
 }
 
 .sector-grid__title {
@@ -52,25 +71,16 @@
   padding-top: 0;
 }
 
-.sector-grid__item .service-chips__chip {
+.sector-grid__item .service-chips__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
-}
-
-@media (width >= 48rem) {
-  .sector-grid {
-    --sg-cols: 11.5rem minmax(0, 1fr);
-  }
-
-  .sector-grid__item {
-    align-items: start;
-    column-gap: 1.75rem;
-    padding: 1.4rem 0 1.45rem;
-  }
-
-  .sector-grid__item .service-chips {
-    grid-column: 2;
-    margin-top: 0.2rem;
-  }
+  border: 0;
 }
 
 @media (width >= 64rem) {
@@ -93,13 +103,25 @@
   }
 
   .sector-grid__list {
+    grid-template-columns: 1fr;
     border-top: none;
   }
 
-  .sector-grid__item {
+  .sector-grid__item,
+  .sector-grid__item:nth-child(odd),
+  .sector-grid__item:nth-child(even) {
     align-items: center;
     column-gap: 2rem;
     padding: 1.45rem 0 1.5rem;
+    border-right: none;
+  }
+
+  .sector-grid__item:nth-last-child(-n + 2) {
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+  }
+
+  .sector-grid__item:last-child {
+    border-bottom: none;
   }
 
   .sector-grid__item .service-chips {
@@ -107,15 +129,7 @@
     margin-top: 0;
   }
 
-  .sector-grid__item .service-chips__label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+  .sector-grid__item .service-chips__chip {
     white-space: nowrap;
-    border: 0;
   }
 }
