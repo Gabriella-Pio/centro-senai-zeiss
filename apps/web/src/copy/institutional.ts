@@ -23,14 +23,14 @@ export const historyHeading: SectionCopy = {
 };
 
 export const historyFacts: StatItem[] = [
-  { value: "25.11.2024", label: "Inauguração na Faculdade SENAI Ítalo Bologna" },
+  { value: "1º", label: "Centro SENAI ZEISS do Brasil" },
   { value: "R$40M", label: "Investimento em máquinas, software e ambiente controlado" },
-  { value: "300+", label: "Empresas previstas em cinco anos, em Goiás e fora do Estado" },
+  { value: "25.11.2024", label: "Inauguração na Faculdade SENAI Ítalo Bologna" },
 ];
 
 export const historyParagraphs = [
-  "Em 25 de novembro de 2024, a FIEG inaugurou na Faculdade SENAI Ítalo Bologna o primeiro Centro de Excelência em Metrologia SENAI ZEISS do Brasil. A parceria com a Carl Zeiss — referência mundial em metrologia industrial — montou um complexo com CMM, medição óptica, sistemas multissensores, escaneamento 3D, raio-X e impressão 3D.",
-  "O investimento de R$ 40 milhões destina o laboratório a dois papéis: prestar serviços de alta precisão às empresas e formar profissionais capazes de operar essas tecnologias. A expectativa institucional é atender mais de 300 empresas em cinco anos, apoiando qualidade de produto, manutenção e transformação tecnológica da indústria.",
+  "Em 25 de novembro de 2024, a FIEG inaugurou na Faculdade SENAI Ítalo Bologna o primeiro Centro de Excelência em Metrologia SENAI ZEISS do Brasil. A parceria com a Carl Zeiss — referência mundial em metrologia industrial — instalou o laboratório em Goiânia.",
+  "O investimento de R$ 40 milhões reuniu CMM, medição óptica, sistemas multissensores, escaneamento 3D, raio-X e impressão 3D. O laboratório presta serviços de alta precisão às empresas e forma profissionais capazes de operar essas tecnologias.",
 ];
 
 export const purposeHeading: SectionCopy = {

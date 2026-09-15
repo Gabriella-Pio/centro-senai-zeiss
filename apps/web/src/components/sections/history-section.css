@@ -1,38 +1,39 @@
 .history {
   display: flex;
   flex-direction: column;
-  gap: var(--section-stack);
+  gap: var(--section-stack-tight);
 }
 
 .history-frame {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--section-stack);
+  gap: var(--section-stack-tight);
   align-items: start;
 }
 
 .history-facts {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 1.85rem;
   margin: 0;
-  padding: 0 0 0 1.75rem;
+  padding: 0 0 0 1.35rem;
   list-style: none;
   border-left: 1px solid var(--color-primary);
 }
 
 .history-facts__item {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: start;
 }
 
 .history-facts__item::before {
   content: "";
   position: absolute;
   top: 0.55rem;
-  left: calc(-1.75rem - 4px);
+  left: calc(-1.35rem - 4px);
   width: 8px;
   height: 8px;
   border: 1px solid var(--color-primary);
@@ -40,35 +41,27 @@
 }
 
 .history-facts__index {
-  font-family: var(--font-mono);
-  font-size: var(--text-switch-tag);
-  letter-spacing: var(--tracking-switch-tag);
-  text-transform: uppercase;
-  color: var(--color-primary);
+  display: none;
 }
 
 .history-facts__value {
-  margin-top: 0.45rem;
+  margin: 0;
   font-family: var(--font-mono);
-  font-size: var(--text-display-md);
+  font-size: clamp(1.4rem, 1.2rem + 1vw, 1.5rem);
   font-weight: 600;
   letter-spacing: var(--tracking-display);
   line-height: var(--leading-display-tight);
   color: var(--color-foreground);
+  white-space: nowrap;
 }
 
 .history-facts__value::after {
-  content: "";
-  display: block;
-  width: 1.5rem;
-  height: 1px;
-  margin-top: 0.8rem;
-  background: var(--color-primary);
+  content: none;
 }
 
 .history-facts__label {
-  margin-top: 0.75rem;
-  max-width: 18rem;
+  margin: 0.15rem 0 0;
+  max-width: none;
   font-size: var(--text-caption);
   line-height: var(--leading-caption);
   color: var(--color-muted-foreground);
@@ -83,26 +76,115 @@
 }
 
 .history-prose p {
-  font-size: var(--text-lead);
-  line-height: var(--leading-lead);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
   font-weight: 300;
   color: var(--color-muted-foreground);
 }
 
-@media (width >= 64rem) {
+@media (width >= 48rem) {
+  .history {
+    gap: var(--section-stack);
+  }
+
   .history-frame {
-    grid-template-columns: minmax(16.5rem, 0.72fr) minmax(0, 1.28fr);
-    gap: var(--section-inline);
-    align-items: stretch;
+    gap: 0;
   }
 
   .history-facts {
-    gap: 3.75rem;
-    padding-top: 0.2rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border-left: none;
+    padding: 0;
+  }
+
+  .history-facts__item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    padding: 0 1.15rem;
+    border-left: 1px solid var(--color-primary);
+  }
+
+  .history-facts__item:first-child {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .history-facts__item:last-child {
+    padding-right: 0;
+  }
+
+  .history-facts__item::before {
+    display: none;
+  }
+
+  .history-facts__index {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-switch-tag);
+    letter-spacing: var(--tracking-switch-tag);
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .history-facts__value {
+    margin-top: 0.4rem;
+    font-size: clamp(1.45rem, 1.1rem + 1.4vw, 2.25rem);
+  }
+
+  .history-facts__value::after {
+    content: "";
+    display: block;
+    width: 1.5rem;
+    height: 1px;
+    margin-top: 0.7rem;
+    background: var(--color-primary);
+  }
+
+  .history-facts__label {
+    margin-top: 0.7rem;
   }
 
   .history-prose {
-    max-width: 36rem;
-    padding-top: 0.35rem;
+    max-width: none;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-primary);
+  }
+
+  .history-prose p {
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+  }
+}
+
+@media (width >= 64rem) {
+  .history-facts__item {
+    padding: 0 2.25rem;
+  }
+
+  .history-facts__value {
+    margin-top: 0.45rem;
+    font-size: var(--text-display-md);
+  }
+
+  .history-facts__value::after {
+    margin-top: 0.8rem;
+  }
+
+  .history-facts__label {
+    margin-top: 0.75rem;
+    max-width: 16rem;
+  }
+
+  .history-prose {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem 3.5rem;
+    margin-top: 2rem;
+    padding-top: 1.75rem;
   }
 }
