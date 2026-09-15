@@ -54,7 +54,12 @@ pids
 .Trashes
 ehthumbs.db
 Thumbs.db
-docs/
+# PDFs do desafio e rascunhos locais. A doc da banca (arquitetura, decisões) entra no Git.
+docs/*.pdf
+docs/00-*.md
+docs/01-*.md
+docs/02-*.md
+docs/03-*.md
 
 # Prova de tipo local (Archivo / Plex / etc.). Não vai para o produto.
 apps/web/src/app/type-test/

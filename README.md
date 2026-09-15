@@ -53,3 +53,13 @@ npm run dev:app
 ```
 
 O site público **não** tem rota `/admin`. A API pública de leads aceita só `POST /api/v1/leads` (criar solicitação). Listar e alterar lead volta quando existir autenticação.
+
+Banco local (opcional):
+
+```bash
+docker compose -f apps/api/docker-compose.yml up -d
+```
+
+## Documentação
+
+O “como ligar” é este README. Arquitetura, decisões, desafios e o que ainda é o módulo interno estão em [`docs/`](./docs/).
