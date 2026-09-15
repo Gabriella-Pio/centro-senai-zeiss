@@ -146,7 +146,7 @@ export const partnersHeading: SectionCopy = {
   eyebrow: 'Quem nos sustenta',
   title: 'As instituições por trás do laboratório',
   description:
-    'FIEG, SENAI Goiás, ZEISS e a Faculdade SENAI Ítalo Bologna — a estrutura que mantém a metrologia ZEISS em Goiânia.',
+    'FIEG, SENAI Goiás e ZEISS — a estrutura que mantém a metrologia ZEISS na Faculdade SENAI Ítalo Bologna, em Goiânia.',
 };
 
 export const partners: PartnerLogo[] = [
@@ -169,10 +169,5 @@ export const partners: PartnerLogo[] = [
       logoAlt: 'Logo FIEG — Federação das Indústrias do Estado de Goiás',
       wide: true,
       href: 'https://www.fieg.com.br',
-    },
-    {
-      name: 'Faculdade SENAI Ítalo Bologna',
-      href: 'https://goias.senai.br/unidade/faculdade-senai-italo-bologna',
-      caption: 'Ítalo Bologna',
     },
 ];

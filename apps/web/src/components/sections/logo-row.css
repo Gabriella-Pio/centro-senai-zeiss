@@ -1,19 +1,21 @@
-/* LogoRow — faixa neutra, 4 por linha, centralizada. */
+/* LogoRow — faixa neutra, três logos na linha, centralizada. */
 
 .logo-row__list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
+  justify-items: center;
+  column-gap: 0.75rem;
   row-gap: 1.75rem;
   width: 100%;
 }
 
 .logo-row__item {
-  flex: 0 0 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  max-width: 16rem;
   min-height: 2.25rem;
   outline: none;
 }
@@ -24,7 +26,6 @@
 
 @media (width >= 40rem) {
   .logo-row__item {
-    flex: 0 0 25%;
     min-height: 2.6rem;
   }
 }
@@ -32,7 +33,7 @@
 .logo-row__logo {
   height: 2.15rem;
   width: auto;
-  max-width: 10.5rem;
+  max-width: min(10.5rem, 100%);
   object-fit: contain;
   opacity: 0.72;
   transition: opacity 0.25s ease;
@@ -45,19 +46,23 @@
 }
 
 @media (width >= 40rem) {
+  .logo-row__list {
+    column-gap: 1.25rem;
+  }
+
   .logo-row__logo {
     height: 2.6rem;
-    max-width: 12.5rem;
+    max-width: min(12.5rem, 100%);
   }
 }
 
 .logo-row__logo--wide {
-  max-width: 13rem;
+  max-width: min(13rem, 100%);
 }
 
 @media (width >= 40rem) {
   .logo-row__logo--wide {
-    max-width: 16rem;
+    max-width: min(16rem, 100%);
   }
 }
 

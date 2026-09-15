@@ -472,7 +472,7 @@ export const en = {
     eyebrow: "Who stands behind us",
     title: "The institutions behind the laboratory",
     description:
-      "FIEG, SENAI Goiás, ZEISS and Faculdade SENAI Ítalo Bologna — the structure that keeps ZEISS metrology in Goiânia.",
+      "FIEG, SENAI Goiás and ZEISS — the structure that keeps ZEISS metrology at Faculdade SENAI Ítalo Bologna, in Goiânia.",
   },
   partners: [
     {
@@ -487,7 +487,6 @@ export const en = {
       ...ptPartners[2],
       logoAlt: "FIEG logo — Federation of Industries of the State of Goiás",
     },
-    ptPartners[3],
   ],
   institutionalHero: {
     ...ptInstitutionalHero,
