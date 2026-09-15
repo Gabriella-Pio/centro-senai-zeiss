@@ -25,47 +25,107 @@ export default function Footer() {
           <BackToTop label={footer.backToTop} />
         </div>
 
-        <div className="grid grid-cols-1 gap-14 sm:grid-cols-2 sm:gap-x-16 sm:gap-y-16 lg:grid-cols-12 lg:gap-x-16 xl:gap-x-20">
-          <div className="space-y-5 lg:col-span-4">
+        <div className="footer-grid">
+          <div className="footer-lockup">
             <BrandLockup variant="footer" inverted />
-            <p className="max-w-sm type-body text-primary-foreground/60">{footer.tagline}</p>
-            <ul className="footer-contact">
-              <li className="footer-contact__row">
-                <a
-                  href={`tel:${location.phoneTel}`}
-                  aria-label={footer.phoneAria}
-                  className={cn("footer-contact__item font-medium", footerLinkClass)}
-                >
-                  <Phone size={16} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" />
-                  {location.phone}
-                </a>
-                <CopyValueButton
-                  value={location.phone}
-                  ariaLabel={contactCopyActions.phone}
-                  copiedAriaLabel={contactCopyActions.phoneDone}
-                />
-              </li>
-              <li className="footer-contact__row">
-                <a
-                  href={`mailto:${location.email}`}
-                  aria-label={footer.emailAria}
-                  className={cn("footer-contact__item font-medium", footerLinkClass)}
-                >
-                  <Mail size={16} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" />
-                  <span className="break-all">{location.email}</span>
-                </a>
-                <CopyValueButton
-                  value={location.email}
-                  ariaLabel={contactCopyActions.email}
-                  copiedAriaLabel={contactCopyActions.emailDone}
-                />
-              </li>
-            </ul>
           </div>
 
-          <div className="lg:col-span-3">
-            <Eyebrow className="mb-6">{footer.visitTitle}</Eyebrow>
-            <address className="space-y-1.5 text-sm not-italic leading-relaxed text-primary-foreground/75 md:text-base">
+          <div className="footer-intro">
+            <p className="type-body text-primary-foreground/60">{footer.tagline}</p>
+            <nav className="footer-intro__icons" aria-label={footer.quickContactLabel}>
+              <a className="footer-icon" href={`tel:${location.phoneTel}`} aria-label={footer.phoneAria}>
+                <Phone size={16} strokeWidth={1.75} aria-hidden />
+              </a>
+              <a className="footer-icon" href={`mailto:${location.email}`} aria-label={footer.emailAria}>
+                <Mail size={16} strokeWidth={1.75} aria-hidden />
+              </a>
+              <a
+                className="footer-icon"
+                href={mapLinks.googleMaps}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={footer.mapsLinks.openInGoogleMaps}
+              >
+                <MapPin size={16} strokeWidth={1.75} aria-hidden />
+              </a>
+            </nav>
+          </div>
+
+          <div className="footer-rule footer-rule--upper" aria-hidden="true" />
+          <div className="footer-rule footer-rule--lower" aria-hidden="true" />
+
+          <div className="footer-nav-cols">
+            <div className="footer-services">
+              <Eyebrow>{footer.servicesTitle}</Eyebrow>
+              <ul className="footer-list">
+                <li>
+                  <Link href={nav.servicesHref} className="footer-nav-link">
+                    {nav.servicesAllLabel}
+                  </Link>
+                </li>
+                {services.map((s) => (
+                  <li key={s.id}>
+                    <Link href={`/services/${s.id}`} className="footer-nav-link">
+                      {s.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="footer-centro">
+              <Eyebrow>{footer.institutionalTitle}</Eyebrow>
+              <ul className="footer-list">
+                {nav.links.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="footer-nav-link">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <ul className="footer-contact">
+                <li className="footer-contact__row">
+                  <a
+                    href={`tel:${location.phoneTel}`}
+                    aria-label={footer.phoneAria}
+                    className={cn("footer-contact__item font-medium", footerLinkClass)}
+                  >
+                    <Phone size={16} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" />
+                    {location.phone}
+                  </a>
+                  <CopyValueButton
+                    value={location.phone}
+                    ariaLabel={contactCopyActions.phone}
+                    copiedAriaLabel={contactCopyActions.phoneDone}
+                  />
+                </li>
+                <li className="footer-contact__row">
+                  <a
+                    href={`mailto:${location.email}`}
+                    aria-label={footer.emailAria}
+                    className={cn("footer-contact__item font-medium", footerLinkClass)}
+                  >
+                    <Mail size={16} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" />
+                    <span className="footer-contact__email">{location.email}</span>
+                  </a>
+                  <CopyValueButton
+                    value={location.email}
+                    ariaLabel={contactCopyActions.email}
+                    copiedAriaLabel={contactCopyActions.emailDone}
+                  />
+                </li>
+              </ul>
+              <p className="footer-hours footer-contact__item">
+                <Clock size={16} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" />
+                {location.hours}
+              </p>
+            </div>
+          </div>
+
+          <div className="footer-visit">
+            <Eyebrow>{footer.visitTitle}</Eyebrow>
+            <address className="footer-visit__address">
               <p className="font-medium text-primary-foreground">{location.name}</p>
               {location.lines.map((line, index) => {
                 const last = index === location.lines.length - 1;
@@ -84,7 +144,7 @@ export default function Footer() {
               })}
             </address>
 
-            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+            <div className="footer-visit__meta">
               <a
                 href={mapLinks.googleMaps}
                 target="_blank"
@@ -106,46 +166,10 @@ export default function Footer() {
                 {footer.mapsLinks.waze}
               </a>
             </div>
-
-            <p className="footer-contact__item mt-5 text-primary-foreground/55">
-              <Clock size={16} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" />
-              {location.hours}
-            </p>
-          </div>
-
-          <div className="lg:col-span-3">
-            <Eyebrow className="mb-6">{footer.servicesTitle}</Eyebrow>
-            <ul className="space-y-3.5 text-sm md:text-base">
-              <li>
-                <Link href={nav.servicesHref} className="footer-nav-link">
-                  {nav.servicesAllLabel}
-                </Link>
-              </li>
-              {services.map((s) => (
-                <li key={s.id}>
-                  <Link href={`/services/${s.id}`} className="footer-nav-link">
-                    {s.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <Eyebrow className="mb-6">{footer.institutionalTitle}</Eyebrow>
-            <ul className="space-y-3.5 text-sm md:text-base">
-              {nav.links.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="footer-nav-link">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
 
-        <div className="site-footer-legal site-footer-divider">
+        <div className="site-footer-legal">
           <p>{footer.copyright}</p>
           <nav className="site-footer-legal__nav" aria-label="Documentos legais">
             <Link href={footer.legal.termsHref} className="footer-legal-link">

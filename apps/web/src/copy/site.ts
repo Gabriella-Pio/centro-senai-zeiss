@@ -20,8 +20,7 @@ export const location = {
     "Faculdade SENAI Ítalo Bologna, Rua Armogaste José da Silveira, 612, Goiânia, GO, 74560-020",
   phone: "(62) 3226-4500",
   phoneTel: "+556232264500",
-  /** Contato público do centro (FIEG). Trocar se o laboratório tiver caixa compartilhada. */
-  email: "matheusoliveirasilva@fieg.com.br",
+  email: "cem.senaizeiss@fieg.com.br",
   hours: "Segunda a sexta, 8h às 18h",
 };
 
@@ -57,6 +56,7 @@ export const footer = {
   visitTitle: "Visite-nos",
   servicesTitle: "Serviços",
   institutionalTitle: "O centro",
+  quickContactLabel: "Contato rápido",
   emailAria: "Enviar e-mail para o laboratório",
   phoneAria: "Ligar para o laboratório",
   copyright:

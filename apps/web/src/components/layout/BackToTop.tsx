@@ -38,7 +38,7 @@ export function BackToTop({ label }: { label: string }) {
       render={<a href="#top" />}
       aria-label={label}
       title={label}
-      className="footer-top-btn !h-14 !w-9"
+      className="footer-top-btn"
       onClick={(event) => {
         event.preventDefault();
         scrollToTop();
