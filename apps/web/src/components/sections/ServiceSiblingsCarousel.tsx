@@ -47,6 +47,7 @@ export function ServiceSiblingsCarousel({
     go,
     goTo,
     slideState,
+    focusCount,
   } = usePeekCarousel({
     count,
     reduceMotion,
@@ -70,6 +71,7 @@ export function ServiceSiblingsCarousel({
       <div
         ref={stageRef}
         className="service-detail__siblings-stage"
+        data-focus={focusCount}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onFocusCapture={() => setPaused(true)}

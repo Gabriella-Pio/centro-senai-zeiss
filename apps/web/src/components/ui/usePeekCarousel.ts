@@ -76,6 +76,7 @@ export function usePeekCarousel({
   const posRef = useRef(startPos);
   const pausedRef = useRef(false);
   const measuredRef = useRef(false);
+  const initKeyRef = useRef<string | null>(null);
   const metricsRef = useRef({ step: 0, cardW: 0, focusCount: 3, peek: PEEK_DESKTOP });
   const [pos, setPos] = useState(startPos);
   const [paused, setPaused] = useState(false);
@@ -175,8 +176,19 @@ export function usePeekCarousel({
 
   useLayoutEffect(() => {
     measure();
+    if (centerInitial && count > 0) {
+      const key = `${count}:${initialIndex}`;
+      if (initKeyRef.current !== key) {
+        initKeyRef.current = key;
+        const next = centeredPos(count, initialIndex, metricsRef.current.focusCount);
+        posRef.current = next;
+        setPos(next);
+        apply(next, false);
+        return;
+      }
+    }
     apply(posRef.current, false);
-  }, [apply, count, measure]);
+  }, [apply, centerInitial, count, initialIndex, measure]);
 
   useEffect(() => {
     const track = trackRef.current;
