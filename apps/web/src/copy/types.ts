@@ -34,6 +34,11 @@ export type TeamMember = {
   imagePosition?: string;
 };
 
+export type TeamGroup = {
+  label: string;
+  members: TeamMember[];
+};
+
 export type StatItem = {
   value: string;
   label: string;

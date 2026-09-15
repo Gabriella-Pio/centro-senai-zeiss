@@ -13,7 +13,7 @@ import {
   partnersHeading,
   purposeHeading,
   purposeItems,
-  team,
+  teamGroups,
   teamHeading,
 } from "@/copy";
 
@@ -29,7 +29,7 @@ export default function InstitutionalPage() {
       <Hero {...institutionalHero} sectionKey="institutional-hero" />
       <HistorySection heading={historyHeading} facts={historyFacts} paragraphs={historyParagraphs} />
       <PurposeSection heading={purposeHeading} items={purposeItems} />
-      <TeamGrid heading={teamHeading} members={team} />
+      <TeamGrid heading={teamHeading} groups={teamGroups} />
       <LogoRow heading={partnersHeading} items={partners} sectionKey="institutional-partners" />
     </>
   );

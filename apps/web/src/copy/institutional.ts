@@ -1,4 +1,4 @@
-import type { CtaCopy, FeatureItem, SectionCopy, StatItem, TeamMember } from "@/copy/types";
+import type { CtaCopy, FeatureItem, SectionCopy, StatItem, TeamGroup } from "@/copy/types";
 
 export const institutionalHero = {
   eyebrow: "O centro",
@@ -71,62 +71,79 @@ export const teamHeading: SectionCopy = {
     "A FIEG viabilizou o investimento, a Faculdade SENAI Ítalo Bologna abriga o complexo, a ZEISS traz a tecnologia.",
 };
 
-export const team: TeamMember[] = [
+export const teamGroups: TeamGroup[] = [
   {
-    name: "Sandro Mabel",
-    role: "Presidente da FIEG e dos Conselhos Regionais do SENAI e SESI",
-    org: "FIEG",
-    image: "/team/sandro-mabel.jpg",
-    imageAlt: "Sandro Mabel, presidente da FIEG.",
-    imagePosition: "50% 12%",
+    label: "FIEG",
+    members: [
+      {
+        name: "Sandro Mabel",
+        role: "Presidente da FIEG e dos Conselhos Regionais do SENAI e SESI",
+        org: "FIEG",
+        image: "/team/sandro-mabel.jpg",
+        imageAlt: "Sandro Mabel, presidente da FIEG.",
+        imagePosition: "50% 12%",
+      },
+    ],
   },
   {
-    name: "Dario Queija de Siqueira",
-    role: "Diretor da Faculdade SENAI Ítalo Bologna",
-    org: "SENAI Goiás",
-    image: "/team/dario-siqueira.jpg",
-    imageAlt: "Dario Queija de Siqueira, diretor da Faculdade SENAI Ítalo Bologna.",
-    imagePosition: "50% 18%",
+    label: "SENAI",
+    members: [
+      {
+        name: "Paulo Vargas",
+        role: "Diretor regional do SENAI e superintendente do SESI na inauguração",
+        org: "SENAI / SESI",
+        note: "In memoriam",
+        image: "/team/paulo-vargas.jpg",
+        imageAlt: "Paulo Vargas, diretor regional do SENAI e superintendente do SESI.",
+        imagePosition: "50% 12%",
+      },
+      {
+        name: "Claudemir Bonatto",
+        role: "Diretor de Educação e Tecnologia do SESI e SENAI",
+        org: "SENAI Goiás",
+        image: "/team/claudemir-bonatto.jpg",
+        imageAlt: "Claudemir Bonatto, diretor de Educação e Tecnologia do SESI e SENAI Goiás.",
+      },
+      {
+        name: "Dario Queija de Siqueira",
+        role: "Diretor da Faculdade SENAI Ítalo Bologna",
+        org: "SENAI Goiás",
+        image: "/team/dario-siqueira.jpg",
+        imageAlt: "Dario Queija de Siqueira, diretor da Faculdade SENAI Ítalo Bologna.",
+        imagePosition: "50% 18%",
+      },
+      {
+        name: "Rolando Vargas Vallejos",
+        role: "Gerente de Tecnologia e Inovação",
+        org: "SENAI Goiás",
+        image: "/team/rolando.jpg",
+        imageAlt: "Rolando Vargas Vallejos, gerente de Tecnologia e Inovação do SENAI Goiás.",
+        imagePosition: "50% 20%",
+      },
+    ],
   },
   {
-    name: "Claudemir Bonatto",
-    role: "Diretor regional do SENAI",
-    org: "SENAI Goiás",
-    image: "/team/claudemir-bonatto.jpg",
-    imageAlt: "Claudemir Bonatto, diretor regional do SENAI Goiás.",
-  },
-  {
-    name: "Rolando Vargas Vallejos",
-    role: "Gerente de Tecnologia e Inovação",
-    org: "SENAI Goiás",
-    image: "/team/rolando.jpg",
-    imageAlt: "Rolando Vargas Vallejos, gerente de Tecnologia e Inovação do SENAI Goiás.",
-    imagePosition: "50% 20%",
-  },
-  {
-    name: "Paulo Vargas",
-    role: "Diretor regional do SENAI e superintendente do SESI na inauguração",
-    org: "SENAI / SESI",
-    note: "In memoriam",
-    image: "/team/paulo-vargas.jpg",
-    imageAlt: "Paulo Vargas, diretor regional do SENAI e superintendente do SESI.",
-    imagePosition: "50% 12%",
-  },
-  {
-    name: "Alan Tonietti",
-    role: "Diretor",
-    org: "ZEISS",
-    note: "Na inauguração",
-    image: "/team/alan-tonietti.jpg",
-    imageAlt: "Alan Tonietti, diretor da ZEISS, na inauguração do centro.",
-    imagePosition: "50% 18%",
-  },
-  {
-    name: "Jochen Weinisch",
-    role: "Vice-presidente de Vendas",
-    org: "ZEISS",
-    image: "/team/jochen-weinisch.jpg",
-    imageAlt: "Jochen Weinisch, vice-presidente de Vendas da ZEISS.",
-    imagePosition: "50% 20%",
+    label: "ZEISS",
+    members: [
+      {
+        name: "Jochen Weinisch",
+        role: "Vice-presidente de Vendas para América Latina, Oriente Médio e África",
+        org: "ZEISS",
+        image: "/team/jochen-weinisch.jpg",
+        imageAlt: "Jochen Weinisch, vice-presidente de Vendas da Divisão de Metrologia da ZEISS para América Latina, Oriente Médio e África.",
+        imagePosition: "50% 20%",
+      },
+      {
+        name: "Alan Toniette",
+        role: "Diretor da Divisão de Metrologia no Brasil",
+        org: "ZEISS",
+        note: "Na inauguração",
+        image: "/team/alan-tonietti.jpg",
+        imageAlt: "Alan Toniette, diretor da Divisão de Metrologia da ZEISS no Brasil, na inauguração do centro.",
+        imagePosition: "50% 18%",
+      },
+    ],
   },
 ];
+
+export const team = teamGroups.flatMap((group) => group.members);

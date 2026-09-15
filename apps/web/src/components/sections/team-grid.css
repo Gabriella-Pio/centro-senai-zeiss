@@ -1,19 +1,36 @@
-.team-grid__list {
+.team-grid {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.7rem;
+  flex-direction: column;
+  gap: var(--section-stack);
+}
+
+.team-grid__groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-stack-tight);
+}
+
+.team-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.team-group__list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .team-grid__item {
-  display: flex;
-  flex: 0 1 calc((100% - 0.7rem) / 2);
-  width: calc((100% - 0.7rem) / 2);
-  max-width: calc((100% - 0.7rem) / 2);
-  flex-direction: column;
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 5.75rem minmax(0, 1fr);
+  grid-template-rows: minmax(5.75rem, auto);
+  align-items: stretch;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--color-primary) 16%, var(--color-border));
   background: #ffffff;
@@ -21,7 +38,10 @@
 
 .team-grid__portrait {
   position: relative;
-  aspect-ratio: 1;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,10 +75,13 @@
 
 .team-grid__meta {
   display: flex;
+  flex: 1;
   flex-direction: column;
+  justify-content: center;
   gap: 0.15rem;
-  padding: 0.65rem 0.7rem 0.75rem;
-  border-top: 1px solid color-mix(in srgb, var(--color-primary) 12%, var(--color-border));
+  min-width: 0;
+  padding: 0.55rem 0.75rem;
+  border-left: 1px solid color-mix(in srgb, var(--color-primary) 12%, var(--color-border));
 }
 
 .team-grid__name {
@@ -85,7 +108,7 @@
 }
 
 .team-grid__note {
-  margin-top: 0.35rem;
+  margin-top: 0.25rem;
   font-family: var(--font-sans);
   font-size: var(--text-caption);
   font-style: italic;
@@ -94,17 +117,101 @@
 }
 
 @media (width >= 48rem) {
-  .team-grid__list {
-    gap: 0.75rem;
+  .team-group {
+    gap: 0.9rem;
+  }
+
+  .team-group__list {
+    gap: 0.7rem;
+  }
+
+  .team-group--quad .team-group__list,
+  .team-group--pair .team-group__list {
+    grid-template-columns: 1fr 1fr;
   }
 
   .team-grid__item {
-    flex: 0 1 calc((100% - 2.25rem) / 4);
-    width: calc((100% - 2.25rem) / 4);
-    max-width: calc((100% - 2.25rem) / 4);
+    grid-template-columns: 7rem minmax(0, 1fr);
+    grid-template-rows: minmax(7rem, auto);
+  }
+
+  .team-group--lead .team-grid__item {
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    grid-template-rows: minmax(8.5rem, auto);
+  }
+
+  .team-grid__meta {
+    padding: 0.65rem 0.9rem;
   }
 
   .team-grid__name {
     font-size: 0.875rem;
+  }
+}
+
+@media (width >= 80rem) {
+  .team-grid__groups {
+    gap: var(--section-stack);
+  }
+
+  .team-group {
+    gap: 1.05rem;
+  }
+
+  .team-group__list {
+    gap: 0.75rem;
+  }
+
+  .team-group--quad .team-group__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .team-group--quad .team-grid__item {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+  }
+
+  .team-group--quad .team-grid__portrait,
+  .team-group--pair .team-grid__portrait,
+  .team-group--lead .team-grid__portrait {
+    aspect-ratio: 1;
+    height: auto;
+  }
+
+  .team-group--pair .team-grid__item,
+  .team-group--lead .team-grid__item {
+    grid-template-rows: auto;
+  }
+
+  .team-group--quad .team-grid__meta {
+    border-left: none;
+    border-top: 1px solid color-mix(in srgb, var(--color-primary) 12%, var(--color-border));
+    padding: 0.75rem 0.85rem 0.85rem;
+  }
+
+  .team-group--pair .team-group__list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .team-group--pair .team-grid__item {
+    grid-template-columns: minmax(11rem, 16rem) minmax(0, 1fr);
+  }
+
+  .team-group--pair .team-grid__meta {
+    padding: 1rem 1.25rem;
+  }
+
+  .team-group--lead .team-grid__item {
+    grid-template-columns: minmax(13rem, 18rem) minmax(0, 1fr);
+  }
+
+  .team-group--lead .team-grid__meta {
+    padding: 1rem 1.35rem;
+  }
+
+  .team-grid__name {
+    font-size: 0.9375rem;
   }
 }

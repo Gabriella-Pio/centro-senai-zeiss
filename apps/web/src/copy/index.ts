@@ -10,6 +10,7 @@ export type {
   SectorItem,
   ServiceContent,
   StatItem,
+  TeamGroup,
   TeamMember,
 } from "@/copy/types";
 
@@ -46,6 +47,7 @@ export {
   purposeHeading,
   purposeItems,
   team,
+  teamGroups,
   teamHeading,
 } from "@/copy/institutional";
 export { contactCopyActions, contactHeading } from "@/copy/contact";
