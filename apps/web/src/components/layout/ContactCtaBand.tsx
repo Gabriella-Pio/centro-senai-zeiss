@@ -35,7 +35,7 @@ export function ContactCtaBand() {
           title={band.title}
           description={band.description}
         />
-        <nav className="flex flex-wrap items-center justify-center gap-3" aria-label="Ações de contato">
+        <nav className="contact-cta-actions" aria-label="Ações de contato">
           <Button size="xl" className="contact-cta-primary" render={<Link href={band.primaryCta.href} />}>
             {band.primaryCta.label}
           </Button>

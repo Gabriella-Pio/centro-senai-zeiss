@@ -23,15 +23,18 @@ export function PageScrollbar() {
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)");
+    const wide = window.matchMedia("(width >= 64rem)");
     const enable = () => {
-      const on = fine.matches;
+      const on = fine.matches && wide.matches;
       setEnabled(on);
       document.documentElement.classList.toggle("has-page-scrollbar", on);
     };
     enable();
     fine.addEventListener("change", enable);
+    wide.addEventListener("change", enable);
     return () => {
       fine.removeEventListener("change", enable);
+      wide.removeEventListener("change", enable);
       document.documentElement.classList.remove("has-page-scrollbar");
     };
   }, []);

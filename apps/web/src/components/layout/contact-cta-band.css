@@ -1,4 +1,34 @@
-/* CTA no navy: o azul ZEISS some no #0b132b sem filete. Sem placa, sem sombra. */
+/* CTA no navy: o azul ZEISS some no #0b132b sem filete. Sem placa, sem sombra.
+   Celular: empilhados na largura da coluna. Desktop: lado a lado, no tamanho do texto. */
+
+.contact-cta-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 0.75rem;
+}
+
+.contact-cta-actions .contact-cta-primary,
+.contact-cta-actions .contact-cta-secondary {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (width >= 40rem) {
+  .contact-cta-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+  }
+
+  .contact-cta-actions .contact-cta-primary,
+  .contact-cta-actions .contact-cta-secondary {
+    width: auto;
+  }
+}
 
 .section-surface[data-surface="dark"] .contact-cta-primary {
   border-color: color-mix(in srgb, var(--color-primary) 42%, #ffffff);
