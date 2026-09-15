@@ -33,12 +33,16 @@ function PurposeStation({ item, index }: { item: FeatureItem; index: number }) {
     <li className="purpose-station">
       {Icon ? <Icon className="purpose-station__filigree" strokeWidth={1.15} aria-hidden /> : null}
 
-      <p className="purpose-station__index" aria-hidden>
-        {String(index + 1).padStart(2, "0")}
-      </p>
-      <p className="purpose-station__label">{item.title}</p>
-      {item.value ? <h3 className="purpose-station__title">{item.value}</h3> : null}
-      <p className="purpose-station__body">{item.description}</p>
+      <div className="purpose-station__meta">
+        <p className="purpose-station__index" aria-hidden>
+          {String(index + 1).padStart(2, "0")}
+        </p>
+        <p className="purpose-station__label">{item.title}</p>
+      </div>
+      <div className="purpose-station__copy">
+        {item.value ? <h3 className="purpose-station__title">{item.value}</h3> : null}
+        <p className="purpose-station__body">{item.description}</p>
+      </div>
     </li>
   );
 }
