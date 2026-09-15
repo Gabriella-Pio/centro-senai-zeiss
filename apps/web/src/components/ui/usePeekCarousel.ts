@@ -8,6 +8,7 @@ const PEEK_SIDE_MID = 0.24;
 const PEEK_SIDE_MIN = 0.1;
 const EASE = "transform .55s cubic-bezier(0.45, 0, 0.15, 1)";
 const TRIPLE_MQ = "(min-width: 64rem)";
+const TABLET_MQ = "(min-width: 48rem)";
 const PEEK_RANGE_MAX = 1024;
 const PEEK_RANGE_MID = 700;
 const PEEK_RANGE_MIN = 360;
@@ -89,8 +90,9 @@ export function usePeekCarousel({
     if (!viewport || !track) return;
 
     const triple = window.matchMedia(TRIPLE_MQ).matches;
+    const tablet = !triple && window.matchMedia(TABLET_MQ).matches;
     const nextFocus = triple ? 3 : 1;
-    const nextPeek = triple ? PEEK_DESKTOP : sidePeek(window.innerWidth);
+    const nextPeek = triple ? PEEK_DESKTOP : tablet ? PEEK_SIDE_MID : sidePeek(window.innerWidth);
     const gap =
       Number.parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 12;
     const visible = nextFocus + 2;

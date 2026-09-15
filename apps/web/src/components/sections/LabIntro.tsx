@@ -30,21 +30,21 @@ export function LabIntro({
 
   return (
     <Section sectionKey={sectionKey} surface={surface} pattern="none">
-      <Container className="grid grid-cols-1 gap-(--section-stack) lg:grid-cols-2 lg:items-stretch lg:gap-x-(--section-inline) xl:gap-x-(--section-inline-lg)">
-        <div className={mediaPlateClass("hidden min-h-0 lg:block lg:h-full")}>
-          <div className={mediaFrameClass("relative aspect-4/3 min-h-0 lg:aspect-auto lg:h-full")}>
+      <Container className="grid grid-cols-1 gap-(--section-stack) md:grid-cols-2 md:items-stretch md:gap-x-(--section-inline) xl:gap-x-(--section-inline-lg)">
+        <div className={mediaPlateClass("hidden min-h-0 md:block md:h-full")}>
+          <div className={mediaFrameClass("relative aspect-4/3 min-h-0 md:aspect-auto md:h-full")}>
             <Image
               src={publicAsset(image.src)}
               alt={image.alt}
               fill
               className={mediaPhotoCoverClass}
               style={{ objectPosition: image.objectPosition ?? "50% 42%" }}
-              sizes={mediaPhotoSizes.splitDesktop}
+              sizes={mediaPhotoSizes.split}
             />
           </div>
         </div>
 
-        <div className="flex min-h-0 w-full flex-col lg:justify-between">
+        <div className="flex min-h-0 w-full flex-col md:justify-between">
           <div className="flex flex-col gap-(--section-stack-tight)">
             <SectionHeading align="left" className="max-w-none gap-3" eyebrow={eyebrow} title={title} />
 
@@ -58,7 +58,7 @@ export function LabIntro({
           </div>
 
           {cta ? (
-            <SectionTextCta className="mt-(--section-stack-tight) lg:self-start" href={cta.href}>
+            <SectionTextCta className="mt-(--section-stack-tight) md:self-start" href={cta.href}>
               {cta.label}
             </SectionTextCta>
           ) : null}

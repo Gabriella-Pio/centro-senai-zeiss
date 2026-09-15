@@ -23,5 +23,5 @@ export const mediaPhotoSizes = {
   split: "(min-width: 768px) 50vw, 0px",
   splitDesktop: "(min-width: 1024px) 50vw, 0px",
   drawer: "36rem",
-  equipment: "(min-width: 64rem) 22rem, (min-width: 43.75rem) 42vw, 72vw",
+  equipment: "(min-width: 64rem) 22rem, (min-width: 48rem) 52vw, (min-width: 43.75rem) 42vw, 72vw",
 } as const;
