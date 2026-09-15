@@ -73,7 +73,7 @@ function ServiceIndexRow({ item, index }: { item: ServiceContent; index: number 
             fill
             className={mediaPhotoCoverClass}
             style={item.cardImagePosition ? { objectPosition: item.cardImagePosition } : undefined}
-            sizes="(min-width: 64rem) 12rem, 12rem"
+            sizes="(min-width: 64rem) 12rem, (min-width: 48rem) 9.5rem, 9.5rem"
           />
         </Link>
       ) : null}
