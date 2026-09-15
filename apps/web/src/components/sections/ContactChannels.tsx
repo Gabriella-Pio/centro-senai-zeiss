@@ -23,68 +23,75 @@ export function ContactChannels({ heading }: ContactChannelsProps) {
   return (
     <Section id="contato" sectionKey="contact-channels" surface="cream" pattern="none" ambient="none" clearNav>
       <Container className="contact-channels">
-        <div className="contact-channels__copy">
-          <SectionHeading
-            align="left"
-            level={1}
-            eyebrow={heading.eyebrow}
-            title={heading.title}
-            description={
-              <>
-                {heading.description.before}
-                <Link href={heading.description.href} className="contact-channels__action">
-                  {heading.description.link}
-                </Link>
-                {heading.description.after}
-              </>
-            }
-          />
+        <SectionHeading
+          className="contact-channels__heading"
+          align="left"
+          level={1}
+          eyebrow={heading.eyebrow}
+          title={heading.title}
+          description={
+            <>
+              {heading.description.before}
+              <Link href={heading.description.href} className="contact-channels__action">
+                {heading.description.link}
+              </Link>
+              {heading.description.after}
+            </>
+          }
+        />
 
-          <dl className="contact-channels__list">
-            <div className="contact-channels__item">
-              <dt>Endereço</dt>
-              <dd>
-                <address>
-                  <p>{location.name}</p>
-                  {location.lines.map((line, index) => {
-                    const last = index === location.lines.length - 1;
-                    return (
-                      <p key={line} className={last ? "contact-channels__address-line" : undefined}>
-                        {line}
-                        {last ? (
-                          <CopyValueButton
-                            value={addressText}
-                            ariaLabel={contactCopyActions.address}
-                            copiedAriaLabel={contactCopyActions.addressDone}
-                          />
-                        ) : null}
-                      </p>
-                    );
-                  })}
-                </address>
-                <div className="contact-channels__nav">
-                  <a
-                    href={maps.googleMaps}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={footer.mapsLinks.openInGoogleMaps}
-                  >
-                    <MapPin {...linkIcon} />
-                    {footer.mapsLinks.googleMaps}
-                  </a>
-                  <a
-                    href={maps.waze}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={footer.mapsLinks.openInWaze}
-                  >
-                    <Navigation {...linkIcon} />
-                    {footer.mapsLinks.waze}
-                  </a>
-                </div>
-              </dd>
-            </div>
+        <div className="contact-channels__details">
+          <div className="contact-channels__place">
+            <dl className="contact-channels__list">
+              <div className="contact-channels__item">
+                <dt>Endereço</dt>
+                <dd>
+                  <address>
+                    <p>{location.name}</p>
+                    {location.lines.map((line, index) => {
+                      const last = index === location.lines.length - 1;
+                      return (
+                        <p key={line} className={last ? "contact-channels__address-line" : undefined}>
+                          {line}
+                          {last ? (
+                            <CopyValueButton
+                              value={addressText}
+                              ariaLabel={contactCopyActions.address}
+                              copiedAriaLabel={contactCopyActions.addressDone}
+                            />
+                          ) : null}
+                        </p>
+                      );
+                    })}
+                  </address>
+                  <div className="contact-channels__nav">
+                    <a
+                      href={maps.googleMaps}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={footer.mapsLinks.openInGoogleMaps}
+                    >
+                      <MapPin {...linkIcon} />
+                      {footer.mapsLinks.googleMaps}
+                    </a>
+                    <a
+                      href={maps.waze}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={footer.mapsLinks.openInWaze}
+                    >
+                      <Navigation {...linkIcon} />
+                      {footer.mapsLinks.waze}
+                    </a>
+                  </div>
+                </dd>
+              </div>
+            </dl>
 
+            <MapEmbed />
+          </div>
+
+          <dl className="contact-channels__list contact-channels__list--reach">
             <div className="contact-channels__item">
               <dt>Telefone</dt>
               <dd className="contact-channels__value">
@@ -131,8 +138,6 @@ export function ContactChannels({ heading }: ContactChannelsProps) {
             </div>
           </dl>
         </div>
-
-        <MapEmbed />
       </Container>
     </Section>
   );
