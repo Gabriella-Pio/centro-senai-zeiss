@@ -1,24 +1,22 @@
-import Link from "next/link";
+"use client";
+
 import { Mail, MapPin, Navigation, Phone } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CopyValueButton } from "@/components/ui/CopyValueButton";
 import { MapEmbed } from "@/components/sections/MapEmbed";
-import { contactCopyActions, type ContactHeadingCopy } from "@/copy/contact";
-import { footer, location } from "@/copy/site";
+import { useCopy } from "@/copy/CopyProvider";
+import { Link } from "@/i18n/navigation";
 import { getLocationLinks } from "@/lib/location-links";
 import "./contact-channels.css";
 
 const linkIcon = { size: 16, strokeWidth: 1.75, "aria-hidden": true as const };
-const addressText = [location.name, ...location.lines].join("\n");
 
-interface ContactChannelsProps {
-  heading: ContactHeadingCopy;
-}
-
-export function ContactChannels({ heading }: ContactChannelsProps) {
+export function ContactChannels() {
+  const { contactHeading: heading, contactCopyActions, footer, location } = useCopy();
   const maps = getLocationLinks(location.mapsQuery);
+  const addressText = [location.name, ...location.lines].join("\n");
 
   return (
     <Section id="contato" sectionKey="contact-channels" surface="cream" pattern="none" ambient="none" clearNav>
@@ -44,7 +42,7 @@ export function ContactChannels({ heading }: ContactChannelsProps) {
           <div className="contact-channels__place">
             <dl className="contact-channels__list">
               <div className="contact-channels__item">
-                <dt>Endereço</dt>
+                <dt>{heading.fields.address}</dt>
                 <dd>
                   <address>
                     <p>{location.name}</p>
@@ -88,12 +86,12 @@ export function ContactChannels({ heading }: ContactChannelsProps) {
               </div>
             </dl>
 
-            <MapEmbed />
+            <MapEmbed name={location.name} mapsQuery={location.mapsQuery} title={heading.mapTitle} />
           </div>
 
           <dl className="contact-channels__list contact-channels__list--reach">
             <div className="contact-channels__item">
-              <dt>Telefone</dt>
+              <dt>{heading.fields.phone}</dt>
               <dd className="contact-channels__value">
                 <a
                   href={`tel:${location.phoneTel}`}
@@ -112,14 +110,14 @@ export function ContactChannels({ heading }: ContactChannelsProps) {
             </div>
 
             <div className="contact-channels__item">
-              <dt>Horário</dt>
+              <dt>{heading.fields.hours}</dt>
               <dd>
                 <p>{location.hours}</p>
               </dd>
             </div>
 
             <div className="contact-channels__item">
-              <dt>E-mail</dt>
+              <dt>{heading.fields.email}</dt>
               <dd className="contact-channels__value">
                 <a
                   href={`mailto:${location.email}`}

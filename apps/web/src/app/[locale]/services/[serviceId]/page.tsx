@@ -1,28 +1,30 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
 import { ServiceDetail } from "@/components/sections/ServiceDetail";
-import { equipment } from "@/copy/equipment";
-import { serviceDetail, services, servicesCatalog, servicesHeading } from "@/copy/services";
+import { getCatalog } from "@/copy/catalog";
 
 interface ServicePageProps {
-  params: Promise<{ serviceId: string }>;
+  params: Promise<{ locale: string; serviceId: string }>;
 }
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 export function generateStaticParams() {
-  return services.map((service) => ({ serviceId: service.id }));
+  return getCatalog("pt").services.map((service) => ({ serviceId: service.id }));
 }
 
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const { serviceId } = await params;
-  const service = services.find((item) => item.id === serviceId);
+  const { locale, serviceId } = await params;
+  const copy = getCatalog(locale);
+  const service = copy.services.find((item) => item.id === serviceId);
   if (!service) notFound();
 
+  const prefix = locale === "pt" ? "" : `/${locale}`;
   return {
-    title: `${service.label} | Centro de Excelência em Metrologia SENAI ZEISS`,
+    title: service.label,
     description: service.shortDescription,
-    alternates: siteUrl ? { canonical: `${siteUrl}/services/${service.id}` } : undefined,
+    alternates: siteUrl ? { canonical: `${siteUrl}${prefix}/services/${service.id}` } : undefined,
   };
 }
 
@@ -69,13 +71,15 @@ const cardMachine: Record<string, string> = {
 };
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
-  const { serviceId } = await params;
-  const service = services.find((s) => s.id === serviceId);
+  const { locale, serviceId } = await params;
+  setRequestLocale(locale);
+  const copy = getCatalog(locale);
+  const service = copy.services.find((item) => item.id === serviceId);
   if (!service) notFound();
 
-  const index = services.findIndex((item) => item.id === service.id);
+  const index = copy.services.findIndex((item) => item.id === service.id);
   const servicePath = `/services/${service.id}`;
-  const machines = equipment
+  const machines = copy.equipment
     .filter((item) => item.href === servicePath)
     .map((item) => ({
       name: item.title.replace(/^ZEISS\s+/, ""),
@@ -99,34 +103,34 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
   return (
     <ServiceDetail
-      eyebrow={servicesHeading.eyebrow ?? serviceDetail.eyebrow}
+      eyebrow={copy.servicesHeading.eyebrow ?? copy.serviceDetail.eyebrow}
       index={index}
       title={service.label}
       body={service.description}
       images={images}
       machines={machines}
       applications={{
-        title: serviceDetail.applicationsLabel,
+        title: copy.serviceDetail.applicationsLabel,
         items: service.applications,
       }}
       audience={{
-        title: serviceDetail.audienceLabel,
+        title: copy.serviceDetail.audienceLabel,
         text: service.audience,
       }}
-      equipmentLabel={serviceDetail.equipmentLabel}
+      equipmentLabel={copy.serviceDetail.equipmentLabel}
       cta={{
-        label: serviceDetail.ctaLabel,
+        label: copy.serviceDetail.ctaLabel,
         href: `/quote?service=${service.id}`,
       }}
-      siblings={services.map((item) => ({
+      siblings={copy.services.map((item) => ({
         id: item.id,
         label: item.label,
         href: `/services/${item.id}`,
         current: item.id === service.id,
       }))}
-      siblingsLabel={serviceDetail.backLabel}
-      catalogCta={servicesCatalog.allServicesCta}
-      detailsLabel={servicesCatalog.detailsLabel}
+      siblingsLabel={copy.serviceDetail.backLabel}
+      catalogCta={copy.servicesCatalog.allServicesCta}
+      detailsLabel={copy.servicesCatalog.detailsLabel}
       siteUrl={siteUrl}
     />
   );

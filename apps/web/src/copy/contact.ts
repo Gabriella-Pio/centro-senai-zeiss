@@ -8,6 +8,13 @@ export const contactHeading = {
     href: "/quote",
     after: ".",
   },
+  fields: {
+    address: "Endereço",
+    phone: "Telefone",
+    hours: "Horário",
+    email: "E-mail",
+  },
+  mapTitle: "Mapa",
 };
 
 export const contactCopyActions = {

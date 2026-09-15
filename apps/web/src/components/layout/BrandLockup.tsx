@@ -1,7 +1,9 @@
-import Link from "next/link";
+"use client";
+
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { cn } from "@cem/ui";
-import { brand } from "@/copy/site";
+import { useCopy } from "@/copy/CopyProvider";
 import "./brand-lockup.css";
 
 type BrandLockupProps = {
@@ -12,6 +14,7 @@ type BrandLockupProps = {
 };
 
 export function BrandLockup({ variant = "nav", inverted = false }: BrandLockupProps) {
+  const { brand } = useCopy();
   const isNav = variant === "nav";
 
   return (

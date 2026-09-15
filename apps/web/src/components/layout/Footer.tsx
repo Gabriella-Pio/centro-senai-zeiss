@@ -1,23 +1,23 @@
-import Link from "next/link";
+"use client";
+
 import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react";
 import { BackToTop } from "@/components/layout/BackToTop";
 import { cn } from "@cem/ui";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { BrandLockup } from "@/components/layout/BrandLockup";
 import { CopyValueButton } from "@/components/ui/CopyValueButton";
-import { contactCopyActions } from "@/copy/contact";
-import { footer, location, nav } from "@/copy/site";
-import { services } from "@/copy/services";
+import { useCopy } from "@/copy/CopyProvider";
+import { Link } from "@/i18n/navigation";
 import { getLocationLinks } from "@/lib/location-links";
 import "./footer.css";
 
 const footerLinkClass =
   "text-primary-foreground/70 transition-colors duration-200 hover:text-primary-foreground";
 
-const mapLinks = getLocationLinks(location.mapsQuery);
-const addressText = [location.name, ...location.lines].join("\n");
-
 export default function Footer() {
+  const { footer, location, nav, services, contactCopyActions } = useCopy();
+  const mapLinks = getLocationLinks(location.mapsQuery);
+  const addressText = [location.name, ...location.lines].join("\n");
   return (
     <footer className="site-footer section-surface relative" data-surface="dark" data-pattern="none">
       <div className="site-footer-inner relative py-(--section-py) md:py-(--section-py-lg)">
@@ -171,7 +171,7 @@ export default function Footer() {
 
         <div className="site-footer-legal">
           <p>{footer.copyright}</p>
-          <nav className="site-footer-legal__nav" aria-label="Documentos legais">
+          <nav className="site-footer-legal__nav" aria-label={footer.legal.navLabel}>
             <Link href={footer.legal.termsHref} className="footer-legal-link">
               {footer.legal.terms}
             </Link>

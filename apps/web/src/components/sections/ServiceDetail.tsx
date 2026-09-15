@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button, cn } from "@cem/ui";
 import { Section } from "@/components/ui/Section";
@@ -11,6 +10,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { mediaFrameClass, mediaPhotoCoverClass, mediaPlateClass } from "@/lib/media-frame";
 import { publicAsset } from "@/lib/public-asset";
 import type { CtaCopy } from "@/copy/types";
+import { Link } from "@/i18n/navigation";
 import { ServiceSiblingsCarousel, type ServiceSiblingItem } from "@/components/sections/ServiceSiblingsCarousel";
 import "./service-detail.css";
 

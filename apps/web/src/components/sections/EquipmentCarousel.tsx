@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button, cn } from "@cem/ui";
 import { Section } from "@/components/ui/Section";
@@ -13,8 +12,9 @@ import { peekSlides, usePeekCarousel } from "@/components/ui/usePeekCarousel";
 import { publicAsset } from "@/lib/public-asset";
 import { mediaPhotoSizes } from "@/lib/media-frame";
 import { ServiceChips, chipForServiceHref } from "@/components/ui/ServiceChips";
-import { equipmentCard } from "@/copy/equipment";
+import { useCopy } from "@/copy/CopyProvider";
 import type { CtaCopy, FeatureItem, SectionCopy } from "@/copy/types";
+import { Link } from "@/i18n/navigation";
 import "./equipment-carousel.css";
 
 interface EquipmentCarouselProps {
@@ -48,6 +48,7 @@ export function EquipmentCarousel({
   pattern = "none",
   ambient = "spotlight",
 }: EquipmentCarouselProps) {
+  const { equipmentCard, services } = useCopy();
   const count = items.length;
   const reduce = usePrefersReducedMotion();
   const {
@@ -105,7 +106,7 @@ export function EquipmentCarousel({
                 type="button"
                 variant="outline"
                 size="icon-lg"
-                aria-label="Equipamento anterior"
+                aria-label={equipmentCard.prev}
                 onClick={() => go(-1)}
                 className="equip-arrow equip-arrow--prev"
               >
@@ -117,8 +118,7 @@ export function EquipmentCarousel({
             <div ref={trackRef} className="equip-track">
               {slides.map(({ item, index, copy, key }) => {
                 const { isPeek, isFocus, isCenter, decorative } = slideState(copy, index);
-                const service = chipForServiceHref(item.href);
-
+                const service = chipForServiceHref(item.href, services);
                 return (
                   <article
                     key={key}
@@ -135,6 +135,7 @@ export function EquipmentCarousel({
                       decorative={decorative}
                       service={service}
                       interactive={isFocus}
+                      usedIn={equipmentCard.usedIn}
                     />
                   </article>
                 );
@@ -147,7 +148,7 @@ export function EquipmentCarousel({
                 type="button"
                 variant="outline"
                 size="icon-lg"
-                aria-label="Próximo equipamento"
+                aria-label={equipmentCard.next}
                 onClick={() => go(1)}
                 className="equip-arrow equip-arrow--next"
               >
@@ -167,7 +168,7 @@ export function EquipmentCarousel({
                 <button
                   key={item.title}
                   type="button"
-                  aria-label={`Ir para ${item.title}`}
+                  aria-label={`${equipmentCard.goTo} ${item.title}`}
                   aria-current={isActive ? "true" : undefined}
                   className={cn("equip-dot", isActive && "is-active", isPlaying && "is-playing")}
                   onClick={() => goTo(index)}
@@ -189,11 +190,13 @@ function EquipCardMedia({
   decorative,
   service,
   interactive,
+  usedIn,
 }: {
   item: FeatureItem;
   decorative: boolean;
   service: ReturnType<typeof chipForServiceHref>;
   interactive: boolean;
+  usedIn: string;
 }) {
   return (
     <>
@@ -213,8 +216,8 @@ function EquipCardMedia({
         {item.tag ? <div className="equip-spec">{item.tag}</div> : null}
         {service ? (
           <ServiceChips
-            label={equipmentCard.usedIn}
-            ariaLabel={`${equipmentCard.usedIn} ${service.label}`}
+            label={usedIn}
+            ariaLabel={`${usedIn} ${service.label}`}
             links={[service]}
             interactive={interactive}
           />

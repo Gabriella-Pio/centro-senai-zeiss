@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, Button } from "@cem/ui";
@@ -7,6 +6,7 @@ import { publicAsset } from "@/lib/public-asset";
 import { vitrineCardClass } from "@/lib/vitrine-card";
 import { cardPhotoAspectClass, mediaPhotoCoverClass, mediaPhotoSizes } from "@/lib/media-frame";
 import type { ActionCardItem } from "@/copy/types";
+import { Link } from "@/i18n/navigation";
 
 interface ActionCardGridProps {
   items: ActionCardItem[];

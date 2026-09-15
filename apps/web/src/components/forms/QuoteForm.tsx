@@ -1,11 +1,11 @@
 "use client";
 
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import Link from "next/link";
 import { Check } from "lucide-react";
 import { Label, Input, Textarea, Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@cem/ui";
 import { apiRequest, ApiError } from "@/lib/api";
 import type { QuoteFormCopy } from "@/copy/quote";
+import { Link } from "@/i18n/navigation";
 import "./quote-form.css";
 
 const FIELD_IDS = [

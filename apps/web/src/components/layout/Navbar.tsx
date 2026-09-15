@@ -1,25 +1,19 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { Button, cn, Sheet, SheetContent, SheetTitle } from "@cem/ui";
 import { BrandLockup } from "@/components/layout/BrandLockup";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { NavTray, navTrayRowClass } from "@/components/layout/NavTray";
+import { useCopy } from "@/copy/CopyProvider";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import { useSectionBackdrop } from "@/hooks/useSectionBackdrop";
-import { nav } from "@/copy/site";
-import { services } from "@/copy/services";
 import "./navbar.css";
 
 const navLinkClass =
   "site-nav-link px-3 py-2 text-base font-medium text-foreground/80 transition-colors hover:text-foreground hover:bg-muted";
-
-const navTextLinks = nav.links.filter(
-  (link) => link.href !== nav.cta.href && link.href !== nav.contactCta.href,
-);
 
 function navPathActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -29,7 +23,11 @@ function navPathActive(pathname: string, href: string) {
 type OpenTray = "services" | "languages" | null;
 
 export default function Navbar() {
+  const { nav, services } = useCopy();
   const pathname = usePathname();
+  const navTextLinks = nav.links.filter(
+    (link) => link.href !== nav.cta.href && link.href !== nav.contactCta.href,
+  );
   const headerRef = useRef<HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openTray, setOpenTray] = useState<OpenTray>(null);
@@ -187,7 +185,11 @@ export default function Navbar() {
               {nav.cta.label}
             </Button>
           </div>
-          <LanguageSwitch open={tray === "languages"} onOpenChange={setLanguageOpen} />
+          <LanguageSwitch
+            align="end"
+            open={tray === "languages"}
+            onOpenChange={setLanguageOpen}
+          />
           <button
             type="button"
             className="site-nav-toggle p-2 text-foreground/80 hover:text-foreground"

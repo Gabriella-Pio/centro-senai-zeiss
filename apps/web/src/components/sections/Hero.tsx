@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { ComponentPropsWithoutRef } from "react";
 import { forwardRef } from "react";
 import { Section } from "@/components/ui/Section";

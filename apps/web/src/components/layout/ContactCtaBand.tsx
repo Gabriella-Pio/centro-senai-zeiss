@@ -1,23 +1,22 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Button } from "@cem/ui";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { contactBand, contactBandOnContact, contactBandOnQuote } from "@/copy/site";
+import { useCopy } from "@/copy/CopyProvider";
+import { Link, usePathname } from "@/i18n/navigation";
 import "./contact-cta-band.css";
 
-function bandForPath(pathname: string) {
-  if (pathname === "/contact") return contactBandOnContact;
-  if (pathname === "/quote") return contactBandOnQuote;
-  return contactBand;
-}
-
 export function ContactCtaBand() {
+  const copy = useCopy();
   const pathname = usePathname();
-  const band = bandForPath(pathname);
+  const band =
+    pathname === "/contact"
+      ? copy.contactBandOnContact
+      : pathname === "/quote"
+        ? copy.contactBandOnQuote
+        : copy.contactBand;
 
   return (
     <Section
@@ -35,7 +34,7 @@ export function ContactCtaBand() {
           title={band.title}
           description={band.description}
         />
-        <nav className="contact-cta-actions" aria-label="Ações de contato">
+        <nav className="contact-cta-actions" aria-label={band.actionsLabel}>
           <Button size="xl" className="contact-cta-primary" render={<Link href={band.primaryCta.href} />}>
             {band.primaryCta.label}
           </Button>

@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Globe } from "lucide-react";
+import { useLocale } from "next-intl";
 import { cn } from "@cem/ui";
-import { NavTray, NavTrayRow } from "@/components/layout/NavTray";
-import { nav } from "@/copy/site";
+import { NavTray, navTrayRowClass } from "@/components/layout/NavTray";
+import { useCopy } from "@/copy/CopyProvider";
+import { usePathname } from "@/i18n/navigation";
+import { routing, type AppLocale } from "@/i18n/routing";
 
 interface LanguageSwitchProps {
   className?: string;
@@ -13,19 +16,27 @@ interface LanguageSwitchProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-/** Só o controle visual. A troca real de idioma entra quando o copy estiver fechado. */
+function hrefForLocale(pathname: string, locale: AppLocale) {
+  const path = pathname || "/";
+  if (locale === routing.defaultLocale) return path;
+  return path === "/" ? `/${locale}` : `/${locale}${path}`;
+}
+
 export function LanguageSwitch({
   className,
-  align = "start",
+  align = "end",
   open: openProp,
   onOpenChange,
 }: LanguageSwitchProps) {
+  const copy = useCopy();
+  const locale = useLocale();
+  const pathname = usePathname();
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const [code, setCode] = useState(nav.languages.defaultCode);
   const rootRef = useRef<HTMLDivElement>(null);
   const controlled = onOpenChange != null;
   const open = controlled ? Boolean(openProp) : uncontrolledOpen;
-  const current = nav.languages.options.find((option) => option.code === code);
+  const languages = copy.nav.languages;
+  const current = languages.options.find((option) => option.code === locale);
 
   const setOpen = (next: boolean) => {
     if (controlled) onOpenChange(next);
@@ -54,7 +65,7 @@ export function LanguageSwitch({
     <div className="relative" ref={rootRef}>
       <button
         type="button"
-        aria-label={nav.languages.ariaLabel}
+        aria-label={languages.ariaLabel}
         aria-expanded={open}
         aria-haspopup="listbox"
         onClick={() => setOpen(!open)}
@@ -66,7 +77,7 @@ export function LanguageSwitch({
       >
         <Globe size={16} strokeWidth={1.75} />
         <span className="site-nav-lang-code font-mono text-xs uppercase tracking-wide">
-          {current?.code ?? code}
+          {current?.code ?? locale}
         </span>
         <ChevronDown
           size={14}
@@ -79,23 +90,39 @@ export function LanguageSwitch({
       </button>
 
       {open && (
-        <NavTray align={align} role="listbox" aria-label={nav.languages.ariaLabel} className="w-40">
-          {nav.languages.options.map((option) => {
-            const selected = option.code === code;
+        <NavTray
+          align={align}
+          role="listbox"
+          aria-label={languages.ariaLabel}
+          className="site-nav-lang-menu w-40"
+        >
+          {languages.options.map((option) => {
+            const code = option.code as AppLocale;
+            const selected = code === locale;
             return (
-              <NavTrayRow
-                key={option.code}
+              <a
+                key={code}
+                href={hrefForLocale(pathname, code)}
+                hrefLang={code}
                 role="option"
                 aria-selected={selected}
-                active={selected}
-                onClick={() => {
-                  setCode(option.code);
-                  setOpen(false);
+                className={navTrayRowClass(selected)}
+                onClick={(event) => {
+                  if (selected) {
+                    event.preventDefault();
+                    setOpen(false);
+                    return;
+                  }
+                  const search = window.location.search;
+                  if (search) {
+                    event.preventDefault();
+                    window.location.assign(`${hrefForLocale(pathname, code)}${search}`);
+                  }
                 }}
               >
-                <span className="w-7 font-mono text-xs text-muted-foreground">{option.code.toUpperCase()}</span>
+                <span className="w-7 font-mono text-xs text-muted-foreground">{code.toUpperCase()}</span>
                 <span>{option.label}</span>
-              </NavTrayRow>
+              </a>
             );
           })}
         </NavTray>

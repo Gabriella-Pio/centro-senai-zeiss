@@ -34,6 +34,7 @@ export const nav = {
   openMenu: "Abrir menu",
   closeMenu: "Fechar menu",
   menuLabel: "Menu",
+  skipToContent: "Ir para o conteúdo",
   languages: {
     ariaLabel: "Idioma",
     defaultCode: "pt",
@@ -66,6 +67,7 @@ export const footer = {
     privacy: "Política de Privacidade",
     termsHref: "/terms",
     privacyHref: "/privacy",
+    navLabel: "Documentos legais",
   },
   backToTop: "Voltar ao topo",
   mapsLinks: {
@@ -81,6 +83,7 @@ export const contactBand = {
   title: "Fale com a nossa equipe",
   description:
     "Peça orçamento, agende visita ao laboratório ou tire dúvidas sobre medição e ensaios.",
+  actionsLabel: "Ações de contato",
   primaryCta: { label: "Solicitar orçamento", href: "/quote" },
   secondaryCta: { label: "Ver endereço e horários", href: "/contact" },
 };
@@ -91,6 +94,7 @@ export const contactBandOnQuote = {
   title: "Prefere falar primeiro?",
   description:
     "Dúvida de recebimento, visita ou horário — endereço e telefone estão na página de contato.",
+  actionsLabel: "Ações de contato",
   primaryCta: { label: "Ver endereço e horários", href: "/contact" },
   secondaryCta: { label: "Ver os serviços", href: "/services" },
 };

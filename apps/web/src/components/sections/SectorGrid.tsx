@@ -2,24 +2,18 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ServiceChips, chipForServiceId } from "@/components/ui/ServiceChips";
-import { sectorsCard } from "@/copy/home";
-import type { SectionCopy, SectorItem } from "@/copy/types";
+import type { CopyCatalog } from "@/copy/catalog";
+import type { SectionCopy, SectorItem, ServiceContent } from "@/copy/types";
 import "./sector-grid.css";
-
-const SECTOR_CHIP_LABELS: Record<string, string> = {
-  "controle-qualidade-dimensional": "Dimensional",
-  "digitalizacao-engenharia-reversa": "Digitalização",
-  "inspecao-interna": "Inspeção NDT",
-  "prototipacao-3d": "Prototipação",
-  "consultoria-qualidade": "Consultoria",
-};
 
 interface SectorGridProps {
   heading: SectionCopy;
   items: SectorItem[];
+  sectorsCard: CopyCatalog["sectorsCard"];
+  services: ServiceContent[];
 }
 
-export function SectorGrid({ heading, items }: SectorGridProps) {
+export function SectorGrid({ heading, items, sectorsCard, services }: SectorGridProps) {
   return (
     <Section sectionKey="sectors" surface="cream" pattern="none">
       <Container className="flex flex-col gap-(--section-stack)">
@@ -33,7 +27,7 @@ export function SectorGrid({ heading, items }: SectorGridProps) {
           </div>
           <ul className="sector-grid__list">
             {items.map((item) => (
-              <SectorRow key={item.id} item={item} />
+              <SectorRow key={item.id} item={item} sectorsCard={sectorsCard} services={services} />
             ))}
           </ul>
         </div>
@@ -42,13 +36,21 @@ export function SectorGrid({ heading, items }: SectorGridProps) {
   );
 }
 
-function SectorRow({ item }: { item: SectorItem }) {
+function SectorRow({
+  item,
+  sectorsCard,
+  services,
+}: {
+  item: SectorItem;
+  sectorsCard: CopyCatalog["sectorsCard"];
+  services: ServiceContent[];
+}) {
   const relatedLinks = item.relatedServices
-    .map((serviceId) => chipForServiceId(serviceId))
+    .map((serviceId) => chipForServiceId(serviceId, services))
     .filter((link): link is NonNullable<typeof link> => link !== null)
     .map((link) => ({
       ...link,
-      label: SECTOR_CHIP_LABELS[link.id] ?? link.label,
+      label: sectorsCard.shortLabels[link.id as keyof typeof sectorsCard.shortLabels] ?? link.label,
     }));
 
   return (
@@ -57,7 +59,7 @@ function SectorRow({ item }: { item: SectorItem }) {
       <p className="sector-grid__description">{item.description}</p>
       <ServiceChips
         label={sectorsCard.servicesLabel}
-        ariaLabel={`${sectorsCard.servicesLabel} para ${item.title}`}
+        ariaLabel={`${sectorsCard.servicesLabel} ${item.title}`}
         links={relatedLinks}
       />
     </li>

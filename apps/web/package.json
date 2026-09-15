@@ -12,13 +12,14 @@
     "convert:heif": "node scripts/convert-lab-heif.mjs"
   },
   "dependencies": {
-    "@cem/ui": "*",
     "@base-ui/react": "^1.6.0",
+    "@cem/ui": "*",
     "@phosphor-icons/react": "^2.1.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.27.0",
     "next": "16.2.12",
+    "next-intl": "^4.14.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "shadcn": "^4.16.0",

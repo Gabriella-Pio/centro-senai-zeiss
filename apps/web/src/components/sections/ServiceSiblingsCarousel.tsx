@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button, cn } from "@cem/ui";
 import { peekSlides, usePeekCarousel } from "@/components/ui/usePeekCarousel";
 import { SectionTextCta } from "@/components/ui/SectionTextCta";
 import type { CtaCopy } from "@/copy/types";
+import { Link } from "@/i18n/navigation";
 
 export interface ServiceSiblingItem {
   id: string;

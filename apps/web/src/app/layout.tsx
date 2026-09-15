@@ -2,15 +2,6 @@ import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import "./motion.css";
-import Navbar from "@/components/layout/Navbar";
-import { ContactCtaBand } from "@/components/layout/ContactCtaBand";
-import Footer from "@/components/layout/Footer";
-import { SectionSurfaceDevPanel } from "@/components/dev/SectionSurfaceDevPanel";
-import { SkipLink } from "@/components/layout/SkipLink";
-import { PageScrollbar } from "@/components/layout/PageScrollbar";
-import { siteMeta } from "@/copy/site";
-
-const isDev = process.env.NODE_ENV === "development";
 
 const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
@@ -34,8 +25,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: siteMeta.title,
-  description: siteMeta.description,
+  title: "Centro de Excelência em Metrologia SENAI ZEISS | Goiânia",
 };
 
 export default function RootLayout({
@@ -44,17 +34,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
+    <html
+      lang="pt-BR"
+      suppressHydrationWarning
+      className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}
+    >
       <body id="top" className={`${plexSans.className} min-h-screen flex flex-col bg-background text-foreground font-sans`}>
-        {isDev ? <SectionSurfaceDevPanel /> : null}
-        <SkipLink />
-        <PageScrollbar />
-        <Navbar />
-        <main id="conteudo" className="flex-1">
-          {children}
-        </main>
-        <ContactCtaBand />
-        <Footer />
+        {children}
       </body>
     </html>
   );

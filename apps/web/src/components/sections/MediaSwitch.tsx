@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import type { SectionAmbient, SectionPattern, SectionSurface } from "@/lib/section-surfaces";
@@ -14,6 +13,7 @@ import { getIcon } from "@/lib/icons";
 import { mediaPhotoCoverClass, mediaPhotoSizes, mediaPlateClass } from "@/lib/media-frame";
 import { publicAsset } from "@/lib/public-asset";
 import type { CtaCopy, FeatureItem, SectionCopy } from "@/copy/types";
+import { Link } from "@/i18n/navigation";
 import "./media-switch.css";
 
 const AUTOPLAY_MS = 5200;

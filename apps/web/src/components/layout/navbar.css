@@ -314,4 +314,11 @@
   .site-header .site-nav-lang {
     padding-inline: 0.65rem;
   }
+
+  /* Abre para a esquerda do globo, com folga do canto e do sanduíche. */
+  .site-nav-lang-menu {
+    right: 0;
+    left: auto;
+    width: min(11.5rem, calc(100vw - 3.5rem));
+  }
 }

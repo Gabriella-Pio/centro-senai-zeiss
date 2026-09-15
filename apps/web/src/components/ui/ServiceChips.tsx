@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { services } from "@/copy/services";
+import type { ServiceContent } from "@/copy/types";
+import { Link } from "@/i18n/navigation";
 import "./service-chips.css";
 
 export type ServiceChipLink = {
@@ -16,7 +16,7 @@ interface ServiceChipsProps {
   interactive?: boolean;
 }
 
-export function chipForServiceId(id: string): ServiceChipLink | null {
+export function chipForServiceId(id: string, services: ServiceContent[]): ServiceChipLink | null {
   const service = services.find((entry) => entry.id === id);
   if (!service) return null;
   return {
@@ -26,9 +26,9 @@ export function chipForServiceId(id: string): ServiceChipLink | null {
   };
 }
 
-export function chipForServiceHref(href?: string): ServiceChipLink | null {
+export function chipForServiceHref(href: string | undefined, services: ServiceContent[]): ServiceChipLink | null {
   if (!href) return null;
-  return chipForServiceId(href.replace(/^\/services\//, ""));
+  return chipForServiceId(href.replace(/^\/services\//, ""), services);
 }
 
 export function ServiceChips({

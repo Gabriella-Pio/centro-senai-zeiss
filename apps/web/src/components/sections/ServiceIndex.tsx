@@ -1,28 +1,28 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SectionTextCta } from "@/components/ui/SectionTextCta";
 import { mediaFrameClass, mediaPhotoCoverClass } from "@/lib/media-frame";
 import { publicAsset } from "@/lib/public-asset";
-import { equipment } from "@/copy/equipment";
-import { servicesCatalog } from "@/copy/services";
-import type { SectionCopy, ServiceContent } from "@/copy/types";
+import type { FeatureItem, SectionCopy, ServiceContent } from "@/copy/types";
+import { Link } from "@/i18n/navigation";
 import "./service-index.css";
 
 interface ServiceIndexProps {
   heading: SectionCopy;
   items: ServiceContent[];
+  equipment: FeatureItem[];
+  detailsLabel: string;
 }
 
-function machinesForService(serviceId: string) {
+function machinesForService(serviceId: string, equipment: FeatureItem[]) {
   return equipment
     .filter((item) => item.href === `/services/${serviceId}`)
     .map((item) => item.title.replace(/^ZEISS\s+/, ""));
 }
 
-export function ServiceIndex({ heading, items }: ServiceIndexProps) {
+export function ServiceIndex({ heading, items, equipment, detailsLabel }: ServiceIndexProps) {
   return (
     <Section id="servicos" sectionKey="services-index" surface="cream" pattern="none" ambient="none" clearNav>
       <Container className="service-index">
@@ -32,7 +32,7 @@ export function ServiceIndex({ heading, items }: ServiceIndexProps) {
 
         <ol className="service-index__list">
           {items.map((item, index) => (
-            <ServiceIndexRow key={item.id} item={item} index={index} />
+            <ServiceIndexRow key={item.id} item={item} index={index} equipment={equipment} detailsLabel={detailsLabel} />
           ))}
         </ol>
       </Container>
@@ -40,9 +40,19 @@ export function ServiceIndex({ heading, items }: ServiceIndexProps) {
   );
 }
 
-function ServiceIndexRow({ item, index }: { item: ServiceContent; index: number }) {
+function ServiceIndexRow({
+  item,
+  index,
+  equipment,
+  detailsLabel,
+}: {
+  item: ServiceContent;
+  index: number;
+  equipment: FeatureItem[];
+  detailsLabel: string;
+}) {
   const href = `/services/${item.id}`;
-  const machines = machinesForService(item.id);
+  const machines = machinesForService(item.id, equipment);
 
   return (
     <li className="service-index__item">
@@ -61,7 +71,7 @@ function ServiceIndexRow({ item, index }: { item: ServiceContent; index: number 
             <p className="service-index__machines">{machines.join(" · ")}</p>
           ) : null}
           <SectionTextCta className="service-index__cta" href={href}>
-            {servicesCatalog.detailsLabel}
+            {detailsLabel}
           </SectionTextCta>
         </div>
       </div>

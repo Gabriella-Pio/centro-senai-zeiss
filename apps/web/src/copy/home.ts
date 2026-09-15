@@ -79,6 +79,13 @@ export const sectorsCard = {
   colSector: 'Setor',
   colApplication: 'No produto',
   colServices: 'Serviços',
+  shortLabels: {
+    'controle-qualidade-dimensional': 'Dimensional',
+    'digitalizacao-engenharia-reversa': 'Digitalização',
+    'inspecao-interna': 'Inspeção NDT',
+    'prototipacao-3d': 'Prototipação',
+    'consultoria-qualidade': 'Consultoria',
+  },
 };
 
 export const sectorsHeading: SectionCopy = {
@@ -142,7 +149,7 @@ export const partnersHeading: SectionCopy = {
     'FIEG, SENAI Goiás, ZEISS e a Faculdade SENAI Ítalo Bologna — a estrutura que mantém a metrologia ZEISS em Goiânia.',
 };
 
-export const partners = [
+export const partners: PartnerLogo[] = [
     {
       name: 'ZEISS',
       logoSrc: '/brand/partners/zeiss-cooperacao.png',
@@ -168,4 +175,4 @@ export const partners = [
       href: 'https://goias.senai.br/unidade/faculdade-senai-italo-bologna',
       caption: 'Ítalo Bologna',
     },
-] satisfies PartnerLogo[];
+];

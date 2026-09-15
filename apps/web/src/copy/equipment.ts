@@ -94,4 +94,7 @@ export const equipmentCatalogCta = {
 
 export const equipmentCard = {
   usedIn: "Usado em",
+  prev: "Equipamento anterior",
+  next: "Próximo equipamento",
+  goTo: "Ir para",
 };

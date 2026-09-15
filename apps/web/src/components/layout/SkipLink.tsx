@@ -1,9 +1,9 @@
 import "./skip-link.css";
 
-export function SkipLink() {
+export function SkipLink({ label }: { label: string }) {
   return (
     <a href="#conteudo" className="skip-link">
-      Ir para o conteúdo
+      {label}
     </a>
   );
 }
