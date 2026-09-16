@@ -91,6 +91,8 @@
 .service-detail__hero-photo {
   width: 100%;
   max-width: 100%;
+  touch-action: pan-y;
+  user-select: none;
 }
 
 .service-detail__hero-frame {
@@ -103,6 +105,7 @@
 .service-detail__hero-frame img {
   opacity: 0;
   transition: opacity 0.55s ease;
+  -webkit-user-drag: none;
 }
 
 .service-detail__hero-frame img.is-active {

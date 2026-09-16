@@ -1,3 +1,10 @@
+@media (width < 90rem) {
+  .site-header {
+    transition: background-color 0.3s cubic-bezier(0.45, 0, 0.55, 1);
+    translate: none;
+  }
+}
+
 .site-header-bar {
   position: relative;
   display: flex;

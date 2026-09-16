@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button, cn } from "@cem/ui";
@@ -65,8 +65,20 @@ function ServicePhoto({
 }) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const photoRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef(active);
   const canCycle = images.length > 1 && !reducedMotion && !paused;
   const activeMachine = images[active]?.machine;
+  activeRef.current = active;
+
+  const goTo = useCallback(
+    (index: number) => {
+      if (images.length === 0) return;
+      setPaused(true);
+      setActive(((index % images.length) + images.length) % images.length);
+    },
+    [images.length],
+  );
 
   useEffect(() => {
     if (!canCycle) return;
@@ -76,11 +88,67 @@ function ServicePhoto({
     return () => window.clearTimeout(id);
   }, [canCycle, active, images.length]);
 
-  function goTo(index: number) {
-    if (images.length === 0) return;
-    setPaused(true);
-    setActive((index + images.length) % images.length);
-  }
+  useEffect(() => {
+    const photo = photoRef.current;
+    if (!photo || images.length < 2) return;
+
+    const LOCK = 10;
+    let pointerId: number | null = null;
+    let startX = 0;
+    let startY = 0;
+    let dragging = false;
+    let locked = false;
+    let dx = 0;
+
+    const onDown = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startY = event.clientY;
+      dragging = false;
+      locked = false;
+      dx = 0;
+    };
+
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerId !== pointerId) return;
+      const mx = event.clientX - startX;
+      const my = event.clientY - startY;
+      if (!locked) {
+        if (Math.hypot(mx, my) < LOCK) return;
+        locked = true;
+        if (Math.abs(mx) <= Math.abs(my)) {
+          pointerId = null;
+          return;
+        }
+        dragging = true;
+        photo.setPointerCapture(event.pointerId);
+      }
+      if (!dragging) return;
+      event.preventDefault();
+      dx = mx;
+    };
+
+    const onUp = (event: PointerEvent) => {
+      if (event.pointerId !== pointerId) return;
+      pointerId = null;
+      if (!dragging) return;
+      dragging = false;
+      if (dx <= -40) goTo(activeRef.current + 1);
+      else if (dx >= 40) goTo(activeRef.current - 1);
+    };
+
+    photo.addEventListener("pointerdown", onDown);
+    photo.addEventListener("pointermove", onMove, { passive: false });
+    photo.addEventListener("pointerup", onUp);
+    photo.addEventListener("pointercancel", onUp);
+    return () => {
+      photo.removeEventListener("pointerdown", onDown);
+      photo.removeEventListener("pointermove", onMove);
+      photo.removeEventListener("pointerup", onUp);
+      photo.removeEventListener("pointercancel", onUp);
+    };
+  }, [goTo, images.length]);
 
   if (images.length === 0 && machines.length === 0) return null;
 
@@ -98,7 +166,7 @@ function ServicePhoto({
               <ChevronLeft size={22} strokeWidth={1.5} aria-hidden />
             </button>
           ) : null}
-          <div className={mediaPlateClass("service-detail__hero-photo")}>
+          <div ref={photoRef} className={mediaPlateClass("service-detail__hero-photo")}>
             <div className={mediaFrameClass("service-detail__hero-frame")}>
               {images.map((image, index) => {
                 const isContain = image.fit === "contain";

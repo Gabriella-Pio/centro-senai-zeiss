@@ -31,6 +31,7 @@ export default function Navbar() {
   const headerRef = useRef<HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openTray, setOpenTray] = useState<OpenTray>(null);
+  const [vvTop, setVvTop] = useState(0);
   const trayTimer = useRef(0);
   const { hidden, atTop } = useHideOnScroll({ disabled: mobileOpen });
   const { color: backdrop, onDark } = useSectionBackdrop(headerRef, pathname);
@@ -39,6 +40,19 @@ export default function Navbar() {
   const inverted = onDark && !mobileOpen;
 
   useEffect(() => () => window.clearTimeout(trayTimer.current), []);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const sync = () => setVvTop(Math.max(0, vv.offsetTop));
+    sync();
+    vv.addEventListener("resize", sync);
+    vv.addEventListener("scroll", sync);
+    return () => {
+      vv.removeEventListener("resize", sync);
+      vv.removeEventListener("scroll", sync);
+    };
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 90rem)");
@@ -74,14 +88,17 @@ export default function Navbar() {
       <header
       ref={headerRef}
       className={cn(
-        "site-header fixed top-0 right-0 left-0 z-50",
+        "site-header fixed right-0 left-0 z-50",
         solid ? "bg-background" : "bg-transparent",
         "transition-[translate,background-color] duration-300 ease-[cubic-bezier(0.45,0,0.55,1)] motion-reduce:transition-none",
         hidden ? "-translate-y-full" : "translate-y-0",
       )}
       data-on-dark={inverted ? "" : undefined}
       data-solid={solid ? "" : undefined}
-      style={!mobileOpen && solid && backdrop ? { backgroundColor: backdrop } : undefined}
+      style={{
+        top: hidden ? 0 : vvTop,
+        ...(!mobileOpen && solid && backdrop ? { backgroundColor: backdrop } : {}),
+      }}
     >
       <div className="site-header-bar flex h-(--nav-height) items-center justify-between">
         <div className="site-header-brand min-w-0">
