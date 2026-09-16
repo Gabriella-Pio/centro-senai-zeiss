@@ -50,7 +50,7 @@ export function LabIntro({
 
             <div className="flex max-w-xl flex-col gap-4">
               {paragraphs.map((paragraph) => (
-                <p key={paragraph.slice(0, 48)} className="type-lead text-muted-foreground font-light">
+                <p key={paragraph.slice(0, 48)} className="type-lead text-muted-foreground">
                   {paragraph}
                 </p>
               ))}

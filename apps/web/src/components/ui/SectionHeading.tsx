@@ -31,7 +31,7 @@ export function SectionHeading({
         {title}
       </TitleTag>
       {description ? (
-        <p className="section-heading__description type-lead mt-(--sh-desc-gap) font-light">
+        <p className="section-heading__description type-lead mt-(--sh-desc-gap)">
           {description}
         </p>
       ) : null}

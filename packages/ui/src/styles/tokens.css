@@ -10,7 +10,7 @@
   --color-secondary: #ece7dc;
   --color-secondary-foreground: #1c1917;
   --color-muted: #efebe3;
-  --color-muted-foreground: #57534e;
+  --color-muted-foreground: #44403c;
   --color-accent: #0057b8;
   --color-accent-foreground: #ffffff;
   --color-border: rgba(28, 25, 23, 0.12);
@@ -23,26 +23,26 @@
 
   /* Tamanho: use classes CSS com var(--text-*) ou text-(length:--token).
      Evite combinar text-{token} + text-primary/text-muted — no Tailwind v4 a cor anula o tamanho. */
-  --text-meta: 0.75rem;
-  /* Eyebrow: rótulo de seção — 13px, legível e abaixo do body (18px). */
-  --text-eyebrow: 0.8125rem;
-  --text-caption: 0.875rem;
-  --text-link: 0.875rem;
-  --text-body: 1.125rem;
-  --text-lead: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
-  --text-header-cta: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --text-meta: 0.875rem;
+  /* Eyebrow: rótulo de seção — abaixo do body, ainda legível para 50+. */
+  --text-eyebrow: 0.9375rem;
+  --text-caption: 1rem;
+  --text-link: 1rem;
+  --text-body: 1.25rem;
+  --text-lead: clamp(1.25rem, 1.15rem + 0.35vw, 1.4375rem);
+  --text-header-cta: clamp(1.1875rem, 1.1rem + 0.25vw, 1.3125rem);
   --text-display-lg: clamp(2.5rem, 2rem + 4vw, 5.5rem);
   --text-display-md: clamp(1.75rem, 1.4rem + 2vw, 3.25rem);
   --text-display-sm: clamp(1.4rem, 1.2rem + 1vw, 2.25rem);
-  --text-hero-subtitle: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
-  --text-hero-lead: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem);
-  --text-card-title: clamp(1.125rem, 1.08rem + 0.3vw, 1.25rem);
-  --text-band-title: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
-  --text-switch-title: clamp(1.375rem, 1.25rem + 0.6vw, 1.625rem);
-  --text-switch-title-service: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
-  --text-switch-tag: 0.6875rem;
-  --text-switch-index: 0.6875rem;
-  --text-switch-blurb: clamp(1.0625rem, 1rem + 0.2vw, 1.1875rem);
+  --text-hero-subtitle: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+  --text-hero-lead: clamp(1.25rem, 1.15rem + 0.3vw, 1.4375rem);
+  --text-card-title: clamp(1.25rem, 1.15rem + 0.3vw, 1.375rem);
+  --text-band-title: clamp(1.375rem, 1.25rem + 0.5vw, 1.625rem);
+  --text-switch-title: clamp(1.5rem, 1.35rem + 0.6vw, 1.75rem);
+  --text-switch-title-service: clamp(1.25rem, 1.15rem + 0.35vw, 1.4375rem);
+  --text-switch-tag: 0.8125rem;
+  --text-switch-index: 0.8125rem;
+  --text-switch-blurb: clamp(1.1875rem, 1.1rem + 0.2vw, 1.3125rem);
   --text-stat: clamp(1.875rem, 1.5rem + 1.5vw, 2.25rem);
 
   /* ── Ritmo tipográfico (entrelinha + tracking) ── */

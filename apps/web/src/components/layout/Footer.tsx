@@ -12,7 +12,7 @@ import { getLocationLinks } from "@/lib/location-links";
 import "./footer.css";
 
 const footerLinkClass =
-  "text-primary-foreground/70 transition-colors duration-200 hover:text-primary-foreground";
+  "text-primary-foreground/90 transition-colors duration-200 hover:text-primary-foreground";
 
 export default function Footer() {
   const { footer, location, nav, services, contactCopyActions } = useCopy();

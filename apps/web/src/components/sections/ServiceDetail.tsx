@@ -355,7 +355,7 @@ export function ServiceDetail({
               </div>
             </div>
             <h1 className="service-detail__title font-heading font-bold">{title}</h1>
-            <p className="service-detail__lead type-lead font-light">{body}</p>
+            <p className="service-detail__lead type-lead">{body}</p>
           </div>
 
           <div className="service-detail__band">

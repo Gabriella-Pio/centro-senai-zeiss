@@ -46,7 +46,7 @@
   margin: 0;
   font-size: var(--text-caption);
   line-height: 1.55;
-  color: color-mix(in srgb, var(--color-primary-foreground) 60%, transparent);
+  color: color-mix(in srgb, var(--color-primary-foreground) 88%, transparent);
 }
 
 @media (width >= 48rem) {
@@ -155,7 +155,7 @@
   font-size: var(--text-caption);
   font-style: normal;
   line-height: 1.55;
-  color: color-mix(in srgb, var(--color-primary-foreground) 75%, transparent);
+  color: color-mix(in srgb, var(--color-primary-foreground) 92%, transparent);
 }
 
 @media (width >= 48rem) {
@@ -174,7 +174,7 @@
 
 .footer-hours {
   margin-top: 1.4rem;
-  color: color-mix(in srgb, var(--color-primary-foreground) 55%, transparent);
+  color: color-mix(in srgb, var(--color-primary-foreground) 88%, transparent);
 }
 
 .footer-contact {
@@ -220,7 +220,7 @@
 .footer-nav-link {
   display: inline-flex;
   width: fit-content;
-  color: color-mix(in srgb, var(--color-primary-foreground) 70%, transparent);
+  color: color-mix(in srgb, var(--color-primary-foreground) 90%, transparent);
   text-decoration: none;
   transition: color 0.15s;
 }
@@ -253,7 +253,7 @@
   font-size: var(--text-caption);
   line-height: var(--leading-caption);
   text-align: center;
-  color: color-mix(in srgb, var(--color-primary-foreground) 42%, transparent);
+  color: color-mix(in srgb, var(--color-primary-foreground) 78%, transparent);
 }
 
 .site-footer-legal p {

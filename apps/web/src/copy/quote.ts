@@ -44,6 +44,7 @@ export const quoteForm = {
     phone: "Informe um telefone com DDD.",
     cnpj: "Informe um CNPJ válido.",
     service: "Selecione pelo menos um serviço.",
+    incomplete: "Ainda não enviamos. Preencha os campos marcados em vermelho.",
     submit: "Não foi possível enviar. Tente de novo ou fale pelo telefone da página de contato.",
   },
   privacy: {

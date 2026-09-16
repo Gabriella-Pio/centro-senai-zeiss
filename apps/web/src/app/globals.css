@@ -110,7 +110,7 @@
 
   .section-surface[data-surface="dark"] {
     --color-foreground: #f1f5f9;
-    --color-muted-foreground: #94a3b8;
+    --color-muted-foreground: #cbd5e1;
     --color-border: rgba(241, 245, 249, 0.14);
     --color-card: #162033;
     --color-card-foreground: #f1f5f9;
@@ -124,12 +124,12 @@
   }
 
   .section-surface[data-surface="dark"] :where(.text-muted-foreground, .section-heading__description) {
-    color: #94a3b8;
+    color: #cbd5e1;
   }
 
   .section-surface[data-surface="dark"] .ui-eyebrow {
-    border-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
-    color: color-mix(in srgb, var(--color-primary) 78%, #ffffff);
+    border-color: color-mix(in srgb, var(--color-primary) 40%, #ffffff);
+    color: color-mix(in srgb, var(--color-primary) 35%, #ffffff);
   }
 
   /* Texturas locais — só na seção, sem camadas globais */

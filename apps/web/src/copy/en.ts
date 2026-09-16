@@ -677,6 +677,7 @@ export const en = {
       phone: "Enter a phone number with area code.",
       cnpj: "Enter a valid CNPJ.",
       service: "Select at least one service.",
+      incomplete: "We have not sent it yet. Fill in the fields marked in red.",
       submit: "We could not send it. Try again or call the number on the contact page.",
     },
     privacy: {

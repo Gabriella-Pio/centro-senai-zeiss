@@ -23,6 +23,6 @@
 }
 
 .section-surface[data-surface="dark"] .ui-eyebrow {
-  border-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
-  color: color-mix(in srgb, var(--color-primary) 78%, #ffffff);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, #ffffff);
+  color: color-mix(in srgb, var(--color-primary) 35%, #ffffff);
 }

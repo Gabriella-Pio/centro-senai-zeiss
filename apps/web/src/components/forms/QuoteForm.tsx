@@ -213,7 +213,10 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
     if (Object.keys(nextErrors).length > 0) {
       const firstId = FIELD_IDS.find((id) => nextErrors[id]);
       requestAnimationFrame(() => {
-        if (firstId) document.getElementById(firstId)?.focus();
+        const field = firstId ? document.getElementById(firstId) : null;
+        field?.scrollIntoView({ behavior: "smooth", block: "center" });
+        field?.focus({ preventScroll: true });
+        if (!field) alertRef.current?.focus();
       });
       return;
     }
@@ -248,12 +251,6 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
         </span>{" "}
         {copy.requiredLegend}
       </p>
-
-      {submitError ? (
-        <div ref={alertRef} className="quote-form__alert" role="alert" tabIndex={-1}>
-          <p className="quote-form__alert-title">{submitError}</p>
-        </div>
-      ) : null}
 
       <div className="quote-form__grid">
         <QuoteField id="company" label={fields.company.label} error={errors.company}>
@@ -401,9 +398,26 @@ export function QuoteForm({ defaultServiceId, services, copy }: QuoteFormProps) 
         />
       </QuoteField>
 
-      <Button type="submit" size="xl" className="quote-form__submit" disabled={pending}>
-        {pending ? copy.submitPending : copy.submit}
-      </Button>
+      <div className="quote-form__actions">
+        {submitError ? (
+          <div ref={alertRef} className="quote-form__alert" role="alert" tabIndex={-1}>
+            <p className="quote-form__alert-title">{submitError}</p>
+          </div>
+        ) : attempted && Object.keys(errors).length > 0 ? (
+          <div ref={alertRef} className="quote-form__alert" role="alert" tabIndex={-1}>
+            <p className="quote-form__alert-title">{copy.validation.incomplete}</p>
+          </div>
+        ) : null}
+        <Button
+          type="submit"
+          size="xl"
+          className="quote-form__submit"
+          disabled={pending}
+          aria-busy={pending}
+        >
+          {pending ? copy.submitPending : copy.submit}
+        </Button>
+      </div>
 
       <p className="quote-form__privacy">
         {copy.privacy.before}

@@ -675,6 +675,7 @@ export const de = {
       phone: "Bitte eine Telefonnummer mit Vorwahl angeben.",
       cnpj: "Bitte eine gültige CNPJ angeben.",
       service: "Bitte mindestens eine Leistung wählen.",
+      incomplete: "Noch nicht gesendet. Bitte die rot markierten Felder ausfüllen.",
       submit: "Senden nicht möglich. Versuchen Sie es erneut oder rufen Sie die Nummer auf der Kontaktseite an.",
     },
     privacy: {
