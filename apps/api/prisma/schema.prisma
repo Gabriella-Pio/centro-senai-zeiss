@@ -20,6 +20,13 @@ enum LeadStatus {
   LOST
 }
 
+enum UserRole {
+  CONSULTA
+  TECNICO
+  VALIDADOR
+  ADMIN
+}
+
 model Lead {
   id        String     @id @default(cuid())
   name      String
@@ -34,4 +41,15 @@ model Lead {
 
   @@index([status])
   @@index([createdAt])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         UserRole
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

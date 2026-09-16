@@ -1,0 +1,22 @@
+.app-brand {
+  display: block;
+  max-width: 100%;
+}
+
+.app-brand__mark {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+  aspect-ratio: 4692 / 436;
+}
+
+.app-brand__mark--nav {
+  max-height: 3rem;
+}
+
+.app-brand__mark--footer {
+  max-height: 2rem;
+}

@@ -1,0 +1,59 @@
+.login-shell {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1fr;
+  background: var(--color-background);
+}
+
+.login-visual {
+  display: none;
+}
+
+.login-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem 2.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 26rem;
+  padding: 2rem 1.75rem;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(28, 25, 23, 0.06);
+}
+
+@media (width >= 64rem) {
+  .login-shell {
+    grid-template-columns: minmax(28rem, 42%) 1fr;
+  }
+
+  .login-visual {
+    display: block;
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    background: url("/lab/login-lab.jpeg") center 30% / cover no-repeat;
+  }
+
+  .login-visual__veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      var(--color-background) 0,
+      transparent 5rem
+    );
+  }
+
+  .login-panel {
+    padding: 3rem;
+  }
+
+  .login-card {
+    padding: 2.25rem 2rem;
+  }
+}

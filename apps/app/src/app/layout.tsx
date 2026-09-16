@@ -1,9 +1,25 @@
 import type { Metadata } from "next";
+import { Archivo, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
+
+const archivo = Archivo({
+  subsets: ["latin", "latin-ext"],
+  weight: ["600", "700"],
+  variable: "--font-archivo",
+  display: "swap",
+});
+
+const plexSans = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Área da equipe — SENAI × ZEISS",
   description: "Módulo interno do laboratório de metrologia. Acesso restrito à equipe.",
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({
@@ -13,7 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body
+        className={`${archivo.variable} ${plexSans.variable} ${plexSans.className} min-h-svh bg-background font-sans text-foreground antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
