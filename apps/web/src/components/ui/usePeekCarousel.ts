@@ -226,6 +226,94 @@ export function usePeekCarousel({
   }, [apply, measure]);
 
   useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || count < 2) return;
+
+    const LOCK = 10;
+    let pointerId: number | null = null;
+    let startX = 0;
+    let startY = 0;
+    let dragging = false;
+    let locked = false;
+    let dx = 0;
+    let ignoreClick = false;
+
+    const baseX = () => {
+      const { step, cardW, peek } = metricsRef.current;
+      return -((posRef.current - 1) * step + (1 - peek) * cardW);
+    };
+
+    const onDown = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      ignoreClick = false;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startY = event.clientY;
+      dragging = false;
+      locked = false;
+      dx = 0;
+    };
+
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerId !== pointerId) return;
+      const mx = event.clientX - startX;
+      const my = event.clientY - startY;
+      if (!locked) {
+        if (Math.hypot(mx, my) < LOCK) return;
+        locked = true;
+        if (Math.abs(mx) <= Math.abs(my)) {
+          pointerId = null;
+          return;
+        }
+        dragging = true;
+        ignoreClick = true;
+        viewport.setPointerCapture(event.pointerId);
+        pausedRef.current = true;
+        setPaused(true);
+      }
+      if (!dragging) return;
+      event.preventDefault();
+      dx = mx;
+      const track = trackRef.current;
+      if (!track) return;
+      track.style.transition = "none";
+      track.style.transform = `translate3d(${baseX() + dx}px,0,0)`;
+    };
+
+    const onUp = (event: PointerEvent) => {
+      if (event.pointerId !== pointerId) return;
+      pointerId = null;
+      if (!dragging) return;
+      dragging = false;
+      const threshold = Math.max(40, metricsRef.current.cardW * 0.18);
+      if (dx <= -threshold) goRef.current(1);
+      else if (dx >= threshold) goRef.current(-1);
+      else apply(posRef.current, true);
+      setPaused(false);
+    };
+
+    const onClickCapture = (event: MouseEvent) => {
+      if (!ignoreClick) return;
+      event.preventDefault();
+      event.stopPropagation();
+      ignoreClick = false;
+    };
+
+    viewport.addEventListener("pointerdown", onDown);
+    viewport.addEventListener("pointermove", onMove, { passive: false });
+    viewport.addEventListener("pointerup", onUp);
+    viewport.addEventListener("pointercancel", onUp);
+    viewport.addEventListener("click", onClickCapture, true);
+    return () => {
+      viewport.removeEventListener("pointerdown", onDown);
+      viewport.removeEventListener("pointermove", onMove);
+      viewport.removeEventListener("pointerup", onUp);
+      viewport.removeEventListener("pointercancel", onUp);
+      viewport.removeEventListener("click", onClickCapture, true);
+    };
+  }, [apply, count]);
+
+  useEffect(() => {
     pausedRef.current = paused;
   }, [paused]);
 

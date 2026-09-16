@@ -448,6 +448,8 @@ button.service-detail__machine-hit:focus-visible {
   width: 100%;
   min-width: 0;
   padding-block: 1.5rem;
+  touch-action: pan-y;
+  user-select: none;
   -webkit-mask-image: linear-gradient(
     90deg,
     transparent 0,
