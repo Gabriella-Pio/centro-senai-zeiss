@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     ],
   },
   turbopack: {
+    // Next 16 exige o mesmo valor que outputFileTracingRoot.
     root: repoRoot,
   },
   async redirects() {
@@ -65,14 +66,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-const config = withNextIntl(nextConfig);
-
-if (config.turbopack) {
-  config.turbopack.resolveAlias = {
-    ...config.turbopack.resolveAlias,
-    // Plugin path is relative to apps/web; Turbopack resolves from the repo root.
-    "next-intl/config": "./apps/web/src/i18n/request.ts",
-  };
-}
-
-export default config;
+export default withNextIntl(nextConfig);
