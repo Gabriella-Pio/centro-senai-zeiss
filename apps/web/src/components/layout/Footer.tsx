@@ -31,7 +31,7 @@ export default function Footer() {
           </div>
 
           <div className="footer-intro">
-            <p className="type-body text-primary-foreground/60">{footer.tagline}</p>
+            <p className="footer-intro__text">{footer.tagline}</p>
             <nav className="footer-intro__icons" aria-label={footer.quickContactLabel}>
               <a className="footer-icon" href={`tel:${location.phoneTel}`} aria-label={footer.phoneAria}>
                 <Phone size={16} strokeWidth={1.75} aria-hidden />

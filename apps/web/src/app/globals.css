@@ -211,6 +211,16 @@
     border-top: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
   }
 
+  /* Overscroll / home indicator: continua o navy em vez do canvas preto. */
+  .site-footer::after {
+    content: "";
+    position: absolute;
+    inset: 100% 0 auto;
+    height: 100vmax;
+    background: #0b132b;
+    pointer-events: none;
+  }
+
   .site-footer-divider {
     border-color: color-mix(in srgb, var(--color-primary-foreground) 12%, transparent);
   }
@@ -220,6 +230,7 @@
   }
   html {
     scroll-behavior: smooth;
+    background-color: var(--color-background);
   }
   @media (prefers-reduced-motion: reduce) {
     html {
