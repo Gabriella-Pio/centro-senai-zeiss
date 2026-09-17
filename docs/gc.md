@@ -14,11 +14,13 @@ O cookie de sessão é `cem_session` (httpOnly, 8 h). Os outros três papéis ai
 
 ## Como subir local
 
-1. Postgres local na porta `5433` (`docker start senai-zeiss-postgres` se o container já existir).
-2. Em `apps/api/.env`: `DATABASE_URL`, `FRONTEND_URL=http://localhost:3000,http://localhost:3001`, `JWT_SECRET`.
-3. `npm run prisma:generate -w @cem/api` e `npm run prisma:seed -w @cem/api`.
-4. `npm run dev:api` e `npm run dev:app`.
-5. Abrir `http://localhost:3001/login`.
+```bash
+npm run dev
+```
+
+Sobe Postgres, API (`:3333`) e o app (`:3001`). Abrir `http://localhost:3001/login`.
+
+O `apps/api/.env` precisa de `DATABASE_URL`, `FRONTEND_URL=http://localhost:3000,http://localhost:3001` e `JWT_SECRET`.
 
 ## Mapa (do complemento) — ainda não nesta fatia
 

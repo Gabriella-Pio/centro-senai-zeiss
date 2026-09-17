@@ -6,9 +6,12 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "bash scripts/dev-local.sh",
+    "dev:all": "bash scripts/dev-local.sh --web",
     "dev:web": "npm run dev -w @cem/web",
     "dev:app": "npm run dev -w @cem/app",
     "dev:api": "npm run start:dev -w @cem/api",
+    "db:up": "docker compose -f apps/api/docker-compose.yml up -d",
     "db:migrate": "npm run prisma:migrate -w @cem/api",
     "convert:heif": "npm run convert:heif -w @cem/web"
   }

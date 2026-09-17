@@ -25,39 +25,37 @@ centro-senai-zeiss/
 
 ## Como rodar
 
-Node.js 22+ e PostgreSQL (Docker opcional em `apps/api/docker-compose.yml`).
+Node.js 22+ e Docker (Postgres em `apps/api/docker-compose.yml`).
 
-Na raiz:
+Na raiz, uma vez:
 
 ```bash
 npm install
 ```
 
-API — copie `apps/api/.env.example` para `apps/api/.env`, suba o banco e:
+Copie `apps/api/.env.example` para `apps/api/.env` (e `apps/web/.env.example` para `apps/web/.env.local` se for o site público).
+
+**Área da equipe + API + banco** (o que você usa no dia a dia agora):
+
+```bash
+npm run dev
+```
+
+Sobe o Postgres se estiver parado, espera ele ficar pronto, e abre a API (`:3333`) e o app (`:3001`). Ctrl+C mata API e app; o container do banco continua.
+
+Site público junto:
+
+```bash
+npm run dev:all
+```
+
+Os três ainda existem separados, se quiser um de cada vez: `dev:api`, `dev:app`, `dev:web`. Banco sozinho: `npm run db:up`.
+
+Primeira vez no banco (ou depois de puxar migrations):
 
 ```bash
 npm run db:migrate
-npm run dev:api
-```
-
-Site público — copie `apps/web/.env.example` para `apps/web/.env.local`:
-
-```bash
-npm run dev:web
-```
-
-Módulo interno (placeholder, ainda sem login):
-
-```bash
-npm run dev:app
-```
-
-O site público **não** tem rota `/admin`. A API pública de leads aceita só `POST /api/v1/leads` (criar solicitação). Listar e alterar lead volta quando existir autenticação.
-
-Banco local (opcional):
-
-```bash
-docker compose -f apps/api/docker-compose.yml up -d
+npm run prisma:seed -w @cem/api
 ```
 
 ## Documentação
