@@ -26,6 +26,7 @@ async function main() {
       name: "Administrador",
       role: "ADMIN",
       active: true,
+      mustChangePassword: false,
       passwordHash,
     },
     create: {
@@ -33,6 +34,7 @@ async function main() {
       name: "Administrador",
       role: "ADMIN",
       active: true,
+      mustChangePassword: false,
       passwordHash,
     },
   });

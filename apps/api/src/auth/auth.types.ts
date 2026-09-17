@@ -5,6 +5,7 @@ export type AuthUser = {
   email: string;
   name: string;
   role: UserRole;
+  mustChangePassword: boolean;
 };
 
 export function toAuthUser(user: {
@@ -12,11 +13,13 @@ export function toAuthUser(user: {
   email: string;
   name: string;
   role: UserRole;
+  mustChangePassword: boolean;
 }): AuthUser {
   return {
     id: user.id,
     email: user.email,
     name: user.name,
     role: user.role,
+    mustChangePassword: user.mustChangePassword,
   };
 }
