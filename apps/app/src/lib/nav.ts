@@ -34,7 +34,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'Início', icon: 'home', group: 'work', roles: ALL_ROLES, ready: true },
   { href: '/assistente', label: 'Assistente', icon: 'assistant', group: 'work', roles: ALL_ROLES },
   { href: '/registros', label: 'Registros', icon: 'records', group: 'work', roles: ALL_ROLES },
-  { href: '/vocabulario', label: 'Vocabulário', icon: 'vocab', group: 'work', roles: ALL_ROLES },
+  { href: '/vocabulario', label: 'Vocabulário', icon: 'vocab', group: 'work', roles: ALL_ROLES, ready: true },
   {
     href: '/validacao',
     label: 'Validação',
