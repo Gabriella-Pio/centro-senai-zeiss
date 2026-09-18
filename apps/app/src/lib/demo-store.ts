@@ -1,0 +1,231 @@
+import type { UserRole } from "./api";
+import type { ServiceRecord } from "@/app/(workspace)/registros/types";
+import type { QuoteRequest } from "@/app/(workspace)/solicitacoes/types";
+import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
+import { createSeedState } from "./demo-store-seed";
+import type { DemoNotification, DemoState } from "./demo-store-types";
+
+export const DEMO_STATE_KEY = "cem_demo_state";
+export const DEMO_CHANGED_EVENT = "cem-demo-changed";
+
+const LEGACY_KEYS = [
+  "cem_demo_quote_requests",
+  "cem_demo_service_records",
+  "cem_demo_vocabulary",
+];
+
+function isBrowser() {
+  return typeof window !== "undefined";
+}
+
+function migrateLegacyState(): DemoState | null {
+  if (!isBrowser()) {
+    return null;
+  }
+  const hasLegacy = LEGACY_KEYS.some((key) => window.localStorage.getItem(key));
+  if (!hasLegacy) {
+    return null;
+  }
+  const seed = createSeedState();
+  try {
+    const requestsRaw = window.localStorage.getItem("cem_demo_quote_requests");
+    if (requestsRaw) {
+      seed.requests = JSON.parse(requestsRaw) as QuoteRequest[];
+    }
+    const recordsRaw = window.localStorage.getItem("cem_demo_service_records");
+    if (recordsRaw) {
+      seed.records = (JSON.parse(recordsRaw) as ServiceRecord[]).map(upgradeRecord);
+    }
+    const vocabularyRaw = window.localStorage.getItem("cem_demo_vocabulary");
+    if (vocabularyRaw) {
+      seed.vocabulary = JSON.parse(vocabularyRaw) as VocabularyTerm[];
+    }
+  } catch {
+    return createSeedState();
+  }
+  LEGACY_KEYS.forEach((key) => window.localStorage.removeItem(key));
+  return seed;
+}
+
+function upgradeRecord(record: ServiceRecord & { status?: string }): ServiceRecord {
+  const legacyStatus = record.status as string | undefined;
+  let serviceStatus = record.serviceStatus ?? "DRAFT";
+  let lessonStatus = record.lessonStatus ?? "DRAFT";
+  if (legacyStatus === "IN_REVIEW") {
+    lessonStatus = "PENDING";
+    serviceStatus = "COMPLETED";
+  } else if (legacyStatus === "FORMALIZED") {
+    lessonStatus = "FORMALIZED";
+    serviceStatus = "COMPLETED";
+  } else if (legacyStatus === "DRAFT") {
+    serviceStatus = record.estimatedHours ? "QUOTED" : "DRAFT";
+  }
+  return {
+    ...record,
+    isDemo: record.isDemo ?? true,
+    partTraitIds: record.partTraitIds ?? [],
+    resourceIds: record.resourceIds ?? [],
+    estimatedCost: record.estimatedCost ?? null,
+    proposedValue: record.proposedValue ?? null,
+    actualHours: record.actualHours ?? null,
+    actualCost: record.actualCost ?? null,
+    billedValue: record.billedValue ?? null,
+    deliveredAt: record.deliveredAt ?? null,
+    rework: record.rework ?? false,
+    scopeChange: record.scopeChange ?? false,
+    deviationCauseId: record.deviationCauseId ?? null,
+    lesson: record.lesson ?? "",
+    relatedTopicIds: record.relatedTopicIds ?? [],
+    visibility: record.visibility ?? "PUBLIC",
+    serviceStatus,
+    lessonStatus,
+  };
+}
+
+export function readDemoState(): DemoState {
+  if (!isBrowser()) {
+    return createSeedState();
+  }
+  const raw = window.localStorage.getItem(DEMO_STATE_KEY);
+  if (!raw) {
+    const migrated = migrateLegacyState();
+    const initial = migrated ?? createSeedState();
+    writeDemoState(initial);
+    return initial;
+  }
+  try {
+    const parsed = JSON.parse(raw) as DemoState;
+    return {
+      ...createSeedState(),
+      ...parsed,
+      records: (parsed.records ?? []).map(upgradeRecord),
+    };
+  } catch {
+    const initial = createSeedState();
+    writeDemoState(initial);
+    return initial;
+  }
+}
+
+export function writeDemoState(state: DemoState) {
+  if (!isBrowser()) {
+    return;
+  }
+  window.localStorage.setItem(DEMO_STATE_KEY, JSON.stringify(state));
+  window.dispatchEvent(new Event(DEMO_CHANGED_EVENT));
+}
+
+export function patchDemoState(patch: Partial<DemoState>) {
+  const current = readDemoState();
+  writeDemoState({ ...current, ...patch });
+}
+
+export function updateDemoState(updater: (state: DemoState) => DemoState) {
+  writeDemoState(updater(readDemoState()));
+}
+
+export function subscribeDemoStore(onChange: () => void) {
+  if (!isBrowser()) {
+    return () => undefined;
+  }
+  const handler = () => onChange();
+  window.addEventListener("storage", handler);
+  window.addEventListener(DEMO_CHANGED_EVENT, handler);
+  return () => {
+    window.removeEventListener("storage", handler);
+    window.removeEventListener(DEMO_CHANGED_EVENT, handler);
+  };
+}
+
+export function pushNotification(input: {
+  roles: UserRole[];
+  message: string;
+  href: string;
+}) {
+  updateDemoState((state) => ({
+    ...state,
+    notifications: [
+      {
+        id: `notif-${Date.now()}`,
+        roles: input.roles,
+        message: input.message,
+        href: input.href,
+        read: false,
+        createdAt: new Date().toISOString(),
+      },
+      ...state.notifications,
+    ],
+  }));
+}
+
+export function markNotificationRead(id: string) {
+  updateDemoState((state) => ({
+    ...state,
+    notifications: state.notifications.map((item) =>
+      item.id === id ? { ...item, read: true } : item,
+    ),
+  }));
+}
+
+export function markAllNotificationsRead(role: UserRole) {
+  updateDemoState((state) => ({
+    ...state,
+    notifications: state.notifications.map((item) =>
+      item.roles.includes(role) ? { ...item, read: true } : item,
+    ),
+  }));
+}
+
+export function unreadNotificationCount(role: UserRole) {
+  return readDemoState().notifications.filter((item) => item.roles.includes(role) && !item.read).length;
+}
+
+export function nextRecordNumber(records: ServiceRecord[]) {
+  const nextSequence =
+    records.reduce((highest, record) => {
+      const sequence = Number(record.recordNumber?.match(/-(\d{4})$/)?.[1] ?? 0);
+      return Math.max(highest, sequence);
+    }, 0) + 1;
+  return `RS-2026-${String(nextSequence).padStart(4, "0")}`;
+}
+
+export function nextRequestNumber(requests: QuoteRequest[]) {
+  const nextSequence =
+    requests.reduce((highest, request) => {
+      const sequence = Number(request.requestNumber?.match(/-(\d{4})$/)?.[1] ?? 0);
+      return Math.max(highest, sequence);
+    }, 0) + 1;
+  return `SO-2026-${String(nextSequence).padStart(4, "0")}`;
+}
+
+export function createEmptyRecord(partial: Partial<ServiceRecord> & Pick<ServiceRecord, "company" | "requester" | "service">): ServiceRecord {
+  const state = readDemoState();
+  return {
+    id: `record-${Date.now()}`,
+    recordNumber: nextRecordNumber(state.records),
+    createdAt: new Date().toISOString(),
+    isDemo: true,
+    partTraitIds: [],
+    resourceIds: [],
+    estimatedHours: null,
+    estimatedEquipmentHours: null,
+    estimatedCost: null,
+    proposedValue: null,
+    assumptions: "",
+    serviceStatus: "DRAFT",
+    actualHours: null,
+    actualCost: null,
+    billedValue: null,
+    deliveredAt: null,
+    rework: false,
+    scopeChange: false,
+    deviationCauseId: null,
+    lesson: "",
+    relatedTopicIds: [],
+    visibility: "PUBLIC",
+    lessonStatus: "DRAFT",
+    ...partial,
+  };
+}
+
+export type { DemoNotification, DemoState };

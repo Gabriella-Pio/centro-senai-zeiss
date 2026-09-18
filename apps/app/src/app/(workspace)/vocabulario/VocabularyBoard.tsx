@@ -1,30 +1,16 @@
 "use client";
 
-import { useMemo, useSyncExternalStore, useState } from "react";
+import { useMemo, useState } from "react";
 import { BookOpen, FilterX, Pencil, Plus, Search } from "lucide-react";
 import { Badge, Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Input, Label } from "@cem/ui";
-import { DEMO_VOCABULARY_KEY } from "./demo";
+import { updateDemoState } from "@/lib/demo-store";
+import { useDemoStore } from "@/lib/use-demo-store";
 import { VocabularyForm } from "./VocabularyForm";
 import { VOCABULARY_CLASS_LABELS, VOCABULARY_CLASSES, type VocabularyClass, type VocabularyTerm } from "./types";
 import "./vocabulary.css";
 
-export function VocabularyBoard({ initialTerms, canEdit }: { initialTerms: VocabularyTerm[]; canEdit: boolean }) {
-  const storedTerms = useSyncExternalStore(
-    (onStoreChange) => {
-      window.addEventListener("storage", onStoreChange);
-      window.addEventListener("cem-demo-vocabulary-changed", onStoreChange);
-      return () => {
-        window.removeEventListener("storage", onStoreChange);
-        window.removeEventListener("cem-demo-vocabulary-changed", onStoreChange);
-      };
-    },
-    () => window.localStorage.getItem(DEMO_VOCABULARY_KEY) ?? "",
-    () => "",
-  );
-  const terms = useMemo(() => {
-    if (!storedTerms) return initialTerms;
-    try { return JSON.parse(storedTerms) as VocabularyTerm[]; } catch { return initialTerms; }
-  }, [initialTerms, storedTerms]);
+export function VocabularyBoard({ canEdit }: { canEdit: boolean }) {
+  const { vocabulary: terms } = useDemoStore();
   const [query, setQuery] = useState("");
   const [termClass, setTermClass] = useState<"ALL" | VocabularyClass>("ALL");
   const [status, setStatus] = useState<"ALL" | "ACTIVE" | "INACTIVE">("ALL");
@@ -46,8 +32,7 @@ export function VocabularyBoard({ initialTerms, canEdit }: { initialTerms: Vocab
   const activeCount = terms.filter((term) => term.active).length;
 
   function saveTerms(nextTerms: VocabularyTerm[], message: string) {
-    window.localStorage.setItem(DEMO_VOCABULARY_KEY, JSON.stringify(nextTerms));
-    window.dispatchEvent(new Event("cem-demo-vocabulary-changed"));
+    updateDemoState((state) => ({ ...state, vocabulary: nextTerms }));
     setNotice(message);
     setCreating(false);
     setEditing(null);
@@ -60,7 +45,10 @@ export function VocabularyBoard({ initialTerms, canEdit }: { initialTerms: Vocab
   }
 
   function toggleActive(term: VocabularyTerm) {
-    saveTerms(terms.map((item) => item.id === term.id ? { ...item, active: !item.active, updatedAt: new Date().toISOString() } : item), term.active ? "Termo desativado." : "Termo ativado.");
+    saveTerms(
+      terms.map((item) => item.id === term.id ? { ...item, active: !item.active, updatedAt: new Date().toISOString() } : item),
+      term.active ? "Termo desativado." : "Termo ativado.",
+    );
   }
 
   return (
