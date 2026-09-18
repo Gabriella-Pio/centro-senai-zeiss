@@ -16,6 +16,7 @@ import {
   Sparkles,
   Users,
   UserRound,
+  Bell,
   X,
 } from "lucide-react";
 import { ROLE_LABELS, type AuthUser } from "@/lib/api";
@@ -34,6 +35,7 @@ const NAV_ICONS: Record<NavIcon, typeof House> = {
   demo: FlaskConical,
   users: Users,
   profile: UserRound,
+  requests: Bell,
 };
 
 const COLLAPSE_KEY = "cem_sidebar_collapsed";

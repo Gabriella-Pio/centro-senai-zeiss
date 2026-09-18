@@ -9,7 +9,8 @@ export type NavIcon =
   | 'indicators'
   | 'demo'
   | 'users'
-  | 'profile';
+  | 'profile'
+  | 'requests';
 
 export type NavGroup = 'work' | 'manage';
 
@@ -33,7 +34,7 @@ export const NAV_GROUPS: { id: NavGroup; label: string }[] = [
 export const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'Início', icon: 'home', group: 'work', roles: ALL_ROLES, ready: true },
   { href: '/assistente', label: 'Assistente', icon: 'assistant', group: 'work', roles: ALL_ROLES },
-  { href: '/registros', label: 'Registros', icon: 'records', group: 'work', roles: ALL_ROLES },
+  { href: '/registros', label: 'Registros', icon: 'records', group: 'work', roles: ALL_ROLES, ready: true },
   { href: '/vocabulario', label: 'Vocabulário', icon: 'vocab', group: 'work', roles: ALL_ROLES, ready: true },
   {
     href: '/validacao',
@@ -54,6 +55,14 @@ export const NAV_ITEMS: NavItem[] = [
     href: '/usuarios',
     label: 'Equipe',
     icon: 'users',
+    group: 'manage',
+    roles: ['ADMIN'],
+    ready: true,
+  },
+  {
+    href: '/solicitacoes',
+    label: 'Solicitações',
+    icon: 'requests',
     group: 'manage',
     roles: ['ADMIN'],
     ready: true,

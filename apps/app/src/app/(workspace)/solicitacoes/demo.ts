@@ -1,0 +1,55 @@
+import type { QuoteRequest } from "./types";
+
+export const DEMO_REQUESTS_KEY = "cem_demo_quote_requests";
+
+export const DEMO_REQUESTS: QuoteRequest[] = [
+  {
+    id: "request-1",
+    requestNumber: "SO-2026-0001",
+    requester: "Fernanda Rocha",
+    company: "Metalúrgica Horizonte",
+    email: "fernanda.rocha@horizonte.example",
+    phone: "+55 11 98888-2040",
+    service: "Inspeção dimensional",
+    message: "Precisamos verificar um lote de carcaças usinadas e comparar as medidas com o desenho técnico.",
+    receivedAt: "2026-09-18T08:42:00.000Z",
+    status: "NEW",
+  },
+  {
+    id: "request-2",
+    requestNumber: "SO-2026-0002",
+    requester: "Rafael Nunes",
+    company: "AeroForma Engenharia",
+    email: "rafael.nunes@aeroforma.example",
+    phone: "+55 19 97771-4412",
+    service: "Digitalização 3D",
+    message: "Gostaríamos de entender o prazo e as condições para digitalizar uma peça com superfície livre.",
+    receivedAt: "2026-09-17T15:10:00.000Z",
+    status: "IN_REVIEW",
+  },
+  {
+    id: "request-3",
+    requestNumber: "SO-2026-0003",
+    linkedRecordNumber: "RS-2026-0001",
+    requester: "Lucas Martins",
+    company: "Inova Moldes",
+    email: "lucas.martins@inovamoldes.example",
+    phone: "+55 48 96662-1031",
+    service: "Engenharia reversa",
+    message: "A solicitação foi aprovada comercialmente e já pode seguir para o registro do serviço.",
+    receivedAt: "2026-09-15T10:25:00.000Z",
+    status: "CONVERTED",
+  },
+  {
+    id: "request-4",
+    requestNumber: "SO-2026-0004",
+    requester: "Camila Freitas",
+    company: "Precisão Componentes",
+    email: "camila.freitas@precisao.example",
+    phone: "+55 41 95554-8092",
+    service: "Calibração",
+    message: "Pedido encerrado após retorno do cliente informando mudança de escopo.",
+    receivedAt: "2026-09-12T09:05:00.000Z",
+    status: "ARCHIVED",
+  },
+];
