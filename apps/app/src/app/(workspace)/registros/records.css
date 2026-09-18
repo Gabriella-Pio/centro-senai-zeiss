@@ -42,4 +42,11 @@
 .record-detail__next span { color: var(--color-muted-foreground); font-size: .875rem; }
 @media (width < 56rem) { .records-page__header { align-items: flex-start; flex-direction: column; } .records-page__toolbar { grid-template-columns: 1fr auto; } .records-page__search { grid-column: 1 / -1; } }
 @media (width < 32rem) { .records-page__summary { align-items: stretch; flex-direction: column; gap: .75rem; } .records-page__summary > div { padding: 0 0 .75rem; border-right: 0; border-bottom: 1px solid var(--color-border); } .records-page__summary > div:last-of-type { padding-bottom: 0; border-bottom: 0; } .records-page__toolbar { grid-template-columns: 1fr; } .records-page__search { grid-column: auto; } }
+.record-tabs { display: flex; gap: .5rem; border-bottom: 1px solid var(--color-border); }
+.record-tabs__btn { padding: .65rem 1rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--color-muted-foreground); font: inherit; font-size: .875rem; font-weight: 600; cursor: pointer; }
+.record-tabs__btn--active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+.record-chip-list { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+.record-chip { padding: .4rem .75rem; border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-card); font-size: .8125rem; cursor: pointer; }
+.record-chip--active { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, var(--color-card)); color: var(--color-primary); }
+.record-check { display: flex; align-items: center; gap: .5rem; font-size: .9375rem; }
 @media (width < 32rem) { .record-detail__grid { grid-template-columns: 1fr; } .records-form__actions { flex-direction: column-reverse; } .records-form__actions button { width: 100%; } }

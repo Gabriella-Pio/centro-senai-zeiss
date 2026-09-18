@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Archive, ArrowRight, Bell, ClipboardPlus, FilterX, Search } from "lucide-react";
+import { Archive, ArrowRight, Bell, ClipboardPlus, FilterX, Plus, Search } from "lucide-react";
 import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Input, Label } from "@cem/ui";
-import { DEMO_REQUESTS_KEY } from "./demo";
-import { DEMO_RECORDS_KEY } from "../registros/demo";
-import type { ServiceRecord } from "../registros/types";
+import { createEmptyRecord, nextRequestNumber, pushNotification, updateDemoState } from "@/lib/demo-store";
+import { useDemoStore } from "@/lib/use-demo-store";
 import { REQUEST_STATUS_LABELS, type QuoteRequest, type RequestStatus } from "./types";
 import "./requests.css";
 
@@ -16,30 +15,9 @@ function formatReceivedAt(value: string) {
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
 
-export function RequestsBoard({ initialRequests }: { initialRequests: QuoteRequest[] }) {
+export function RequestsBoard() {
   const router = useRouter();
-  const storedRequests = useSyncExternalStore(
-    (onStoreChange) => {
-      window.addEventListener("storage", onStoreChange);
-      window.addEventListener("cem-demo-requests-changed", onStoreChange);
-      return () => {
-        window.removeEventListener("storage", onStoreChange);
-        window.removeEventListener("cem-demo-requests-changed", onStoreChange);
-      };
-    },
-    () => window.localStorage.getItem(DEMO_REQUESTS_KEY) ?? "",
-    () => "",
-  );
-  const requests = useMemo(() => {
-    let parsed: QuoteRequest[] = initialRequests;
-    if (storedRequests) {
-      try { parsed = JSON.parse(storedRequests) as QuoteRequest[]; } catch { parsed = initialRequests; }
-    }
-    return parsed.map((request, index) => ({
-      ...request,
-      requestNumber: request.requestNumber ?? `SO-2026-${String(index + 1).padStart(4, "0")}`,
-    }));
-  }, [initialRequests, storedRequests]);
+  const { requests, vocabulary } = useDemoStore();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"ALL" | RequestStatus>("ALL");
   const [selected, setSelected] = useState<QuoteRequest | null>(null);
@@ -58,50 +36,81 @@ export function RequestsBoard({ initialRequests }: { initialRequests: QuoteReque
   const newCount = requests.filter((request) => request.status === "NEW").length;
   const filtering = Boolean(query.trim()) || status !== "ALL";
 
-  function persist(next: QuoteRequest[], message: string) {
-    window.localStorage.setItem(DEMO_REQUESTS_KEY, JSON.stringify(next));
-    window.dispatchEvent(new Event("cem-demo-requests-changed"));
+  function persistRequests(next: QuoteRequest[], message: string) {
+    updateDemoState((state) => ({ ...state, requests: next }));
     setNotice(message);
     setSelected(null);
   }
 
   function convertToRecord(request: QuoteRequest) {
-    const stored = window.localStorage.getItem(DEMO_RECORDS_KEY);
-    let records: ServiceRecord[] = [];
-    try { records = stored ? JSON.parse(stored) as ServiceRecord[] : []; } catch { records = []; }
-    const nextSequence = records.reduce((highest, record) => {
-      const sequence = Number(record.recordNumber?.match(/-(\d{4})$/)?.[1] ?? 0);
-      return Math.max(highest, sequence);
-    }, 0) + 1;
-    const record: ServiceRecord = {
-      id: `record-${Date.now()}`,
-      recordNumber: `RS-2026-${String(nextSequence).padStart(4, "0")}`,
+    const serviceType = vocabulary.find(
+      (term) => term.class === "SERVICE_TYPE" && term.label.toLowerCase() === request.service.toLowerCase(),
+    );
+    const record = createEmptyRecord({
       requestId: request.id,
       requestNumber: request.requestNumber,
       company: request.company,
       service: request.service,
       requester: request.requester,
-      estimatedEquipmentHours: null,
-      estimatedHours: null,
+      serviceTypeId: serviceType?.id,
       assumptions: `Solicitação recebida: ${request.message}`,
-      status: "DRAFT",
-      createdAt: new Date().toISOString(),
-    };
-    window.localStorage.setItem(DEMO_RECORDS_KEY, JSON.stringify([...records, record]));
-    window.dispatchEvent(new Event("cem-demo-records-changed"));
-    persist(requests.map((item) => item.id === request.id ? { ...item, status: "CONVERTED", linkedRecordNumber: record.recordNumber } : item), "Registro criado a partir da solicitação.");
+    });
+    updateDemoState((state) => ({
+      ...state,
+      records: [...state.records, record],
+      requests: state.requests.map((item) =>
+        item.id === request.id ? { ...item, status: "CONVERTED", linkedRecordNumber: record.recordNumber } : item,
+      ),
+    }));
+    pushNotification({
+      roles: ["TECNICO"],
+      message: `Novo registro ${record.recordNumber} pronto para orçamento.`,
+      href: "/registros",
+    });
+    setNotice("Registro criado a partir da solicitação.");
+    setSelected(null);
     router.push("/registros");
   }
 
   function archiveRequest() {
     if (!archiveTarget || archiveReason.trim().length < 5) return;
-    persist(requests.map((item) => item.id === archiveTarget.id ? { ...item, status: "ARCHIVED", archiveReason: archiveReason.trim() } : item), "Solicitação arquivada com justificativa.");
+    persistRequests(
+      requests.map((item) =>
+        item.id === archiveTarget.id ? { ...item, status: "ARCHIVED", archiveReason: archiveReason.trim() } : item,
+      ),
+      "Solicitação arquivada com justificativa.",
+    );
     setArchiveTarget(null);
     setArchiveReason("");
   }
 
   function updateStatus(request: QuoteRequest, nextStatus: RequestStatus) {
-    persist(requests.map((item) => item.id === request.id ? { ...item, status: nextStatus } : item), nextStatus === "CONVERTED" ? "Solicitação convertida em registro de serviço." : "Solicitação atualizada.");
+    persistRequests(
+      requests.map((item) => (item.id === request.id ? { ...item, status: nextStatus } : item)),
+      "Solicitação atualizada.",
+    );
+  }
+
+  function simulateWebsiteRequest() {
+    const request: QuoteRequest = {
+      id: `request-${Date.now()}`,
+      requestNumber: nextRequestNumber(requests),
+      requester: "Cliente demonstração",
+      company: "Indústria Alfa",
+      email: "contato@industriaalfa.example",
+      phone: "+55 62 99999-0000",
+      service: "Inspeção dimensional",
+      message: "Precisamos de orçamento para inspeção dimensional de 12 carcaças usinadas.",
+      receivedAt: new Date().toISOString(),
+      status: "NEW",
+    };
+    updateDemoState((state) => ({ ...state, requests: [request, ...state.requests] }));
+    pushNotification({
+      roles: ["ADMIN", "VALIDADOR"],
+      message: "Nova solicitação de orçamento recebida pelo site.",
+      href: "/solicitacoes",
+    });
+    setNotice("Pedido simulado adicionado à fila.");
   }
 
   function clearFilters() {
@@ -117,7 +126,10 @@ export function RequestsBoard({ initialRequests }: { initialRequests: QuoteReque
           <h1 className="requests-page__title">Solicitações de orçamento</h1>
           <p className="requests-page__intro">Acompanhe o que chegou pelo site e transforme oportunidades aprovadas em registros do laboratório.</p>
         </div>
-        {newCount > 0 ? <div className="requests-page__new-count"><strong>{newCount}</strong><span>novas solicitações</span></div> : null}
+        <div className="requests-page__header-actions">
+          {newCount > 0 ? <div className="requests-page__new-count"><strong>{newCount}</strong><span>novas solicitações</span></div> : null}
+          <Button type="button" variant="outline" onClick={simulateWebsiteRequest}><Plus aria-hidden="true" /> Simular pedido do site</Button>
+        </div>
       </header>
 
       <div className="requests-page__summary"><div><strong>{requests.length}</strong><span>solicitações no total</span></div><div><strong>{newCount}</strong><span>aguardando análise</span></div><p>Dados da demonstração</p></div>

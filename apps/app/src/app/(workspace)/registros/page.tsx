@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
-import { DEMO_RECORDS } from "./demo";
 import { RecordsBoard } from "./RecordsBoard";
 
 export default async function RecordsPage() {
@@ -9,5 +8,5 @@ export default async function RecordsPage() {
     redirect("/login");
   }
 
-  return <RecordsBoard initialRecords={DEMO_RECORDS} />;
+  return <RecordsBoard userRole={user.role} userName={user.name} />;
 }

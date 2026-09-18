@@ -1,0 +1,16 @@
+.validation-page { width: 100%; }
+.validation-page__header { padding-bottom: 2rem; border-bottom: 1px solid var(--color-border); }
+.validation-page__eyebrow { display: inline-flex; align-items: center; gap: .45rem; margin: 0; color: var(--color-primary); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.validation-page__title { margin: .6rem 0 0; font-family: var(--font-heading); font-size: clamp(2rem, 1.5rem + 1.4vw, 3rem); font-weight: 600; }
+.validation-page__intro { max-width: 48rem; margin: .85rem 0 0; color: var(--color-muted-foreground); line-height: 1.6; }
+.validation-page__content { margin-top: 2rem; }
+.validation-page__notice { margin: 0 0 1rem; color: var(--color-primary); }
+.validation-page__empty { padding: 2rem; border: 1px dashed var(--color-border); border-radius: var(--radius); color: var(--color-muted-foreground); text-align: center; }
+.validation-list { display: grid; gap: 1rem; }
+.validation-card { display: flex; justify-content: space-between; gap: 1rem; padding: 1.25rem; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-card); }
+.validation-card strong { display: block; font-family: var(--font-mono); color: var(--color-primary); }
+.validation-card span { display: block; margin-top: .25rem; color: var(--color-muted-foreground); font-size: .875rem; }
+.validation-card p { margin: .75rem 0; line-height: 1.55; }
+.validation-card__meta { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; font-size: .8125rem; color: var(--color-muted-foreground); }
+.validation-card__actions { display: flex; flex-direction: column; gap: .5rem; flex-shrink: 0; }
+@media (width < 48rem) { .validation-card { flex-direction: column; } }

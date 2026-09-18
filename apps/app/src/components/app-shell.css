@@ -376,3 +376,86 @@
     width: auto;
   }
 }
+
+.shell-notifications {
+  position: relative;
+}
+
+.shell-notifications__btn {
+  position: relative;
+}
+
+.shell-notifications__badge {
+  position: absolute;
+  top: -0.2rem;
+  right: -0.2rem;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1.1rem;
+  text-align: center;
+}
+
+.shell-notifications__panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 50;
+  width: min(22rem, calc(100vw - 2rem));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-card);
+  box-shadow: 0 12px 32px rgba(28, 25, 23, 0.12);
+}
+
+.shell-notifications__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.shell-notifications__head button {
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.shell-notifications__empty,
+.shell-notifications__panel ul {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  list-style: none;
+}
+
+.shell-notifications__item a {
+  display: block;
+  padding: 0.65rem 0;
+  color: var(--color-foreground);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-decoration: none;
+}
+
+.shell-notifications__item--read a {
+  color: var(--color-muted-foreground);
+}
+
+.demo-banner {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-card));
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+}

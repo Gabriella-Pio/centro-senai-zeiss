@@ -2,15 +2,18 @@
 
 O módulo interno vive em `apps/app` (`http://localhost:3001`). Não entra no site público.
 
-## Fatia 1 — login
+## Contas do laboratório (seed)
 
-Há um único usuário no seed:
+Senha de todas: `senai-zeiss`
 
-- e-mail: `admin@laboratorio.local`
-- senha: `senai-zeiss`
-- papel: Administrador
+| Papel | Nome | E-mail |
+|-------|------|--------|
+| Administrador | Matheus | `matheus@laboratorio.local` |
+| Validador | Sebastião | `sebastiao@laboratorio.local` |
+| Técnico | João | `joao@laboratorio.local` |
+| Consulta | Estagiário | `consulta@laboratorio.local` |
 
-O cookie de sessão é `cem_session` (httpOnly, 8 h). Os outros três papéis ainda **não** existem como contas: o Admin vai cadastrá-los na fatia 2.
+Também existe `admin@laboratorio.local` (alias administrativo).
 
 ## Como subir local
 
@@ -20,21 +23,57 @@ npm run dev
 
 Sobe Postgres, API (`:3333`) e o app (`:3001`). Abrir `http://localhost:3001/login`.
 
-O `apps/api/.env` precisa de `DATABASE_URL`, `FRONTEND_URL=http://localhost:3000,http://localhost:3001` e `JWT_SECRET`.
+```bash
+npm run db:migrate
+npm run prisma:seed -w @cem/api
+```
 
-## Mapa (do complemento) — ainda não nesta fatia
+## Modo apresentação (híbrido)
 
-1. Vocabulário controlado
-2. Registro em blocos A / B / C
-3. Assistente honesto na escada 0 / 1–4 / 5–14 / 15+ casos
-4. Validação e aviso ao orçamentista
-5. Indicadores
-6. Demonstração marcada e apagável; histórico real separado
+- `NEXT_PUBLIC_DEMO_MODE=false` — login real via API
+- Fluxo GC (solicitações, registros, assistente, validação, indicadores) em `localStorage` (`cem_demo_state`)
+- Banner “Modo demonstração” em todas as telas internas
 
-## O que já está decidido
+## Modo ensaio offline
+
+```bash
+# apps/app/.env.local
+NEXT_PUBLIC_DEMO_MODE=true
+```
+
+Login com atalhos “Entrar como…” na tela de login. Sem Postgres obrigatório.
+
+## O que é real vs mock
+
+| Real (back) | Mock (front / localStorage) |
+|-------------|----------------------------|
+| Login, sessão, papéis | Solicitações internas |
+| POST `/leads` da vitrine | Registros A/B/C |
+| Gestão de usuários (Admin) | Vocabulário |
+| | Assistente, validação, indicadores |
+| | Notificações |
+
+## Roteiro de apresentação (~20 min)
+
+1. **Vitrine** — catálogo + formulário de orçamento
+2. **Matheus** — Solicitações → em análise → converter em registro
+3. **João** — Assistente (tipo + traits) → faixa/confiança → criar registro
+4. **João** — Registros → blocos B e C → concluir serviço
+5. **Sebastião** — Validação → formalizar lição → notificação no sino
+6. **João** — Assistente de novo → recomendação mudou
+7. **Indicadores** — assertividade e causas frequentes
+
+## Peças do complemento
+
+1. Área interna com perfis — login + nav por papel
+2. Registro de serviço — blocos A, B, C com regra de conclusão
+3. Vocabulário controlado — Admin edita; todos consultam
+4. Assistente honesto — escada 0 / 1–4 / 5–14 / 15+ casos
+5. Validação e aviso — fila de lições + sino
+6. Indicadores — só base demo formalizada
+
+## Decisões
 
 - Preço e margem **nunca** no `apps/web`
-- Login com cookie **httpOnly**, não `localStorage`
-- CORS fechado (`FRONTEND_URL`); lead público só cria
-- PII e casos reais fora do Git; demo versionada e apagável
-- Stack do desafio (Next / Nest / Postgres), não Java 11 / SQL Server
+- Histórico real começa vazio; demo versionada e apagável
+- PII de clientes reais fora do Git
