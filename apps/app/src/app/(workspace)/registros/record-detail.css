@@ -1,0 +1,276 @@
+.record-detail-page {
+  width: 100%;
+  max-width: 72rem;
+}
+
+.record-detail-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  color: var(--color-muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.record-detail-page__back:hover {
+  color: var(--color-primary);
+}
+
+.record-detail-page__back svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.record-detail-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.record-detail-page__number {
+  margin: 0;
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.record-detail-page__title {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 1.4rem + 1vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.record-detail-page__subtitle {
+  margin: 0.45rem 0 0;
+  color: var(--color-muted-foreground);
+  font-size: 1rem;
+}
+
+.record-detail-page__batch {
+  margin: 0.35rem 0 0;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.record-stages-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.record-stages-table th,
+.record-stages-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.record-stages-table th {
+  color: var(--color-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.record-stages-table tfoot td {
+  border-bottom: 0;
+  background: color-mix(in srgb, var(--color-muted) 50%, var(--color-card));
+}
+
+.record-detail-page__tariff-note {
+  margin: 0.75rem 0 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.record-detail-page__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.record-stepper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.record-stepper__step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) + 2px);
+  background: var(--color-card);
+  color: var(--color-muted-foreground);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.record-stepper__step svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.record-stepper__step strong {
+  display: block;
+  color: var(--color-foreground);
+  font-size: 0.9375rem;
+}
+
+.record-stepper__step small {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+}
+
+.record-stepper__step--active {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+  box-shadow: 0 4px 16px rgba(0, 87, 184, 0.08);
+}
+
+.record-stepper__step--active svg {
+  color: var(--color-primary);
+}
+
+.record-stepper__step--done svg {
+  color: #16a34a;
+}
+
+.record-detail-page__layout {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.record-detail-page__layout--split {
+  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+  align-items: start;
+}
+
+.record-detail-page__form {
+  min-width: 0;
+}
+
+.record-detail-page__aside {
+  display: grid;
+  gap: 1rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.record-section {
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) + 2px);
+  background: var(--color-card);
+  box-shadow: 0 4px 16px rgba(28, 25, 23, 0.04);
+}
+
+.record-section h2 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.record-section + .record-section {
+  margin-top: 1rem;
+}
+
+.record-select {
+  margin-top: 0.35rem;
+  height: 3rem;
+  width: 100%;
+  border: 1px solid var(--color-input);
+  border-radius: var(--radius);
+  background: var(--color-card);
+  padding: 0 0.75rem;
+  font: inherit;
+  font-size: 1rem;
+}
+
+.record-summary-card {
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) + 2px);
+  background: var(--color-card);
+  box-shadow: 0 4px 16px rgba(28, 25, 23, 0.04);
+}
+
+.record-summary-card h3 {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.record-summary-card dl {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.record-summary-card div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.record-summary-card div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.record-summary-card dt {
+  color: var(--color-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.record-summary-card dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.record-detail-page__error {
+  margin-top: 1rem;
+  color: var(--color-destructive);
+  font-size: 0.875rem;
+}
+
+@media (width < 56rem) {
+  .record-detail-page__layout--split {
+    grid-template-columns: 1fr;
+  }
+
+  .record-detail-page__aside {
+    position: static;
+  }
+
+  .record-detail-page__header {
+    flex-direction: column;
+  }
+}
+
+@media (width < 40rem) {
+  .record-stepper {
+    grid-template-columns: 1fr;
+  }
+}

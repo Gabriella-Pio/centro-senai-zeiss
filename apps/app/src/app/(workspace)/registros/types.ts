@@ -1,6 +1,18 @@
 export type LessonStatus = "DRAFT" | "PENDING" | "FORMALIZED" | "SUPERSEDED";
 export type ServiceStatus = "DRAFT" | "QUOTED" | "COMPLETED";
 export type RecordVisibility = "PUBLIC" | "RESTRICTED";
+export type RecordKind = "single" | "batch" | "composite";
+
+import type { QuoteSnapshot } from "@/lib/pricing";
+
+export type ServiceStage = {
+  id: string;
+  serviceTypeId: string;
+  label: string;
+  resourceIds: string[];
+  estimatedHours: number | null;
+  actualHours: number | null;
+};
 
 export type ServiceRecord = {
   id: string;
@@ -12,6 +24,11 @@ export type ServiceRecord = {
   requester: string;
   createdAt: string;
   isDemo: boolean;
+  recordKind?: RecordKind;
+  quantity?: number;
+  batchLabel?: string;
+  hoursPackageRef?: string;
+  stages?: ServiceStage[];
 
   // Bloco A — orçado
   serviceTypeId?: string;
@@ -24,7 +41,9 @@ export type ServiceRecord = {
   assumptions: string;
   estimatedBy?: string;
   estimationOverrideReason?: string;
+  priceOverrideReason?: string;
   equipment?: string;
+  quoteSnapshot?: QuoteSnapshot;
 
   serviceStatus: ServiceStatus;
 

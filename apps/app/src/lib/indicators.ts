@@ -1,5 +1,7 @@
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
+import type { LabSettings } from "./demo-store-types";
+import { computeRealizedMargin } from "./pricing";
 
 const TOLERANCE = 0.15;
 
@@ -7,10 +9,17 @@ export type IndicatorSummary = {
   totalFormalized: number;
   assertivenessRate: number;
   averageEffortDeviation: number;
+  averageMarginPercent: number;
+  belowTargetMarginCount: number;
+  targetMarginPercent: number;
   topCauses: { label: string; count: number }[];
 };
 
-export function computeIndicators(records: ServiceRecord[], vocabulary: VocabularyTerm[]): IndicatorSummary {
+export function computeIndicators(
+  records: ServiceRecord[],
+  vocabulary: VocabularyTerm[],
+  labSettings: LabSettings,
+): IndicatorSummary {
   const formalized = records.filter(
     (record) => record.isDemo && record.lessonStatus === "FORMALIZED" && record.serviceStatus === "COMPLETED",
   );
@@ -48,10 +57,26 @@ export function computeIndicators(records: ServiceRecord[], vocabulary: Vocabula
     .sort((a, b) => b.count - a.count)
     .slice(0, 3);
 
+  const withMargin = formalized
+    .map((record) => computeRealizedMargin(record))
+    .filter((margin): margin is number => margin !== null);
+
+  const averageMarginPercent =
+    withMargin.length === 0
+      ? 0
+      : Math.round(withMargin.reduce((sum, margin) => sum + margin, 0) / withMargin.length);
+
+  const belowTargetMarginCount = withMargin.filter(
+    (margin) => margin < labSettings.targetMarginPercent,
+  ).length;
+
   return {
     totalFormalized: formalized.length,
     assertivenessRate: withHours.length === 0 ? 0 : Math.round((withinTolerance.length / withHours.length) * 100),
     averageEffortDeviation: Math.round(averageEffortDeviation * 100),
+    averageMarginPercent,
+    belowTargetMarginCount,
+    targetMarginPercent: labSettings.targetMarginPercent,
     topCauses,
   };
 }

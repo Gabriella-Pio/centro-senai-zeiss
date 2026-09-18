@@ -8,7 +8,11 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: repoRoot,
   transpilePackages: ["@cem/ui"],
   images: {
-    localPatterns: [{ pathname: "/brand/**" }, { pathname: "/lab/**" }],
+    localPatterns: [
+      { pathname: "/brand/**" },
+      { pathname: "/lab/**" },
+      { pathname: "/equipment/**" },
+    ],
   },
   turbopack: {
     root: repoRoot,

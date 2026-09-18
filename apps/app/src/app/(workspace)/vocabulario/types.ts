@@ -7,6 +7,8 @@ export type VocabularyTerm = {
   guidance: string;
   active: boolean;
   updatedAt: string;
+  /** Tarifa horária (R$/h) — apenas para recursos do laboratório. */
+  hourlyRate?: number;
 };
 
 export const VOCABULARY_CLASS_LABELS: Record<VocabularyClass, string> = {

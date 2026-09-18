@@ -1,0 +1,85 @@
+.cost-panel {
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-card));
+}
+
+.cost-panel__header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.cost-panel__header p {
+  margin: 0.35rem 0 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.cost-panel__tariff-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cost-panel__tariff-link:hover {
+  text-decoration: underline;
+}
+
+.cost-panel__empty {
+  margin: 0.75rem 0 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.875rem;
+}
+
+.cost-panel__table {
+  width: 100%;
+  margin-top: 0.85rem;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.cost-panel__table th,
+.cost-panel__table td {
+  padding: 0.5rem 0.35rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.cost-panel__table th:last-child,
+.cost-panel__table td:last-child,
+.cost-panel__table tfoot td:last-child {
+  text-align: right;
+}
+
+.cost-panel__suggested {
+  color: var(--color-primary);
+}
+
+.cost-panel__history {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.cost-panel__history h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-muted-foreground);
+}
+
+.cost-panel__history p {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.cost-panel__explanations {
+  margin: 0.85rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--color-muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}

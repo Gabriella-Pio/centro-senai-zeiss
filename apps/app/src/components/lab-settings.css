@@ -1,0 +1,53 @@
+.lab-settings {
+  margin-top: 2rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) + 2px);
+  background: color-mix(in srgb, var(--color-muted) 28%, var(--color-card));
+}
+.lab-settings__head h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.lab-settings__head p {
+  margin: .4rem 0 0;
+  max-width: 42rem;
+  color: var(--color-muted-foreground);
+  font-size: .875rem;
+  line-height: 1.55;
+}
+.lab-settings__head a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.lab-settings__head a:hover { text-decoration: underline; }
+.lab-settings__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.lab-settings__grid > div { display: grid; gap: .4rem; align-content: start; }
+.lab-settings__hint {
+  margin: 0;
+  color: var(--color-muted-foreground);
+  font-size: .75rem;
+  line-height: 1.4;
+}
+.lab-settings__actions {
+  display: flex;
+  gap: .75rem;
+  margin-top: 1rem;
+}
+.lab-settings__saved {
+  margin: .75rem 0 0;
+  color: #16a34a;
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+@media (width < 56rem) {
+  .lab-settings__grid { grid-template-columns: 1fr; }
+}

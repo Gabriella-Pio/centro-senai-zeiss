@@ -17,6 +17,7 @@ import {
   Users,
   UserRound,
   Bell,
+  TableProperties,
   X,
 } from "lucide-react";
 import { ROLE_LABELS, type AuthUser } from "@/lib/api";
@@ -38,6 +39,7 @@ const NAV_ICONS: Record<NavIcon, typeof House> = {
   users: Users,
   profile: UserRound,
   requests: Bell,
+  tariffs: TableProperties,
 };
 
 const COLLAPSE_KEY = "cem_sidebar_collapsed";

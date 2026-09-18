@@ -1,4 +1,5 @@
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
+import { getComparableHours } from "./record-helpers";
 
 export type ConfidenceLevel = "none" | "low" | "medium" | "high";
 
@@ -71,7 +72,9 @@ export function findSimilarRecords(
 
 export function buildRecommendation(cases: ServiceRecord[]): AssistantRecommendation {
   const level = getConfidenceLevel(cases.length);
-  const actualHours = cases.map((item) => item.actualHours).filter((value): value is number => value !== null);
+  const actualHours = cases
+    .map((item) => getComparableHours(item, "actual"))
+    .filter((value): value is number => value !== null);
   const med = median(actualHours);
   const q1 = quartile(actualHours, 0.25);
   const q3 = quartile(actualHours, 0.75);
@@ -79,8 +82,15 @@ export function buildRecommendation(cases: ServiceRecord[]): AssistantRecommenda
   let correctionFactor: number | null = null;
   if (cases.length > 0) {
     const ratios = cases
-      .filter((item) => item.estimatedHours && item.actualHours)
-      .map((item) => item.actualHours! / item.estimatedHours!);
+      .map((item) => {
+        const estimated = getComparableHours(item, "estimated");
+        const actual = getComparableHours(item, "actual");
+        if (!estimated || !actual) {
+          return null;
+        }
+        return actual / estimated;
+      })
+      .filter((value): value is number => value !== null);
     correctionFactor = ratios.length > 0 ? ratios.reduce((sum, value) => sum + value, 0) / ratios.length : null;
   }
 

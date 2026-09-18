@@ -10,7 +10,8 @@ export type NavIcon =
   | 'demo'
   | 'users'
   | 'profile'
-  | 'requests';
+  | 'requests'
+  | 'tariffs';
 
 export type NavGroup = 'work' | 'manage';
 
@@ -67,6 +68,14 @@ export const NAV_ITEMS: NavItem[] = [
     icon: 'requests',
     group: 'manage',
     roles: ['ADMIN', 'VALIDADOR'],
+    ready: true,
+  },
+  {
+    href: '/tarifas',
+    label: 'Tarifas',
+    icon: 'tariffs',
+    group: 'manage',
+    roles: ALL_ROLES,
     ready: true,
   },
   {

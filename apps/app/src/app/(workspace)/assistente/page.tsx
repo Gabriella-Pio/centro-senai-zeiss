@@ -8,5 +8,11 @@ export default async function AssistantPage() {
     redirect("/login");
   }
 
-  return <AssistantBoard userName={user.name} canCreate={user.role !== "CONSULTA"} />;
+  return (
+    <AssistantBoard
+      userName={user.name}
+      canCreate={user.role !== "CONSULTA"}
+      canEditLabSettings={user.role === "ADMIN"}
+    />
+  );
 }

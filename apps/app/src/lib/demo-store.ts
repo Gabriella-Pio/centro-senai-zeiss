@@ -2,8 +2,15 @@ import type { UserRole } from "./api";
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import type { QuoteRequest } from "@/app/(workspace)/solicitacoes/types";
 import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
+import { DEMO_SEED_VERSION } from "./cargill-demo-records";
 import { createSeedState } from "./demo-store-seed";
-import type { DemoNotification, DemoState } from "./demo-store-types";
+import {
+  applyMachineTariffsToVocabulary,
+  createMachineTariff,
+  type MachineCostInputs,
+} from "./machine-tariff";
+import { DEFAULT_MACHINE_INPUTS } from "./machine-tariff-seed";
+import { DEFAULT_LAB_SETTINGS, type DemoNotification, type DemoState } from "./demo-store-types";
 
 export const DEMO_STATE_KEY = "cem_demo_state";
 export const DEMO_CHANGED_EVENT = "cem-demo-changed";
@@ -77,33 +84,118 @@ function upgradeRecord(record: ServiceRecord & { status?: string }): ServiceReco
     lesson: record.lesson ?? "",
     relatedTopicIds: record.relatedTopicIds ?? [],
     visibility: record.visibility ?? "PUBLIC",
+    quantity: record.quantity ?? 1,
+    stages: record.stages ?? [],
+    quoteSnapshot: record.quoteSnapshot,
     serviceStatus,
     lessonStatus,
   };
+}
+
+export function updateMachineTariffInputs(
+  state: DemoState,
+  tariffId: string,
+  patch: Partial<MachineCostInputs>,
+): DemoState {
+  const machineTariffs = state.machineTariffs.map((tariff) =>
+    tariff.id === tariffId ? { ...tariff, inputs: { ...tariff.inputs, ...patch } } : tariff,
+  );
+  return {
+    ...state,
+    machineTariffs,
+    vocabulary: applyMachineTariffsToVocabulary(state.vocabulary, machineTariffs),
+  };
+}
+
+export function addMachineTariff(state: DemoState, label: string): DemoState {
+  const trimmed = label.trim();
+  const stamp = Date.now();
+  const resourceId = `vocab-${stamp}`;
+  const tariff = createMachineTariff({
+    id: `machine-${stamp}`,
+    resourceId,
+    label: trimmed,
+    inputs: { ...DEFAULT_MACHINE_INPUTS },
+  });
+  const resource: VocabularyTerm = {
+    id: resourceId,
+    label: trimmed,
+    class: "RESOURCE",
+    guidance: "Recurso cadastrado na folha de custos por máquina.",
+    active: true,
+    updatedAt: new Date().toISOString(),
+  };
+  const machineTariffs = [...state.machineTariffs, tariff];
+  return {
+    ...state,
+    machineTariffs,
+    vocabulary: applyMachineTariffsToVocabulary([...state.vocabulary, resource], machineTariffs),
+  };
+}
+
+function mergeVocabularyWithSeed(stored: VocabularyTerm[], seed: VocabularyTerm[]) {
+  const seedById = new Map(seed.map((term) => [term.id, term]));
+  const merged = stored.map((term) => {
+    const seedTerm = seedById.get(term.id);
+    if (term.class === "RESOURCE" && seedTerm?.hourlyRate && !term.hourlyRate) {
+      return { ...term, hourlyRate: seedTerm.hourlyRate };
+    }
+    return term;
+  });
+  seed.forEach((term) => {
+    if (!merged.some((item) => item.id === term.id)) {
+      merged.push(term);
+    }
+  });
+  return merged;
 }
 
 export function readDemoState(): DemoState {
   if (!isBrowser()) {
     return createSeedState();
   }
+  const seed = createSeedState();
   const raw = window.localStorage.getItem(DEMO_STATE_KEY);
   if (!raw) {
     const migrated = migrateLegacyState();
-    const initial = migrated ?? createSeedState();
+    const initial = migrated ?? seed;
     writeDemoState(initial);
     return initial;
   }
   try {
     const parsed = JSON.parse(raw) as DemoState;
-    return {
-      ...createSeedState(),
+    const storedVersion = parsed.seedVersion ?? 1;
+    const userRecords = (parsed.records ?? []).filter((record) => !record.isDemo);
+    const records =
+      storedVersion < DEMO_SEED_VERSION
+        ? [...seed.records, ...userRecords.map(upgradeRecord)]
+        : (parsed.records ?? []).map(upgradeRecord);
+    const merged = {
+      ...seed,
       ...parsed,
-      records: (parsed.records ?? []).map(upgradeRecord),
+      seedVersion: DEMO_SEED_VERSION,
+      records,
+      vocabulary: mergeVocabularyWithSeed(parsed.vocabulary ?? [], seed.vocabulary),
+      machineTariffs: (storedVersion < DEMO_SEED_VERSION
+        ? seed.machineTariffs
+        : (parsed.machineTariffs ?? seed.machineTariffs)
+      ).map((tariff) => ({
+        ...tariff,
+        inputs: {
+          ...tariff.inputs,
+          variableSalaryHourly: tariff.inputs.variableSalaryHourly ?? tariff.inputs.hourlySalary,
+          administrativeOverheadPercent: tariff.inputs.administrativeOverheadPercent ?? 65,
+        },
+      })),
+      labSettings: { ...DEFAULT_LAB_SETTINGS, ...parsed.labSettings },
     };
+    if (storedVersion < DEMO_SEED_VERSION) {
+      writeDemoState(merged);
+    }
+    return merged;
   } catch {
-    const initial = createSeedState();
-    writeDemoState(initial);
-    return initial;
+    writeDemoState(seed);
+    return seed;
   }
 }
 
@@ -224,6 +316,8 @@ export function createEmptyRecord(partial: Partial<ServiceRecord> & Pick<Service
     relatedTopicIds: [],
     visibility: "PUBLIC",
     lessonStatus: "DRAFT",
+    quantity: 1,
+    stages: [],
     ...partial,
   };
 }

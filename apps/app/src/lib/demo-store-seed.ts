@@ -1,7 +1,34 @@
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
+import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
 import { DEMO_REQUESTS } from "@/app/(workspace)/solicitacoes/demo";
 import { DEMO_VOCABULARY } from "@/app/(workspace)/vocabulario/demo";
-import type { DemoState } from "./demo-store-types";
+import { CARGILL_DEMO_RECORDS, CARGILL_VOCABULARY_EXTRA, DEMO_SEED_VERSION } from "./cargill-demo-records";
+import { DEFAULT_LAB_SETTINGS, type DemoState } from "./demo-store-types";
+import { applyMachineTariffsToVocabulary } from "./machine-tariff";
+import { MACHINE_TARIFF_SEED } from "./machine-tariff-seed";
+import { buildQuoteSnapshot } from "./pricing";
+
+function seedQuotePricing(
+  teamHours: number,
+  resourceIds: string[],
+  vocabulary: VocabularyTerm[],
+  createdAt: string,
+) {
+  const equipmentHours = Math.round(teamHours * 0.6);
+  const snapshot = buildQuoteSnapshot({
+    vocabulary,
+    resourceIds,
+    teamHours,
+    equipmentHours,
+    labSettings: { ...DEFAULT_LAB_SETTINGS, tariffTableLabel: `${DEFAULT_LAB_SETTINGS.tariffTableLabel} (snapshot ${createdAt.slice(0, 10)})` },
+  });
+  return {
+    totalCost: snapshot.breakdown.totalCost,
+    proposedValue: snapshot.breakdown.suggestedPrice,
+    estimatedEquipmentHours: equipmentHours,
+    quoteSnapshot: snapshot,
+  };
+}
 
 type FormalizedSeed = Partial<ServiceRecord> & {
   serviceTypeId: string;
@@ -10,26 +37,37 @@ type FormalizedSeed = Partial<ServiceRecord> & {
   actualHours: number;
 };
 
-function buildFormalizedRecord(index: number, overrides: FormalizedSeed): ServiceRecord {
+function buildFormalizedRecord(
+  index: number,
+  overrides: FormalizedSeed,
+  vocabulary: VocabularyTerm[],
+): ServiceRecord {
   const num = String(index).padStart(4, "0");
   const { service, serviceTypeId, estimatedHours, actualHours, ...rest } = overrides;
+  const resourceIds = overrides.resourceIds ?? ["vocab-5", "vocab-12"];
+  const createdAt = `2026-08-${String(Math.min(index, 28)).padStart(2, "0")}T10:00:00.000Z`;
+  const pricing = seedQuotePricing(estimatedHours, resourceIds, vocabulary, createdAt);
+  const actualRatio = actualHours / estimatedHours;
+  const actualCost = Math.round(pricing.totalCost * actualRatio);
+  const billedValue = Math.round(pricing.proposedValue * (actualRatio > 1.1 ? 1.05 : 0.98));
   return {
     id: `seed-record-${index}`,
     recordNumber: `RS-2026-${num}`,
     company: `Cliente demo ${index}`,
     requester: "Contato técnico",
-    createdAt: `2026-08-${String(Math.min(index, 28)).padStart(2, "0")}T10:00:00.000Z`,
+    createdAt,
     isDemo: true,
     partTraitIds: ["vocab-3"],
-    resourceIds: ["vocab-5"],
-    estimatedEquipmentHours: Math.round(estimatedHours * 0.6),
-    estimatedCost: estimatedHours * 180,
-    proposedValue: estimatedHours * 320,
+    resourceIds,
+    estimatedEquipmentHours: pricing.estimatedEquipmentHours,
+    estimatedCost: pricing.totalCost,
+    proposedValue: pricing.proposedValue,
+    quoteSnapshot: pricing.quoteSnapshot,
     assumptions: "Peça disponível e desenho técnico conferido.",
     estimatedBy: "João",
     serviceStatus: "COMPLETED",
-    actualCost: actualHours * 185,
-    billedValue: actualHours * 310,
+    actualCost,
+    billedValue,
     deliveredAt: `2026-08-${String(Math.min(index + 2, 28)).padStart(2, "0")}T16:00:00.000Z`,
     rework: false,
     scopeChange: false,
@@ -46,6 +84,111 @@ function buildFormalizedRecord(index: number, overrides: FormalizedSeed): Servic
   };
 }
 
+const EXTRA_VOCABULARY: VocabularyTerm[] = [
+  {
+    id: "vocab-7",
+    label: "Fixação mais complexa que o previsto",
+    class: "DEVIATION_CAUSE",
+    guidance: "Tempo extra para preparar dispositivo ou acessar a região.",
+    active: true,
+    updatedAt: "2026-09-10T09:00:00.000Z",
+  },
+  {
+    id: "vocab-8",
+    label: "Programação subestimada",
+    class: "DEVIATION_CAUSE",
+    guidance: "Rotina de medição ou digitalização levou mais tempo que o estimado.",
+    active: true,
+    updatedAt: "2026-09-09T09:00:00.000Z",
+  },
+  {
+    id: "vocab-9",
+    label: "Engenharia reversa",
+    class: "SERVICE_TYPE",
+    guidance: "Reconstrução CAD a partir de digitalização.",
+    active: true,
+    updatedAt: "2026-09-08T09:00:00.000Z",
+  },
+  {
+    id: "vocab-10",
+    label: "ATOS Q 8M",
+    class: "RESOURCE",
+    guidance: "Scanner óptico ATOS Q 8M — tarifa da folha de custos.",
+    active: true,
+    updatedAt: "2026-09-07T09:00:00.000Z",
+  },
+  {
+    id: "vocab-11",
+    label: "BOSELLO MAX 80",
+    class: "RESOURCE",
+    guidance: "Tomógrafo industrial — tarifa da folha de custos.",
+    active: true,
+    updatedAt: "2026-09-06T09:00:00.000Z",
+  },
+  {
+    id: "vocab-12",
+    label: "Sala climatizada",
+    class: "RESOURCE",
+    guidance: "Custo horário alocado (energia, umidificação, climatização).",
+    active: true,
+    updatedAt: "2026-09-05T09:00:00.000Z",
+    hourlyRate: 12,
+  },
+  {
+    id: "vocab-16",
+    label: "CMM O-INSPECT",
+    class: "RESOURCE",
+    guidance: "MMC óptica ZEISS O-Inspect.",
+    active: true,
+    updatedAt: "2026-09-07T09:00:00.000Z",
+  },
+  {
+    id: "vocab-17",
+    label: "CMM CONTURA",
+    class: "RESOURCE",
+    guidance: "MMC ZEISS CONTURA.",
+    active: true,
+    updatedAt: "2026-09-07T09:00:00.000Z",
+  },
+  {
+    id: "vocab-18",
+    label: "T-SCAN Hawk 2",
+    class: "RESOURCE",
+    guidance: "Scanner portátil T-SCAN Hawk 2.",
+    active: true,
+    updatedAt: "2026-09-07T09:00:00.000Z",
+  },
+  {
+    id: "vocab-13",
+    label: "CMM DuraMax",
+    class: "RESOURCE",
+    guidance: "MMC portátil ZEISS DuraMax — folha de custos.",
+    active: true,
+    updatedAt: "2026-06-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-19",
+    label: "ZEISS ZRE",
+    class: "RESOURCE",
+    guidance: "ZEISS Reverse Engineering — licença e posto de trabalho; tarifa da folha de custos.",
+    active: true,
+    updatedAt: "2026-09-18T09:00:00.000Z",
+  },
+  ...CARGILL_VOCABULARY_EXTRA,
+];
+
+const BASE_VOCABULARY = applyMachineTariffsToVocabulary(
+  [
+    ...DEMO_VOCABULARY.map((term) =>
+      term.id === "vocab-5"
+        ? { ...term, label: "CMM PRISMO", guidance: "MMC ZEISS PRISMO — folha de custos." }
+        : term,
+    ),
+    ...EXTRA_VOCABULARY,
+  ],
+  MACHINE_TARIFF_SEED,
+);
+
 const INSPECTION_HOURS = [14, 16, 15, 18, 17, 16, 19, 15, 14, 20, 16, 18, 17, 15, 16];
 const INSPECTION_ACTUAL = [17, 18, 16, 22, 19, 17, 21, 16, 15, 24, 18, 20, 19, 17, 18];
 
@@ -60,7 +203,7 @@ const formalizedInspectionRecords = INSPECTION_HOURS.map((estimated, index) =>
       ? "Fixação mais complexa que o previsto em superfícies livres."
       : "Programação de medição subestimada para tolerâncias apertadas.",
     deviationCauseId: index % 3 === 0 ? "vocab-7" : "vocab-8",
-  }),
+  }, BASE_VOCABULARY),
 );
 
 const otherFormalized: ServiceRecord[] = [
@@ -68,30 +211,39 @@ const otherFormalized: ServiceRecord[] = [
     serviceTypeId: "vocab-2",
     service: "Digitalização 3D",
     partTraitIds: ["vocab-3"],
+    resourceIds: ["vocab-10", "vocab-12"],
     estimatedHours: 12,
     actualHours: 14,
     lesson: "Preparar mais tempo para alinhamento de marcações em peças escaneadas.",
     deviationCauseId: "vocab-7",
-  }),
+  }, BASE_VOCABULARY),
   buildFormalizedRecord(4, {
     serviceTypeId: "vocab-2",
     service: "Digitalização 3D",
     partTraitIds: ["vocab-4"],
+    resourceIds: ["vocab-18", "vocab-12"],
     estimatedHours: 10,
     actualHours: 11,
     lesson: "Peças com tolerância apertada exigem mais pontos de referência.",
     deviationCauseId: "vocab-8",
-  }),
+  }, BASE_VOCABULARY),
   buildFormalizedRecord(5, {
     serviceTypeId: "vocab-9",
     service: "Engenharia reversa",
     partTraitIds: ["vocab-3"],
+    resourceIds: ["vocab-10", "vocab-12"],
     estimatedHours: 24,
     actualHours: 28,
     lesson: "Incluir retrabalho de malha quando o acesso à região é limitado.",
     deviationCauseId: "vocab-7",
-  }),
+  }, BASE_VOCABULARY),
 ];
+
+const record1CreatedAt = "2026-09-15T11:00:00.000Z";
+const record1Pricing = seedQuotePricing(24, ["vocab-10", "vocab-5"], BASE_VOCABULARY, record1CreatedAt);
+const record2Pricing = seedQuotePricing(16, ["vocab-17", "vocab-12"], BASE_VOCABULARY, "2026-09-12T09:30:00.000Z");
+
+export const SEED_VOCABULARY = BASE_VOCABULARY;
 
 export const SEED_RECORDS: ServiceRecord[] = [
   {
@@ -100,20 +252,48 @@ export const SEED_RECORDS: ServiceRecord[] = [
     requestId: "request-3",
     requestNumber: "SO-2026-0003",
     company: "Inova Moldes",
-    service: "Engenharia reversa",
+    service: "Scan + eng. reversa + inspeção CMM",
     requester: "Lucas Martins",
-    createdAt: "2026-09-15T11:00:00.000Z",
+    createdAt: record1CreatedAt,
     isDemo: true,
+    recordKind: "composite",
     serviceTypeId: "vocab-9",
     partTraitIds: ["vocab-3"],
-    resourceIds: ["vocab-10"],
+    resourceIds: ["vocab-10", "vocab-5"],
+    stages: [
+      {
+        id: "record-1-stage-1",
+        serviceTypeId: "vocab-2",
+        label: "Digitalização 3D",
+        resourceIds: ["vocab-10"],
+        estimatedHours: 8,
+        actualHours: null,
+      },
+      {
+        id: "record-1-stage-2",
+        serviceTypeId: "vocab-9",
+        label: "Engenharia reversa",
+        resourceIds: ["vocab-10"],
+        estimatedHours: 12,
+        actualHours: null,
+      },
+      {
+        id: "record-1-stage-3",
+        serviceTypeId: "vocab-1",
+        label: "Inspeção dimensional (CMM)",
+        resourceIds: ["vocab-5"],
+        estimatedHours: 4,
+        actualHours: null,
+      },
+    ],
     estimatedHours: 24,
-    estimatedEquipmentHours: 18,
-    estimatedCost: 4320,
-    proposedValue: 7680,
-    assumptions: "Peça disponível no laboratório e acesso às regiões principais garantido.",
+    estimatedEquipmentHours: record1Pricing.estimatedEquipmentHours,
+    estimatedCost: record1Pricing.totalCost,
+    proposedValue: record1Pricing.proposedValue,
+    quoteSnapshot: record1Pricing.quoteSnapshot,
+    assumptions: "Serviço composto: scan, modelagem e validação dimensional no mesmo registro.",
     estimatedBy: "João",
-    equipment: "Scanner 3D ATOS",
+    equipment: "ATOS Q 8M + CMM PRISMO",
     serviceStatus: "QUOTED",
     actualHours: null,
     actualCost: null,
@@ -131,20 +311,23 @@ export const SEED_RECORDS: ServiceRecord[] = [
     id: "record-2",
     recordNumber: "RS-2026-0002",
     company: "Metalúrgica Horizonte",
-    service: "Inspeção dimensional",
+    service: "Inspeção dimensional — lote de 8 peças",
     requester: "Fernanda Rocha",
     createdAt: "2026-09-12T09:30:00.000Z",
     isDemo: true,
+    recordKind: "batch",
+    quantity: 8,
+    batchLabel: "Lote eixos usinados 1–8",
     serviceTypeId: "vocab-1",
     partTraitIds: ["vocab-4"],
-    resourceIds: ["vocab-5"],
+    resourceIds: ["vocab-17", "vocab-12"],
     estimatedHours: 16,
-    estimatedEquipmentHours: 12,
-    estimatedCost: 2880,
-    proposedValue: 5120,
+    estimatedEquipmentHours: record2Pricing.estimatedEquipmentHours,
+    estimatedCost: record2Pricing.totalCost,
+    proposedValue: record2Pricing.proposedValue,
     assumptions: "Desenho técnico atualizado será enviado junto com o lote.",
     estimatedBy: "João",
-    equipment: "CMM ZEISS CONTURA",
+    equipment: "CMM CONTURA",
     serviceStatus: "DRAFT",
     actualHours: null,
     actualCost: null,
@@ -160,49 +343,17 @@ export const SEED_RECORDS: ServiceRecord[] = [
   },
   ...otherFormalized,
   ...formalizedInspectionRecords,
-];
-
-export const SEED_VOCABULARY = [
-  ...DEMO_VOCABULARY,
-  {
-    id: "vocab-7",
-    label: "Fixação mais complexa que o previsto",
-    class: "DEVIATION_CAUSE" as const,
-    guidance: "Tempo extra para preparar dispositivo ou acessar a região.",
-    active: true,
-    updatedAt: "2026-09-10T09:00:00.000Z",
-  },
-  {
-    id: "vocab-8",
-    label: "Programação subestimada",
-    class: "DEVIATION_CAUSE" as const,
-    guidance: "Rotina de medição ou digitalização levou mais tempo que o estimado.",
-    active: true,
-    updatedAt: "2026-09-09T09:00:00.000Z",
-  },
-  {
-    id: "vocab-9",
-    label: "Engenharia reversa",
-    class: "SERVICE_TYPE" as const,
-    guidance: "Reconstrução CAD a partir de digitalização.",
-    active: true,
-    updatedAt: "2026-09-08T09:00:00.000Z",
-  },
-  {
-    id: "vocab-10",
-    label: "Scanner 3D ATOS",
-    class: "RESOURCE" as const,
-    guidance: "Equipamento para digitalização de superfícies.",
-    active: true,
-    updatedAt: "2026-09-07T09:00:00.000Z",
-  },
+  ...CARGILL_DEMO_RECORDS,
 ];
 
 export function createSeedState(): DemoState {
   return {
+    seedVersion: DEMO_SEED_VERSION,
     requests: DEMO_REQUESTS,
     records: SEED_RECORDS,
     vocabulary: SEED_VOCABULARY,
+    machineTariffs: MACHINE_TARIFF_SEED,
+    labSettings: DEFAULT_LAB_SETTINGS,
     notifications: [
       {
         id: "notif-1",

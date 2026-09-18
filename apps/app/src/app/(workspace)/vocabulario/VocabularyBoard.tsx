@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { BookOpen, FilterX, Pencil, Plus, Search } from "lucide-react";
 import { Badge, Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Input, Label } from "@cem/ui";
 import { updateDemoState } from "@/lib/demo-store";
+import { formatCurrency } from "@/lib/pricing";
 import { useDemoStore } from "@/lib/use-demo-store";
 import { VocabularyForm } from "./VocabularyForm";
 import { VOCABULARY_CLASS_LABELS, VOCABULARY_CLASSES, type VocabularyClass, type VocabularyTerm } from "./types";
@@ -57,7 +58,7 @@ export function VocabularyBoard({ canEdit }: { canEdit: boolean }) {
         <div>
           <p className="vocabulary-page__eyebrow"><BookOpen aria-hidden="true" /> Base de conhecimento</p>
           <h1 className="vocabulary-page__title">Vocabulário</h1>
-          <p className="vocabulary-page__intro">Organize os termos usados pela equipe para registrar e descrever os casos do laboratório.</p>
+          <p className="vocabulary-page__intro">Organize os termos usados pela equipe. Recursos com tarifa horária alimentam a composição de custo do orçamento.</p>
         </div>
         {canEdit ? <Button type="button" size="lg" onClick={() => setCreating(true)}><Plus aria-hidden="true" /> Novo termo</Button> : null}
       </header>
@@ -79,7 +80,7 @@ export function VocabularyBoard({ canEdit }: { canEdit: boolean }) {
         {notice ? <p className="vocabulary-page__notice" role="status">{notice}</p> : null}
         <h2 id="vocabulary-list-heading" className="sr-only">Termos do vocabulário</h2>
         <div className="vocabulary-page__table-wrap">
-          {filtered.length === 0 ? <div className="vocabulary-page__empty"><FilterX aria-hidden="true" /><p>Nenhum termo encontrado com esses filtros.</p>{filtering ? <Button type="button" variant="outline" onClick={clearFilters}>Limpar filtros</Button> : null}</div> : <table className="vocabulary-page__table"><thead><tr><th>Termo</th><th>Classe</th><th>Situação</th><th className="vocabulary-page__actions-heading">Ações</th></tr></thead><tbody>{filtered.map((term) => <tr key={term.id}><td><strong>{term.label}</strong><span>{term.guidance || "Sem orientação de uso"}</span></td><td><Badge variant="outline">{VOCABULARY_CLASS_LABELS[term.class]}</Badge></td><td><span className={term.active ? "vocabulary-status vocabulary-status--active" : "vocabulary-status vocabulary-status--inactive"}>{term.active ? "Ativo" : "Inativo"}</span></td><td className="vocabulary-page__actions"><Button type="button" variant="ghost" size="icon-sm" title={`Editar ${term.label}`} onClick={() => setEditing(term)}><Pencil aria-hidden="true" /><span className="sr-only">Editar {term.label}</span></Button>{canEdit ? <Button type="button" variant="ghost" size="sm" onClick={() => toggleActive(term)}>{term.active ? "Desativar" : "Ativar"}</Button> : null}</td></tr>)}</tbody></table>}
+          {filtered.length === 0 ? <div className="vocabulary-page__empty"><FilterX aria-hidden="true" /><p>Nenhum termo encontrado com esses filtros.</p>{filtering ? <Button type="button" variant="outline" onClick={clearFilters}>Limpar filtros</Button> : null}</div> : <table className="vocabulary-page__table"><thead><tr><th>Termo</th><th>Classe</th><th>Tarifa</th><th>Situação</th><th className="vocabulary-page__actions-heading">Ações</th></tr></thead><tbody>{filtered.map((term) => <tr key={term.id}><td><strong>{term.label}</strong><span>{term.guidance || "Sem orientação de uso"}</span></td><td><Badge variant="outline">{VOCABULARY_CLASS_LABELS[term.class]}</Badge></td><td>{term.class === "RESOURCE" && term.hourlyRate ? <span className="vocabulary-page__rate">{formatCurrency(term.hourlyRate)}/h</span> : <span>—</span>}</td><td><span className={term.active ? "vocabulary-status vocabulary-status--active" : "vocabulary-status vocabulary-status--inactive"}>{term.active ? "Ativo" : "Inativo"}</span></td><td className="vocabulary-page__actions"><Button type="button" variant="ghost" size="icon-sm" title={`Editar ${term.label}`} onClick={() => setEditing(term)}><Pencil aria-hidden="true" /><span className="sr-only">Editar {term.label}</span></Button>{canEdit ? <Button type="button" variant="ghost" size="sm" onClick={() => toggleActive(term)}>{term.active ? "Desativar" : "Ativar"}</Button> : null}</td></tr>)}</tbody></table>}
         </div>
       </section>
 
