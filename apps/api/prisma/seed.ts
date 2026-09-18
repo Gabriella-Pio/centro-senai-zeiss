@@ -10,34 +10,39 @@ if (!connectionString) {
 
 const prisma = new PrismaClient({ adapter: new PrismaPg(connectionString) });
 
-const ADMIN_EMAIL = "admin@laboratorio.local";
-const ADMIN_PASSWORD = "senai-zeiss";
+const PASSWORD = "senai-zeiss";
+
+const LAB_USERS = [
+  { email: "matheus@laboratorio.local", name: "Matheus", role: "ADMIN" as const },
+  { email: "sebastiao@laboratorio.local", name: "Sebastião", role: "VALIDADOR" as const },
+  { email: "joao@laboratorio.local", name: "João", role: "TECNICO" as const },
+  { email: "consulta@laboratorio.local", name: "Estagiário", role: "CONSULTA" as const },
+  { email: "admin@laboratorio.local", name: "Administrador", role: "ADMIN" as const },
+];
 
 async function main() {
-  const passwordHash = hashSync(ADMIN_PASSWORD, 10);
+  const passwordHash = hashSync(PASSWORD, 10);
 
-  await prisma.user.deleteMany({
-    where: { email: { not: ADMIN_EMAIL } },
-  });
-
-  await prisma.user.upsert({
-    where: { email: ADMIN_EMAIL },
-    update: {
-      name: "Administrador",
-      role: "ADMIN",
-      active: true,
-      mustChangePassword: false,
-      passwordHash,
-    },
-    create: {
-      email: ADMIN_EMAIL,
-      name: "Administrador",
-      role: "ADMIN",
-      active: true,
-      mustChangePassword: false,
-      passwordHash,
-    },
-  });
+  for (const user of LAB_USERS) {
+    await prisma.user.upsert({
+      where: { email: user.email },
+      update: {
+        name: user.name,
+        role: user.role,
+        active: true,
+        mustChangePassword: false,
+        passwordHash,
+      },
+      create: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        active: true,
+        mustChangePassword: false,
+        passwordHash,
+      },
+    });
+  }
 }
 
 main()

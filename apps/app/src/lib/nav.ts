@@ -33,7 +33,7 @@ export const NAV_GROUPS: { id: NavGroup; label: string }[] = [
 
 export const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'Início', icon: 'home', group: 'work', roles: ALL_ROLES, ready: true },
-  { href: '/assistente', label: 'Assistente', icon: 'assistant', group: 'work', roles: ALL_ROLES },
+  { href: '/assistente', label: 'Assistente', icon: 'assistant', group: 'work', roles: ALL_ROLES, ready: true },
   { href: '/registros', label: 'Registros', icon: 'records', group: 'work', roles: ALL_ROLES, ready: true },
   { href: '/vocabulario', label: 'Vocabulário', icon: 'vocab', group: 'work', roles: ALL_ROLES, ready: true },
   {
@@ -42,6 +42,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: 'validation',
     group: 'work',
     roles: ['VALIDADOR', 'ADMIN'],
+    ready: true,
   },
   {
     href: '/indicadores',
@@ -49,6 +50,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: 'indicators',
     group: 'work',
     roles: ALL_ROLES,
+    ready: true,
   },
   { href: '/demonstracao', label: 'Demonstração', icon: 'demo', group: 'manage', roles: ['ADMIN'] },
   {
@@ -64,7 +66,7 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Solicitações',
     icon: 'requests',
     group: 'manage',
-    roles: ['ADMIN'],
+    roles: ['ADMIN', 'VALIDADOR'],
     ready: true,
   },
   {

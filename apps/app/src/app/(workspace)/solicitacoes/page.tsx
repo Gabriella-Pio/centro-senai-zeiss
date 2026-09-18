@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
-import { DEMO_REQUESTS } from "./demo";
 import { RequestsBoard } from "./RequestsBoard";
 
 export default async function RequestsPage() {
@@ -8,9 +7,9 @@ export default async function RequestsPage() {
   if (!user) {
     redirect("/login");
   }
-  if (user.role !== "ADMIN") {
+  if (user.role !== "ADMIN" && user.role !== "VALIDADOR") {
     redirect("/");
   }
 
-  return <RequestsBoard initialRequests={DEMO_REQUESTS} />;
+  return <RequestsBoard />;
 }

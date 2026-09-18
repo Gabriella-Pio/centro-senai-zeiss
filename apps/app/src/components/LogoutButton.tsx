@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { Button } from "@cem/ui";
 import { apiRequest } from "@/lib/api";
-import { DEMO_LOGGED_OUT_KEY, DEMO_MODE } from "@/lib/demo";
+import { DEMO_LOGGED_OUT_KEY, DEMO_MODE, clearDemoUserCookie } from "@/lib/demo";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 export function LogoutButton({
@@ -21,6 +21,8 @@ export function LogoutButton({
   async function onLogout() {
     if (DEMO_MODE) {
       window.localStorage.setItem(DEMO_LOGGED_OUT_KEY, "1");
+      document.cookie = `${DEMO_LOGGED_OUT_KEY}=1; path=/; max-age=${8 * 60 * 60}; samesite=lax`;
+      clearDemoUserCookie();
     }
     try {
       await apiRequest("/auth/logout", { method: "POST" });

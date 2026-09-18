@@ -1,6 +1,12 @@
 import { cookies } from "next/headers";
 import { ApiError, type AuthUser } from "./api";
-import { DEMO_CURRENT_USER, DEMO_LOGGED_OUT_KEY, DEMO_MODE } from "./demo";
+import {
+  DEMO_CURRENT_USER,
+  DEMO_LOGGED_OUT_KEY,
+  DEMO_MODE,
+  DEMO_USER_COOKIE,
+  findDemoUserById,
+} from "./demo";
 
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1").replace(
   /\/$/,
@@ -11,13 +17,30 @@ async function cookieHeader(): Promise<HeadersInit> {
   const token = (await cookies()).get("cem_session")?.value;
   return token ? { Cookie: `cem_session=${token}` } : {};
 }
+
+function demoUserFromCookies(): AuthUser | null {
+  if (typeof window !== "undefined" && window.localStorage.getItem(DEMO_LOGGED_OUT_KEY) === "1") {
+    return null;
+  }
+  return DEMO_CURRENT_USER;
+}
+
 export async function getSessionUser(): Promise<AuthUser | null> {
   if (DEMO_MODE) {
-    if (typeof window !== "undefined" && window.localStorage.getItem(DEMO_LOGGED_OUT_KEY) === "1") {
+    const jar = await cookies();
+    if (jar.get(DEMO_LOGGED_OUT_KEY)?.value === "1") {
       return null;
+    }
+    const demoUserId = jar.get(DEMO_USER_COOKIE)?.value;
+    if (demoUserId) {
+      const user = findDemoUserById(demoUserId);
+      if (user) {
+        return user;
+      }
     }
     return DEMO_CURRENT_USER;
   }
+
   const token = (await cookies()).get("cem_session")?.value;
   if (!token) {
     return null;
@@ -60,3 +83,4 @@ export async function serverApi<T>(path: string, init: RequestInit = {}): Promis
   return payload as T;
 }
 
+export { demoUserFromCookies };

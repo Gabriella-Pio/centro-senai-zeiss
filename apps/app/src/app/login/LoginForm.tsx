@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Input, Label } from "@cem/ui";
 import { ApiError, apiRequest } from "@/lib/api";
+import { DEMO_MODE, DEMO_USERS } from "@/lib/demo";
 
 const LOGIN_FAILED = "E-mail ou senha inválidos.";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -14,6 +15,22 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  async function loginAs(targetEmail: string) {
+    setEmail(targetEmail);
+    setPassword("senai-zeiss");
+    setError(null);
+    setPending(true);
+    try {
+      await apiRequest("/auth/login", { method: "POST", body: { email: targetEmail, password: "senai-zeiss" } });
+      router.replace("/");
+      router.refresh();
+    } catch {
+      setError(LOGIN_FAILED);
+    } finally {
+      setPending(false);
+    }
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,50 +64,35 @@ export function LoginForm() {
   }
 
   return (
-    <form className="mt-8 space-y-5" onSubmit={(event) => void onSubmit(event)} noValidate>
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-base">
-          E-mail
-        </Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="username"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-          className="h-12 text-base"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="password" className="text-base">
-          Senha
-        </Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-          className="h-12 text-base"
-        />
-      </div>
-      <div className="space-y-3 pt-2">
-        {error ? (
-          <p className="text-sm text-destructive" role="alert">
-            {error}
-          </p>
-        ) : null}
-        <Button type="submit" size="xl" className="w-full" disabled={pending}>
-          {pending ? "Entrando…" : "Entrar"}
-        </Button>
-        <p className="text-center text-sm text-muted-foreground">
-          Não tem conta? Peça acesso ao administrador do laboratório.
-        </p>
-      </div>
-    </form>
+    <>
+      <form className="mt-8 space-y-5" onSubmit={(event) => void onSubmit(event)} noValidate>
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-base">E-mail</Label>
+          <Input id="email" name="email" type="email" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} required className="h-12 text-base" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-base">Senha</Label>
+          <Input id="password" name="password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required className="h-12 text-base" />
+        </div>
+        <div className="space-y-3 pt-2">
+          {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
+          <Button type="submit" size="xl" className="w-full" disabled={pending}>{pending ? "Entrando…" : "Entrar"}</Button>
+          <p className="text-center text-sm text-muted-foreground">Não tem conta? Peça acesso ao administrador do laboratório.</p>
+        </div>
+      </form>
+
+      {DEMO_MODE ? (
+        <div className="mt-6 space-y-2">
+          <p className="text-sm font-medium text-muted-foreground">Ensaio offline — entrar como:</p>
+          <div className="grid gap-2">
+            {DEMO_USERS.filter((user) => user.active).map((user) => (
+              <Button key={user.id} type="button" variant="outline" disabled={pending} onClick={() => void loginAs(user.email)}>
+                {user.name} ({user.role})
+              </Button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }

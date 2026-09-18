@@ -9,12 +9,16 @@ export type AuthUser = {
 };
 
 import {
-  DEMO_CURRENT_USER,
+  DEMO_CURRENT_USER_ID_KEY,
   DEMO_LOGGED_OUT_KEY,
   DEMO_MODE,
   DEMO_USERS,
   DEMO_USERS_KEY,
+  clearDemoUserCookie,
   demoRole,
+  findDemoUserByEmail,
+  findDemoUserById,
+  setDemoUserCookie,
   type DemoUser,
 } from "./demo";
 
@@ -89,20 +93,40 @@ function writeDemoUsers(users: DemoUser[]) {
   window.dispatchEvent(new Event("cem-demo-users-changed"));
 }
 
+function currentDemoUser(): DemoUser {
+  const storedId = window.localStorage.getItem(DEMO_CURRENT_USER_ID_KEY);
+  if (storedId) {
+    const match = findDemoUserById(storedId);
+    if (match) {
+      return match;
+    }
+  }
+  return DEMO_USERS[0];
+}
+
 async function demoRequest<T>(path: string, body: unknown): Promise<T> {
   const payload = (body ?? {}) as Record<string, unknown>;
   if (path === "/auth/login") {
+    const email = String(payload.email ?? "").trim().toLowerCase();
+    const user = findDemoUserByEmail(email);
+    if (!user) {
+      throw new ApiError("E-mail ou senha inválidos.", 401);
+    }
     window.localStorage.removeItem(DEMO_LOGGED_OUT_KEY);
-    return { user: DEMO_CURRENT_USER } as T;
+    document.cookie = `${DEMO_LOGGED_OUT_KEY}=; path=/; max-age=0; samesite=lax`;
+    window.localStorage.setItem(DEMO_CURRENT_USER_ID_KEY, user.id);
+    setDemoUserCookie(user.id);
+    return { user } as T;
   }
   if (path === "/auth/me") {
-    return { user: DEMO_CURRENT_USER } as T;
+    return { user: currentDemoUser() } as T;
   }
   if (path === "/auth/logout" || path === "/auth/me/password") {
+    window.localStorage.setItem(DEMO_LOGGED_OUT_KEY, "1");
+    document.cookie = `${DEMO_LOGGED_OUT_KEY}=1; path=/; max-age=${8 * 60 * 60}; samesite=lax`;
+    window.localStorage.removeItem(DEMO_CURRENT_USER_ID_KEY);
+    clearDemoUserCookie();
     return { ok: true } as T;
-  }
-  if (path === "/auth/me") {
-    return { user: DEMO_CURRENT_USER } as T;
   }
 
   const users = readDemoUsers();
