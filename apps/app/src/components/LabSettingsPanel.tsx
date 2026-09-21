@@ -78,8 +78,8 @@ export function LabSettingsPanel({ canEdit }: { canEdit: boolean }) {
       </div>
       {canEdit && draft ? (
         <div className="lab-settings__actions">
-          <Button type="button" onClick={save}>Salvar parâmetros</Button>
-          <Button type="button" variant="outline" onClick={() => setDraft(null)}>Descartar</Button>
+          <Button type="button" size="lg" onClick={save}>Salvar parâmetros</Button>
+          <Button type="button" variant="outline" size="lg" onClick={() => setDraft(null)}>Descartar</Button>
         </div>
       ) : null}
       {saved ? <p className="lab-settings__saved" role="status">Parâmetros atualizados.</p> : null}

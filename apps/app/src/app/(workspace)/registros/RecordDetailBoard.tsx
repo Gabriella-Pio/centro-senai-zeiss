@@ -258,7 +258,7 @@ export function RecordDetailBoard({
                   <div><Label>Valor proposto (R$)</Label><Input type="number" min="0" disabled={readOnly} value={record.proposedValue ?? ""} onChange={(event) => updateRecord({ proposedValue: event.target.value ? Number(event.target.value) : null })} className="h-12" placeholder={suggestedPrice ? String(suggestedPrice) : ""} /></div>
                   {!readOnly && suggestedPrice > 0 ? (
                     <div className="records-form__apply-price">
-                      <Button type="button" variant="outline" onClick={() => updateRecord({ proposedValue: suggestedPrice })}>
+                      <Button type="button" variant="outline" size="lg" onClick={() => updateRecord({ proposedValue: suggestedPrice })}>
                         Usar sugerido ({formatCurrency(suggestedPrice)})
                       </Button>
                     </div>
@@ -268,7 +268,7 @@ export function RecordDetailBoard({
                   <div><Label>Justificativa para valor diferente do sugerido</Label><textarea disabled={readOnly} value={record.priceOverrideReason ?? ""} onChange={(event) => updateRecord({ priceOverrideReason: event.target.value })} className="records-form__textarea" rows={2} /></div>
                 ) : null}
                 <div><Label>Premissas</Label><textarea disabled={readOnly} value={record.assumptions} onChange={(event) => updateRecord({ assumptions: event.target.value })} className="records-form__textarea" rows={3} /></div>
-                {!readOnly ? <Button type="button" onClick={saveBlockA}>Salvar bloco A</Button> : null}
+                {!readOnly ? <Button type="button" size="lg" onClick={saveBlockA}>Salvar bloco A</Button> : null}
               </div>
             </div>
           ) : null}
@@ -294,7 +294,7 @@ export function RecordDetailBoard({
               <div><Label>Lição aprendida</Label><textarea disabled={readOnly} value={record.lesson} onChange={(event) => updateRecord({ lesson: event.target.value })} className="records-form__textarea" rows={5} /></div>
               <div><Label>Sigilo</Label><select disabled={readOnly} value={record.visibility} onChange={(event) => updateRecord({ visibility: event.target.value as RecordVisibility })} className="record-select">{Object.entries(VISIBILITY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
               {!readOnly && record.serviceStatus !== "COMPLETED" ? (
-                <Button type="button" onClick={completeService}>Concluir serviço e enviar lição</Button>
+                <Button type="button" size="lg" onClick={completeService}>Concluir serviço e enviar lição</Button>
               ) : null}
             </div>
           ) : null}

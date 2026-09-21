@@ -25,12 +25,15 @@ export const DEMO_REQUESTS: QuoteRequest[] = [
     service: "Digitalização 3D",
     message: "Gostaríamos de entender o prazo e as condições para digitalizar uma peça com superfície livre.",
     receivedAt: "2026-09-17T15:10:00.000Z",
-    status: "IN_REVIEW",
+    status: "ASSIGNED",
+    assignedToUserId: "demo-sebastiao",
+    assignedToName: "Sebastião",
   },
   {
     id: "request-3",
     requestNumber: "SO-2026-0003",
     linkedRecordNumber: "RS-2026-0001",
+    linkedRecordId: "record-1",
     requester: "Lucas Martins",
     company: "Inova Moldes",
     email: "lucas.martins@inovamoldes.example",
@@ -51,5 +54,6 @@ export const DEMO_REQUESTS: QuoteRequest[] = [
     message: "Pedido encerrado após retorno do cliente informando mudança de escopo.",
     receivedAt: "2026-09-12T09:05:00.000Z",
     status: "ARCHIVED",
+    archiveReason: "Cliente informou mudança de escopo e encerrou o pedido antes da proposta.",
   },
 ];

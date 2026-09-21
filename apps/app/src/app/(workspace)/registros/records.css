@@ -19,9 +19,20 @@
 .records-page__table td { padding: 1rem; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
 .records-page__table tr:last-child td { border-bottom: 0; }
 .records-page__table tbody tr:hover { background: color-mix(in srgb, var(--color-muted) 45%, var(--color-card)); }
-.records-page__table td:first-child strong, .records-page__table td:first-child span { display: block; }
+.records-page__table td:first-child strong,
+.records-page__table td:first-child span,
+.records-page__table td:first-child a { display: block; }
 .records-page__table td:first-child span { margin-top: .25rem; color: var(--color-muted-foreground); font-size: .8125rem; }
 .records-page__number { font-family: var(--font-mono); color: var(--color-primary); font-size: .8125rem; letter-spacing: .03em; }
+.records-page__request-link {
+  margin-top: .25rem;
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: .8125rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.records-page__request-link:hover { text-decoration: underline; }
 .records-page__value { display: block; margin-top: .2rem; color: var(--color-muted-foreground); font-size: .8125rem; }
 .records-page__batch { display: block; margin-top: .25rem; color: var(--color-primary); font-size: .75rem; font-weight: 600; }
 .records-page__open { display: inline-flex; align-items: center; padding: 0.35rem 0.75rem; border-radius: var(--radius); color: var(--color-primary); font-size: 0.875rem; font-weight: 600; text-decoration: none; }

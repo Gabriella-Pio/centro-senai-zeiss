@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
 import { RequestsBoard } from "./RequestsBoard";
@@ -11,5 +12,9 @@ export default async function RequestsPage() {
     redirect("/");
   }
 
-  return <RequestsBoard />;
+  return (
+    <Suspense fallback={null}>
+      <RequestsBoard />
+    </Suspense>
+  );
 }

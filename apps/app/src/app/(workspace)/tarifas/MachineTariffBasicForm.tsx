@@ -209,10 +209,10 @@ export function MachineTariffBasicForm({
       </div>
       {canEdit && hasDraft ? (
         <div className="machine-tariff-panel__actions">
-          <Button type="button" onClick={onSave} disabled={hasValidationErrors(validationErrors)}>
+          <Button type="button" size="lg" onClick={onSave} disabled={hasValidationErrors(validationErrors)}>
             Salvar planilha
           </Button>
-          <Button type="button" variant="outline" onClick={onDiscard}>Descartar</Button>
+          <Button type="button" variant="outline" size="lg" onClick={onDiscard}>Descartar</Button>
         </div>
       ) : null}
     </TariffSection>

@@ -1,0 +1,50 @@
+---
+description: Padrão visual para estados vazios, sem resultados e avisos de status importantes
+alwaysApply: true
+---
+
+# Estados vazios e avisos de status
+
+Mensagens importantes para o usuário **não** devem ser só um `<p>` cinza discreto.
+
+## Estados vazios / sem resultados / seleção pendente
+
+Use um card destacado com:
+- ícone (Lucide) em círculo
+- título em negrito
+- texto explicativo curto
+- ação opcional (ex.: botão "Limpar filtros", "Cadastrar")
+
+Na página de tarifas, reutilize `TariffEmptyState` (`apps/app/src/app/(workspace)/tarifas/TariffEmptyState.tsx`) e as classes `.tariffs-empty-state*`.
+
+```tsx
+// ❌ Evitar
+<p className="text-muted-foreground">Nenhum item encontrado.</p>
+
+// ✅ Preferir
+<TariffEmptyState
+  icon={SearchX}
+  title="Nenhum ativo encontrado"
+  description="Tente outro termo ou ajuste os filtros."
+  action={<Button onClick={clearFilters}>Limpar filtros</Button>}
+/>
+```
+
+Fora de tarifas, extrair/generalizar o mesmo padrão (componente compartilhado + estilos equivalentes) em vez de inventar outro visual.
+
+## Avisos de status (arquivado, somente leitura, bloqueio)
+
+Use banner destacado com cor semântica, ícone, título + detalhe e CTA quando fizer sentido.
+
+Referência: `.tariffs-archived-banner` em `tariffs.css` e o bloco em `MachineTariffHero.tsx`.
+
+- **Âmbar**: consulta / arquivado / atenção sem erro
+- **Azul tracejado**: vazio / orientação / próximo passo
+- **Vermelho**: erro ou ação destrutiva (com moderação)
+
+## Quando aplicar
+
+- lista/grid sem itens
+- busca ou filtros sem resultado
+- área que exige seleção prévia
+- entidade em modo somente leitura ou arquivada

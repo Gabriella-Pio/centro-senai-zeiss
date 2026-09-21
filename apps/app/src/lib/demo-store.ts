@@ -1,6 +1,7 @@
 import type { UserRole } from "./api";
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import type { QuoteRequest } from "@/app/(workspace)/solicitacoes/types";
+import { upgradeQuoteRequest } from "./request-lifecycle";
 import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
 import { DEMO_SEED_VERSION } from "./cargill-demo-records";
 import { createSeedState } from "./demo-store-seed";
@@ -39,7 +40,7 @@ function migrateLegacyState(): DemoState | null {
   try {
     const requestsRaw = window.localStorage.getItem("cem_demo_quote_requests");
     if (requestsRaw) {
-      seed.requests = JSON.parse(requestsRaw) as QuoteRequest[];
+      seed.requests = (JSON.parse(requestsRaw) as QuoteRequest[]).map(upgradeQuoteRequest);
     }
     const recordsRaw = window.localStorage.getItem("cem_demo_service_records");
     if (recordsRaw) {
@@ -282,6 +283,7 @@ export function readDemoState(): DemoState {
       ...seed,
       ...parsed,
       seedVersion: DEMO_SEED_VERSION,
+      requests: (parsed.requests ?? seed.requests).map(upgradeQuoteRequest),
       records,
       vocabulary: mergeVocabularyWithSeed(parsed.vocabulary ?? [], seed.vocabulary),
       machineTariffs: (storedVersion < DEMO_SEED_VERSION

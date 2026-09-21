@@ -121,7 +121,16 @@ export function RecordsBoard({ userRole, userName }: { userRole: UserRole; userN
               <tbody>
                 {filtered.map((record) => (
                   <tr key={record.id}>
-                    <td><strong className="records-page__number">{record.recordNumber}</strong><span>{record.requestNumber ?? "Sem solicitação"}</span></td>
+                    <td>
+                      <strong className="records-page__number">{record.recordNumber}</strong>
+                      {record.requestId && record.requestNumber ? (
+                        <Link href={`/solicitacoes?solicitacao=${record.requestId}`} className="records-page__request-link">
+                          {record.requestNumber}
+                        </Link>
+                      ) : (
+                        <span>{record.requestNumber ?? "Sem solicitação"}</span>
+                      )}
+                    </td>
                     <td><strong>{record.company}</strong><span>{record.requester}</span></td>
                     <td>
                       {record.service}
@@ -150,7 +159,7 @@ export function RecordsBoard({ userRole, userName }: { userRole: UserRole; userN
             <div><Label htmlFor="record-requester">Solicitante</Label><Input id="record-requester" value={draft.requester} onChange={(event) => setDraft((current) => ({ ...current, requester: event.target.value }))} className="mt-2 h-12" /></div>
             <div><Label htmlFor="record-service-type">Tipo de serviço</Label><select id="record-service-type" value={draft.serviceTypeId} onChange={(event) => setDraft((current) => ({ ...current, serviceTypeId: event.target.value }))} className="mt-2 h-12 w-full rounded-(--radius) border border-input bg-card px-3"><option value="">Selecionar do vocabulário</option>{serviceTypes.map((term) => <option key={term.id} value={term.id}>{term.label}</option>)}</select></div>
             {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
-            <div className="records-form__actions"><Button type="button" variant="outline" onClick={() => setCreating(false)}>Cancelar</Button><Button type="button" onClick={createRecord}>Criar e abrir</Button></div>
+            <div className="records-form__actions"><Button type="button" variant="outline" size="lg" onClick={() => setCreating(false)}>Cancelar</Button><Button type="button" size="lg" onClick={createRecord}>Criar e abrir</Button></div>
           </div>
         </DialogContent>
       </Dialog>

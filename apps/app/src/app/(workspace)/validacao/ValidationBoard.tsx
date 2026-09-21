@@ -74,8 +74,8 @@ export function ValidationBoard() {
                     </div>
                   </div>
                   <div className="validation-card__actions">
-                    <Button type="button" onClick={() => formalize(record.id)}>Formalizar</Button>
-                    <Button type="button" variant="outline" onClick={() => supersede(record.id)}>Superar</Button>
+                    <Button type="button" size="lg" onClick={() => formalize(record.id)}>Formalizar</Button>
+                    <Button type="button" variant="outline" size="lg" onClick={() => supersede(record.id)}>Superar</Button>
                   </div>
                 </article>
               );

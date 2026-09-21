@@ -1,10 +1,9 @@
-"use client";
-
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { WorkspaceEmptyState } from "@/components/WorkspaceEmptyState";
 
 export function TariffEmptyState({
-  icon: Icon,
+  icon,
   title,
   description,
   action,
@@ -16,19 +15,17 @@ export function TariffEmptyState({
   action?: ReactNode;
   className?: string;
 }) {
+  const mappedClass = className
+    ?.replace("tariffs-empty-state--grid", "workspace-empty-state--grid")
+    .replace("tariffs-empty-state--panel", "workspace-empty-state--panel");
+
   return (
-    <div
-      className={`tariffs-empty-state${className ? ` ${className}` : ""}`}
-      role="status"
-    >
-      <span className="tariffs-empty-state__icon" aria-hidden="true">
-        <Icon />
-      </span>
-      <div className="tariffs-empty-state__copy">
-        <strong className="tariffs-empty-state__title">{title}</strong>
-        {description ? <p className="tariffs-empty-state__text">{description}</p> : null}
-      </div>
-      {action ? <div className="tariffs-empty-state__action">{action}</div> : null}
-    </div>
+    <WorkspaceEmptyState
+      icon={icon}
+      title={title}
+      description={description}
+      action={action}
+      className={mappedClass}
+    />
   );
 }
