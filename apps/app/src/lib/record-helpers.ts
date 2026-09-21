@@ -4,12 +4,30 @@ export function getRecordQuantity(record: ServiceRecord) {
   return record.quantity ?? 1;
 }
 
+export function getRecordScopeMode(record: ServiceRecord): "single" | "batch" {
+  if (record.recordKind === "batch") {
+    return "batch";
+  }
+  if (record.recordKind === "single") {
+    return "single";
+  }
+  return getRecordQuantity(record) > 1 ? "batch" : "single";
+}
+
 export function isBatchRecord(record: ServiceRecord) {
-  return getRecordQuantity(record) > 1 || Boolean(record.batchLabel);
+  return getRecordScopeMode(record) === "batch";
+}
+
+export function resolveQuoteHours(record: ServiceRecord) {
+  const hours = record.estimatedHours ?? 0;
+  if (record.resourceIds.length > 0) {
+    return { teamHours: 0, equipmentHours: hours };
+  }
+  return { teamHours: hours, equipmentHours: 0 };
 }
 
 export function isCompositeRecord(record: ServiceRecord) {
-  return (record.stages?.length ?? 0) > 0;
+  return (record.stages?.length ?? 0) > 1;
 }
 
 export function getComparableHours(record: ServiceRecord, field: "estimated" | "actual") {

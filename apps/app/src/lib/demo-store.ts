@@ -427,6 +427,7 @@ export function createEmptyRecord(partial: Partial<ServiceRecord> & Pick<Service
     visibility: "PUBLIC",
     lessonStatus: "DRAFT",
     quantity: 1,
+    recordKind: "single",
     stages: [],
     ...partial,
   };

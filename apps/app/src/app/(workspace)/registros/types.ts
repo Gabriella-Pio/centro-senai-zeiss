@@ -9,6 +9,9 @@ export type ServiceStage = {
   id: string;
   serviceTypeId: string;
   label: string;
+  /** Recurso principal da etapa (equipamento ou ambiente). */
+  resourceId?: string | null;
+  /** Legado — preferir `resourceId`. */
   resourceIds: string[];
   estimatedHours: number | null;
   actualHours: number | null;
@@ -68,6 +71,19 @@ export const SERVICE_STATUS_LABELS: Record<ServiceStatus, string> = {
   QUOTED: "Orçado / em execução",
   COMPLETED: "Concluído",
 };
+
+export const SERVICE_STATUS_BADGE_LABELS: Record<ServiceStatus, string> = {
+  DRAFT: "Rascunho",
+  QUOTED: "Orçado",
+  COMPLETED: "Concluído",
+};
+
+export const SERVICE_STATUS_TABS: Array<{ id: "ALL" | ServiceStatus; label: string }> = [
+  { id: "DRAFT", label: "Rascunho" },
+  { id: "QUOTED", label: "Orçado" },
+  { id: "COMPLETED", label: "Concluído" },
+  { id: "ALL", label: "Todos" },
+];
 
 export const LESSON_STATUS_LABELS: Record<LessonStatus, string> = {
   DRAFT: "Rascunho",

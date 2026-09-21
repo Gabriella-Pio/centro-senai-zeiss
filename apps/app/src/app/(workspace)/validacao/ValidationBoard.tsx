@@ -1,14 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { Badge, Button } from "@cem/ui";
 import { pushNotification, updateDemoState } from "@/lib/demo-store";
+import { getRecordDetailPath } from "@/lib/records-navigation";
 import { useDemoStore } from "@/lib/use-demo-store";
 import { LESSON_STATUS_LABELS, VISIBILITY_LABELS } from "../registros/types";
 import "./validation.css";
 
 export function ValidationBoard() {
+  const searchParams = useSearchParams();
+  const highlightedRecordId = searchParams.get("registro");
   const { records, vocabulary } = useDemoStore();
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -16,6 +21,15 @@ export function ValidationBoard() {
     () => records.filter((record) => record.lessonStatus === "PENDING"),
     [records],
   );
+
+  useEffect(() => {
+    if (!highlightedRecordId) {
+      return;
+    }
+    document
+      .getElementById(`validation-record-${highlightedRecordId}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightedRecordId, pending]);
 
   function formalize(recordId: string) {
     const record = records.find((item) => item.id === recordId);
@@ -61,8 +75,13 @@ export function ValidationBoard() {
           <div className="validation-list">
             {pending.map((record) => {
               const cause = vocabulary.find((term) => term.id === record.deviationCauseId)?.label ?? "—";
+              const highlighted = highlightedRecordId === record.id;
               return (
-                <article key={record.id} className="validation-card">
+                <article
+                  key={record.id}
+                  id={`validation-record-${record.id}`}
+                  className={`validation-card${highlighted ? " validation-card--highlighted" : ""}`}
+                >
                   <div>
                     <strong>{record.recordNumber}</strong>
                     <span>{record.company} · {record.service}</span>
@@ -72,6 +91,10 @@ export function ValidationBoard() {
                       <Badge variant="outline">{VISIBILITY_LABELS[record.visibility]}</Badge>
                       <span>Causa: {cause}</span>
                     </div>
+                    <Link href={getRecordDetailPath(record.id, "C")} className="validation-card__record-link">
+                      Abrir registro
+                      <ArrowRight aria-hidden="true" />
+                    </Link>
                   </div>
                   <div className="validation-card__actions">
                     <Button type="button" size="lg" onClick={() => formalize(record.id)}>Formalizar</Button>

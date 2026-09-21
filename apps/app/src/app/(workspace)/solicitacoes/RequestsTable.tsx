@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import { Button } from "@cem/ui";
+import { getRecordDetailPath } from "@/lib/records-navigation";
 import type { QuoteRequest } from "./types";
 import { formatReceivedAt } from "./requests-utils";
 import { RequestStatusBadge } from "./RequestStatusBadge";
@@ -36,7 +37,7 @@ export function RequestsTable({
               <strong className="requests-page__number">{request.requestNumber}</strong>
               <span>{formatReceivedAt(request.receivedAt)}</span>
               {request.linkedRecordId && request.linkedRecordNumber ? (
-                <Link href={`/registros/${request.linkedRecordId}`} className="requests-page__record-link">
+                <Link href={getRecordDetailPath(request.linkedRecordId)} className="requests-page__record-link">
                   {request.linkedRecordNumber}
                 </Link>
               ) : request.assignedToName ? (

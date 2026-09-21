@@ -6,7 +6,7 @@ import { CARGILL_DEMO_RECORDS, CARGILL_VOCABULARY_EXTRA, DEMO_SEED_VERSION } fro
 import { DEFAULT_LAB_SETTINGS, type DemoState } from "./demo-store-types";
 import { applyMachineTariffsToVocabulary } from "./machine-tariff";
 import { MACHINE_TARIFF_SEED } from "./machine-tariff-seed";
-import { buildQuoteSnapshot } from "./pricing";
+import { buildQuoteSnapshot, buildStageQuoteSnapshot } from "./pricing";
 
 function seedQuotePricing(
   teamHours: number,
@@ -103,11 +103,83 @@ const EXTRA_VOCABULARY: VocabularyTerm[] = [
   },
   {
     id: "vocab-9",
-    label: "Engenharia reversa",
+    label: "Engenharia reversa e reconstrução de modelos CAD",
     class: "SERVICE_TYPE",
-    guidance: "Reconstrução CAD a partir de digitalização.",
+    guidance: "Reconstrução CAD a partir de digitalização e modelos técnicos.",
     active: true,
     updatedAt: "2026-09-08T09:00:00.000Z",
+  },
+  {
+    id: "vocab-20",
+    label: "Nacionalização e desenvolvimento de componentes",
+    class: "SERVICE_TYPE",
+    guidance: "Adaptação e desenvolvimento de componentes para o contexto nacional.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-21",
+    label: "Comparação entre modelo CAD e peça física",
+    class: "SERVICE_TYPE",
+    guidance: "Análise de conformidade entre modelo digital e peça medida.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-22",
+    label: "Elaboração de mapas de desgaste",
+    class: "SERVICE_TYPE",
+    guidance: "Mapeamento e documentação de desgaste em componentes.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-23",
+    label: "Tomografia industrial para inspeções internas não destrutivas",
+    class: "SERVICE_TYPE",
+    guidance: "Inspeção interna de peças sem destruição por tomografia.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-24",
+    label: "Análise de falhas, quebras e anomalias",
+    class: "SERVICE_TYPE",
+    guidance: "Investigação técnica de falhas e anomalias em componentes.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-25",
+    label: "Estruturação de árvores de equipamentos e identificação de peças críticas",
+    class: "SERVICE_TYPE",
+    guidance: "Organização de ativos e priorização de componentes críticos.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-26",
+    label: "Criação de almoxarifado virtual e biblioteca digital de componentes",
+    class: "SERVICE_TYPE",
+    guidance: "Estruturação de biblioteca digital e almoxarifado virtual.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-27",
+    label: "Elaboração de planos de manutenção e lubrificação",
+    class: "SERVICE_TYPE",
+    guidance: "Planos técnicos de manutenção e lubrificação de equipamentos.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
+  },
+  {
+    id: "vocab-28",
+    label: "Treinamentos técnicos",
+    class: "SERVICE_TYPE",
+    guidance: "Capacitação em manutenção, metrologia, engenharia reversa, lubrificação e análise de falhas.",
+    active: true,
+    updatedAt: "2026-09-20T09:00:00.000Z",
   },
   {
     id: "vocab-10",
@@ -173,6 +245,15 @@ const EXTRA_VOCABULARY: VocabularyTerm[] = [
     guidance: "ZEISS Reverse Engineering — licença e posto de trabalho; tarifa da folha de custos.",
     active: true,
     updatedAt: "2026-09-18T09:00:00.000Z",
+  },
+  {
+    id: "vocab-29",
+    label: "Bambu Lab P1S",
+    class: "RESOURCE",
+    guidance: "Impressora 3D para protótipos em engenharia reversa.",
+    active: true,
+    updatedAt: "2026-09-21T09:00:00.000Z",
+    hourlyRate: 42,
   },
   ...CARGILL_VOCABULARY_EXTRA,
 ];
@@ -240,7 +321,47 @@ const otherFormalized: ServiceRecord[] = [
 ];
 
 const record1CreatedAt = "2026-09-15T11:00:00.000Z";
-const record1Pricing = seedQuotePricing(24, ["vocab-10", "vocab-5"], BASE_VOCABULARY, record1CreatedAt);
+const record1Stages = [
+  {
+    id: "record-1-stage-1",
+    serviceTypeId: "vocab-2",
+    label: "Digitalização 3D",
+    resourceId: "vocab-10",
+    resourceIds: ["vocab-10"],
+    estimatedHours: 8,
+    actualHours: null,
+  },
+  {
+    id: "record-1-stage-2",
+    serviceTypeId: "vocab-9",
+    label: "Engenharia reversa",
+    resourceId: "vocab-19",
+    resourceIds: ["vocab-19"],
+    estimatedHours: 12,
+    actualHours: null,
+  },
+  {
+    id: "record-1-stage-3",
+    serviceTypeId: "vocab-1",
+    label: "Inspeção dimensional (CMM)",
+    resourceId: "vocab-5",
+    resourceIds: ["vocab-5"],
+    estimatedHours: 4,
+    actualHours: null,
+  },
+];
+const record1Snapshot = buildStageQuoteSnapshot({
+  vocabulary: BASE_VOCABULARY,
+  stages: record1Stages,
+  labSettings: DEFAULT_LAB_SETTINGS,
+});
+record1Snapshot.savedAt = record1CreatedAt;
+const record1Pricing = {
+  totalCost: record1Snapshot.breakdown.suggestedPrice,
+  proposedValue: record1Snapshot.breakdown.suggestedPrice,
+  estimatedEquipmentHours: 24,
+  quoteSnapshot: record1Snapshot,
+};
 const record2Pricing = seedQuotePricing(16, ["vocab-17", "vocab-12"], BASE_VOCABULARY, "2026-09-12T09:30:00.000Z");
 
 export const SEED_VOCABULARY = BASE_VOCABULARY;
@@ -259,33 +380,8 @@ export const SEED_RECORDS: ServiceRecord[] = [
     recordKind: "composite",
     serviceTypeId: "vocab-9",
     partTraitIds: ["vocab-3"],
-    resourceIds: ["vocab-10", "vocab-5"],
-    stages: [
-      {
-        id: "record-1-stage-1",
-        serviceTypeId: "vocab-2",
-        label: "Digitalização 3D",
-        resourceIds: ["vocab-10"],
-        estimatedHours: 8,
-        actualHours: null,
-      },
-      {
-        id: "record-1-stage-2",
-        serviceTypeId: "vocab-9",
-        label: "Engenharia reversa",
-        resourceIds: ["vocab-10"],
-        estimatedHours: 12,
-        actualHours: null,
-      },
-      {
-        id: "record-1-stage-3",
-        serviceTypeId: "vocab-1",
-        label: "Inspeção dimensional (CMM)",
-        resourceIds: ["vocab-5"],
-        estimatedHours: 4,
-        actualHours: null,
-      },
-    ],
+    resourceIds: ["vocab-10", "vocab-19", "vocab-5"],
+    stages: record1Stages,
     estimatedHours: 24,
     estimatedEquipmentHours: record1Pricing.estimatedEquipmentHours,
     estimatedCost: record1Pricing.totalCost,

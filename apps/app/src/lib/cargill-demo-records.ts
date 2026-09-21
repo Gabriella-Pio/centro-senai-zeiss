@@ -6,7 +6,7 @@ import { MACHINE_TARIFF_SEED } from "./machine-tariff-seed";
 import { buildQuoteSnapshot } from "./pricing";
 
 /** Versão do seed — incrementar quando os registros demo mudarem. */
-export const DEMO_SEED_VERSION = 6;
+export const DEMO_SEED_VERSION = 8;
 
 const BATCH_QUANTITY = 16;
 

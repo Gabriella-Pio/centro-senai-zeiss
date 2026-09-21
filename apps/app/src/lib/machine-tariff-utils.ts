@@ -34,7 +34,9 @@ export type ResourceUsageCount = {
 
 function recordUsesResource(record: ServiceRecord, resourceId: string) {
   if (record.resourceIds?.includes(resourceId)) return true;
-  if (record.stages?.some((stage) => stage.resourceIds.includes(resourceId))) return true;
+  if (record.stages?.some((stage) => stage.resourceId === resourceId || stage.resourceIds.includes(resourceId))) {
+    return true;
+  }
   if (record.quoteSnapshot?.resourceRates && resourceId in record.quoteSnapshot.resourceRates) return true;
   return false;
 }

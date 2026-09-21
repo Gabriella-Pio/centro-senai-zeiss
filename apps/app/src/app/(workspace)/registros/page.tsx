@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
 import { RecordsBoard } from "./RecordsBoard";
@@ -8,5 +9,9 @@ export default async function RecordsPage() {
     redirect("/login");
   }
 
-  return <RecordsBoard userRole={user.role} userName={user.name} />;
+  return (
+    <Suspense fallback={null}>
+      <RecordsBoard userRole={user.role} userName={user.name} />
+    </Suspense>
+  );
 }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Archive, ArrowRight, ClipboardPlus, UserRound } from "lucide-react";
 import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@cem/ui";
+import { getRecordDetailPath } from "@/lib/records-navigation";
 import { getAllowedActions } from "@/lib/request-lifecycle";
 import type { QuoteRequest } from "./types";
 import { formatReceivedAt } from "./requests-utils";
@@ -139,7 +140,7 @@ export function RequestDetailDialog({
           {request.linkedRecordId && request.linkedRecordNumber ? (
             <div className="request-detail__record-link">
               <span>Registro de Serviço relacionado</span>
-              <Link href={`/registros/${request.linkedRecordId}`}>
+              <Link href={getRecordDetailPath(request.linkedRecordId)}>
                 {request.linkedRecordNumber}
                 <ArrowRight aria-hidden="true" />
               </Link>
@@ -170,7 +171,7 @@ export function RequestDetailDialog({
                 <Button
                   size="lg"
                   nativeButton={false}
-                  render={<Link href={`/registros/${request.linkedRecordId}`} />}
+                  render={<Link href={getRecordDetailPath(request.linkedRecordId)} />}
                 >
                   Abrir registro
                   <ArrowRight aria-hidden="true" />

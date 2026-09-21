@@ -8,6 +8,9 @@
 .validation-page__empty { padding: 2rem; border: 1px dashed var(--color-border); border-radius: var(--radius); color: var(--color-muted-foreground); text-align: center; }
 .validation-list { display: grid; gap: 1rem; }
 .validation-card { display: flex; justify-content: space-between; gap: 1rem; padding: 1.25rem; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-card); }
+.validation-card--highlighted { border-color: var(--color-primary); box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 25%, transparent); }
+.validation-card__record-link { display: inline-flex; align-items: center; gap: .35rem; margin-top: .75rem; color: var(--color-primary); font-size: .875rem; font-weight: 600; text-decoration: none; }
+.validation-card__record-link:hover { text-decoration: underline; }
 .validation-card strong { display: block; font-family: var(--font-mono); color: var(--color-primary); }
 .validation-card span { display: block; margin-top: .25rem; color: var(--color-muted-foreground); font-size: .875rem; }
 .validation-card p { margin: .75rem 0; line-height: 1.55; }

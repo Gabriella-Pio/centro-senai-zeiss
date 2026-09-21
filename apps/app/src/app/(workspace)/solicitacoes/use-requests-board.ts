@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createEmptyRecord, nextRequestNumber, pushNotification, updateDemoState } from "@/lib/demo-store";
+import { getRecordDetailPath } from "@/lib/records-navigation";
 import {
   archiveRequestState,
   assignRequest,
@@ -110,12 +111,12 @@ export function useRequestsBoard() {
     pushNotification({
       roles: ["TECNICO"],
       message: `Novo registro ${record.recordNumber} pronto para orçamento.`,
-      href: `/registros/${record.id}`,
+      href: getRecordDetailPath(record.id),
     });
     setNotice("Registro criado a partir da solicitação.");
     setPendingClose(true);
     syncSolicitacaoParam(null);
-    router.push(`/registros/${record.id}`);
+    router.push(getRecordDetailPath(record.id));
   }
 
   function handleArchive(request: QuoteRequest, reason: string) {

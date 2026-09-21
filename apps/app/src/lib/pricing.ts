@@ -1,5 +1,6 @@
-import type { ServiceRecord } from "@/app/(workspace)/registros/types";
+import type { ServiceRecord, ServiceStage } from "@/app/(workspace)/registros/types";
 import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
+import { getStageResourceId } from "@/lib/record-stages";
 import type { LabSettings } from "./demo-store-types";
 
 export type CostLine = {
@@ -15,6 +16,8 @@ export type QuoteCostBreakdown = {
   totalCost: number;
   suggestedPrice: number;
   marginPercent: number;
+  /** Tarifa hora-máquina (item 32) já é preço — sem margem adicional. */
+  tariffAsPrice?: boolean;
   explanations: string[];
 };
 
@@ -104,22 +107,110 @@ export function computeQuoteCost(input: {
     });
   }
 
-  const totalCost = lines.reduce((sum, line) => sum + line.subtotal, 0);
+  const tariffTotal = lines
+    .filter((line) => line.id !== "team")
+    .reduce((sum, line) => sum + line.subtotal, 0);
+  const teamTotal = lines.find((line) => line.id === "team")?.subtotal ?? 0;
   const margin = labSettings.targetMarginPercent;
-  const suggestedPrice = totalCost > 0 ? Math.round(totalCost / (1 - margin / 100)) : 0;
+  const teamPrice = teamTotal > 0 ? teamTotal / (1 - margin / 100) : 0;
+  const suggestedPrice = Math.round(tariffTotal + teamPrice);
+  const totalCost = Math.round(tariffTotal + teamTotal);
+  const tariffAsPrice = tariffTotal > 0;
 
-  if (totalCost > 0) {
-    explanations.push(`Margem alvo de ${margin}% → preço sugerido ${formatCurrency(suggestedPrice)}`);
+  if (tariffTotal > 0) {
+    explanations.push("Tarifa hora-máquina (item 32) tratada como preço — sem margem adicional.");
+  }
+  if (teamTotal > 0) {
+    explanations.push(`Mão de obra com margem alvo de ${margin}% → ${formatCurrency(Math.round(teamPrice))}`);
   }
 
   explanations.unshift(`Tarifas: ${labSettings.tariffTableLabel}`);
 
   return {
     lines,
-    totalCost: Math.round(totalCost),
+    totalCost,
     suggestedPrice,
-    marginPercent: margin,
+    marginPercent: teamTotal > 0 ? margin : 0,
+    tariffAsPrice,
     explanations,
+  };
+}
+
+export function computeStageQuoteCost(input: {
+  vocabulary: VocabularyTerm[];
+  stages: ServiceStage[];
+  labSettings: LabSettings;
+  resourceRates?: Record<string, number>;
+}): QuoteCostBreakdown {
+  const { vocabulary, stages, labSettings, resourceRates } = input;
+  const lines: CostLine[] = [];
+  const explanations: string[] = [];
+
+  stages.forEach((stage) => {
+    const resourceId = getStageResourceId(stage);
+    const hours = stage.estimatedHours;
+    if (!resourceId || !hours || hours <= 0) {
+      return;
+    }
+    const resource = vocabulary.find((term) => term.id === resourceId && term.class === "RESOURCE");
+    const rate = resourceRates?.[resourceId] ?? resource?.hourlyRate ?? 0;
+    if (!resource || rate <= 0) {
+      return;
+    }
+    lines.push({
+      id: stage.id,
+      label: `${stage.label} · ${resource.label}`,
+      hours,
+      rate,
+      subtotal: hours * rate,
+    });
+    explanations.push(
+      `${hours} h · ${stage.label} em ${resource.label} × ${formatCurrency(rate)}/h`,
+    );
+  });
+
+  const suggestedPrice = Math.round(lines.reduce((sum, line) => sum + line.subtotal, 0));
+
+  if (suggestedPrice > 0) {
+    explanations.push("Preço por etapa com tarifa item 32 (já inclui overhead administrativo).");
+  }
+
+  explanations.unshift(`Tarifas: ${labSettings.tariffTableLabel}`);
+
+  return {
+    lines,
+    totalCost: suggestedPrice,
+    suggestedPrice,
+    marginPercent: 0,
+    tariffAsPrice: true,
+    explanations,
+  };
+}
+
+export function buildStageQuoteSnapshot(input: {
+  vocabulary: VocabularyTerm[];
+  stages: ServiceStage[];
+  labSettings: LabSettings;
+}): QuoteSnapshot {
+  const breakdown = computeStageQuoteCost(input);
+  const resourceRates: Record<string, number> = {};
+  input.stages.forEach((stage) => {
+    const resourceId = getStageResourceId(stage);
+    if (!resourceId) {
+      return;
+    }
+    const term = input.vocabulary.find((item) => item.id === resourceId);
+    if (term?.hourlyRate) {
+      resourceRates[resourceId] = term.hourlyRate;
+    }
+  });
+  return {
+    savedAt: new Date().toISOString(),
+    tariffTableLabel: input.labSettings.tariffTableLabel,
+    teamHourlyRate: input.labSettings.teamHourlyRate,
+    targetMarginPercent: 0,
+    resourceRates,
+    breakdown,
   };
 }
 
