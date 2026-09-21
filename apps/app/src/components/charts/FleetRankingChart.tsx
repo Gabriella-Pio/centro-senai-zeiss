@@ -17,18 +17,28 @@ import { ChartCard } from "./ChartCard";
 import { RechartsTooltipContent } from "./RechartsTooltip";
 import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN_LEFT, slicesToBarData, truncateLabel } from "./recharts-theme";
 
+function handleMachineBarClick(
+  payload: { id?: string; name?: string } | undefined,
+  onMachineSelect?: (machineId: string) => void,
+) {
+  if (!payload?.id || !onMachineSelect || payload.name === FLEET_AVERAGE_LABEL) return;
+  onMachineSelect(payload.id);
+}
+
 export function FleetRankingChart({
   title,
   subtitle,
   slices,
   formatValue,
   highlightLabel,
+  onMachineSelect,
 }: {
   title: string;
   subtitle?: string;
   slices: DonutSlice[];
   formatValue?: (value: number) => string;
   highlightLabel?: string;
+  onMachineSelect?: (machineId: string) => void;
 }) {
   const format = formatValue ?? ((value: number) => String(value));
 
@@ -43,9 +53,12 @@ export function FleetRankingChart({
   const data = slicesToBarData(slices);
   const average = data.find((item) => item.name === FLEET_AVERAGE_LABEL)?.value;
   const chartRows = data.filter((item) => item.name !== FLEET_AVERAGE_LABEL);
+  const cardSubtitle = onMachineSelect
+    ? `${subtitle ? `${subtitle} · ` : ""}Clique em uma barra para abrir a planilha`
+    : subtitle;
 
   return (
-    <ChartCard title={title} subtitle={subtitle} className="chart-card--interactive">
+    <ChartCard title={title} subtitle={cardSubtitle} className="chart-card--interactive">
       <ResponsiveContainer width="100%" height={CHART_HEIGHT - (average ? 28 : 0)}>
         <BarChart data={chartRows} layout="vertical" margin={CHART_MARGIN_LEFT}>
           <CartesianGrid horizontal={false} stroke="var(--color-border)" strokeDasharray="3 3" />
@@ -60,10 +73,16 @@ export function FleetRankingChart({
           <Tooltip
             cursor={{ fill: "color-mix(in srgb, var(--color-primary) 6%, transparent)" }}
             content={({ active, payload, label }) => (
-              <RechartsTooltipContent active={active} payload={payload as never} label={label} formatValue={format} />
+              <RechartsTooltipContent active={active} payload={payload} label={label} formatValue={format} />
             )}
           />
-          <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={18}>
+          <Bar
+            dataKey="value"
+            radius={[0, 6, 6, 0]}
+            barSize={18}
+            cursor={onMachineSelect ? "pointer" : undefined}
+            onClick={(bar) => handleMachineBarClick(bar?.payload as { id?: string; name?: string }, onMachineSelect)}
+          >
             {chartRows.map((entry) => (
               <Cell
                 key={entry.name}

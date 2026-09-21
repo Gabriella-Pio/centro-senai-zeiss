@@ -8,7 +8,9 @@ import {
   applyMachineTariffsToVocabulary,
   createMachineTariff,
   type MachineCostInputs,
+  type MachineTariff,
 } from "./machine-tariff";
+import { getResourceUsageCount } from "./machine-tariff-utils";
 import { DEFAULT_MACHINE_INPUTS } from "./machine-tariff-seed";
 import { DEFAULT_LAB_SETTINGS, type DemoNotification, type DemoState } from "./demo-store-types";
 
@@ -107,15 +109,37 @@ export function updateMachineTariffInputs(
   };
 }
 
-export function addMachineTariff(state: DemoState, label: string): DemoState {
+function setVocabularyResourceActive(state: DemoState, resourceId: string, active: boolean) {
+  return state.vocabulary.map((term) =>
+    term.id === resourceId ? { ...term, active, updatedAt: new Date().toISOString() } : term,
+  );
+}
+
+function withMachineTariffs(state: DemoState, machineTariffs: MachineTariff[]): DemoState {
+  return {
+    ...state,
+    machineTariffs,
+    vocabulary: applyMachineTariffsToVocabulary(state.vocabulary, machineTariffs),
+  };
+}
+
+export function addMachineTariff(
+  state: DemoState,
+  label: string,
+  options?: {
+    tariffId?: string;
+    inputs?: MachineCostInputs;
+  },
+): DemoState {
   const trimmed = label.trim();
-  const stamp = Date.now();
+  const stamp = options?.tariffId ? options.tariffId.replace(/^machine-/, "") : String(Date.now());
+  const id = options?.tariffId ?? `machine-${stamp}`;
   const resourceId = `vocab-${stamp}`;
   const tariff = createMachineTariff({
-    id: `machine-${stamp}`,
+    id,
     resourceId,
     label: trimmed,
-    inputs: { ...DEFAULT_MACHINE_INPUTS },
+    inputs: options?.inputs ?? { ...DEFAULT_MACHINE_INPUTS },
   });
   const resource: VocabularyTerm = {
     id: resourceId,
@@ -130,6 +154,90 @@ export function addMachineTariff(state: DemoState, label: string): DemoState {
     ...state,
     machineTariffs,
     vocabulary: applyMachineTariffsToVocabulary([...state.vocabulary, resource], machineTariffs),
+  };
+}
+
+export function archiveMachineTariff(state: DemoState, tariffId: string): DemoState {
+  const tariff = state.machineTariffs.find((item) => item.id === tariffId);
+  if (!tariff) return state;
+
+  const archivedAt = new Date().toISOString();
+  const machineTariffs = state.machineTariffs.map((item) =>
+    item.id === tariffId ? { ...item, archivedAt } : item,
+  );
+  const next = withMachineTariffs(state, machineTariffs);
+
+  return {
+    ...next,
+    vocabulary: setVocabularyResourceActive(next, tariff.resourceId, false),
+  };
+}
+
+export function restoreMachineTariff(state: DemoState, tariffId: string): DemoState {
+  const tariff = state.machineTariffs.find((item) => item.id === tariffId);
+  if (!tariff) return state;
+
+  const machineTariffs = state.machineTariffs.map((item) =>
+    item.id === tariffId ? { ...item, archivedAt: null } : item,
+  );
+  const next = withMachineTariffs(state, machineTariffs);
+
+  return {
+    ...next,
+    vocabulary: setVocabularyResourceActive(next, tariff.resourceId, true),
+  };
+}
+
+export function renameMachineTariff(state: DemoState, tariffId: string, label: string): DemoState {
+  const trimmed = label.trim();
+  const tariff = state.machineTariffs.find((item) => item.id === tariffId);
+  if (!tariff) return state;
+
+  const machineTariffs = state.machineTariffs.map((item) =>
+    item.id === tariffId ? { ...item, label: trimmed } : item,
+  );
+  const vocabulary = state.vocabulary.map((term) =>
+    term.id === tariff.resourceId
+      ? { ...term, label: trimmed, updatedAt: new Date().toISOString() }
+      : term,
+  );
+
+  return {
+    ...state,
+    machineTariffs,
+    vocabulary: applyMachineTariffsToVocabulary(vocabulary, machineTariffs),
+  };
+}
+
+export function duplicateMachineTariff(
+  state: DemoState,
+  sourceId: string,
+  label: string,
+  tariffId?: string,
+): DemoState {
+  const source = state.machineTariffs.find((item) => item.id === sourceId);
+  if (!source) return state;
+
+  return addMachineTariff(state, label, {
+    tariffId,
+    inputs: { ...source.inputs },
+  });
+}
+
+export function deleteMachineTariff(state: DemoState, tariffId: string): DemoState {
+  const tariff = state.machineTariffs.find((item) => item.id === tariffId);
+  if (!tariff) return state;
+
+  const usage = getResourceUsageCount(state, tariff.resourceId);
+  if (usage.total > 0) return state;
+
+  const machineTariffs = state.machineTariffs.filter((item) => item.id !== tariffId);
+  const vocabulary = state.vocabulary.filter((term) => term.id !== tariff.resourceId);
+
+  return {
+    ...state,
+    machineTariffs,
+    vocabulary: applyMachineTariffsToVocabulary(vocabulary, machineTariffs),
   };
 }
 

@@ -54,7 +54,7 @@ export function CompositionBarChart({
           <Tooltip
             cursor={{ fill: "color-mix(in srgb, var(--color-primary) 6%, transparent)" }}
             content={({ active, payload, label }) => (
-              <RechartsTooltipContent active={active} payload={payload as never} label={label} formatValue={format} />
+              <RechartsTooltipContent active={active} payload={payload} label={label} formatValue={format} />
             )}
           />
           <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={18}>

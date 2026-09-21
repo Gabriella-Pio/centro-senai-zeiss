@@ -1,137 +1,37 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BarChart3, ChevronDown } from "lucide-react";
-import { CompositionBarChart } from "@/components/charts/CompositionBarChart";
-import { DonutChart } from "@/components/charts/DonutChart";
-import { FleetCapacityChart } from "@/components/charts/FleetCapacityChart";
-import { FleetRankingChart } from "@/components/charts/FleetRankingChart";
-import { MachineCostStackChart } from "@/components/charts/MachineCostStackChart";
-import { MachineRateChart } from "@/components/charts/MachineRateChart";
-import { SensitivityChart } from "@/components/charts/SensitivityChart";
-import { StepLineChart } from "@/components/charts/StepLineChart";
+import { BarChart3, ChevronDown, Package, Plus } from "lucide-react";
+import { Button } from "@cem/ui";
 import {
   buildFleetOverviewChart,
   FLEET_OVERVIEW_GROUPS,
-  type FleetOverviewChartConfig,
   type FleetOverviewGroup,
 } from "@/lib/fleet-chart-data";
-import { getMachineHourlyRate, type MachineTariff } from "@/lib/machine-tariff";
-import { buildFleetRateRows, buildFleetStackRows } from "@/lib/tariff-chart-data";
+import { buildMachineCostSegments } from "@/lib/tariff-chart-data";
+import { computeMachineCost, getMachineHourlyRate, type MachineTariff } from "@/lib/machine-tariff";
 import { formatCurrency } from "@/lib/pricing";
-
-const FLEET_LEGEND = [
-  { id: "fixed", label: "Custos fixos", color: "#0057b8" },
-  { id: "variable", label: "Energia e ferramental", color: "#e87722" },
-  { id: "labor", label: "Mão de obra", color: "#16a34a" },
-  { id: "admin", label: "Overhead administrativo", color: "#7c3aed" },
-];
-
-function FleetOverviewChart({
-  chart,
-  machineTariffs,
-  highlightId,
-}: {
-  chart: FleetOverviewChartConfig;
-  machineTariffs: MachineTariff[];
-  highlightId?: string;
-}) {
-  if (chart.kind === "rate-ranking") {
-    return (
-      <MachineRateChart rows={buildFleetRateRows(machineTariffs)} highlightId={highlightId} dense />
-    );
-  }
-
-  if (chart.kind === "cost-stack") {
-    return (
-      <MachineCostStackChart
-        rows={buildFleetStackRows(machineTariffs)}
-        highlightId={highlightId}
-        dense
-        showLegend={false}
-      />
-    );
-  }
-
-  if (chart.kind === "donut") {
-    return (
-      <DonutChart
-        title={chart.title}
-        subtitle={chart.subtitle}
-        slices={chart.slices ?? []}
-        centerLabel={chart.centerLabel}
-        formatValue={chart.formatValue}
-        compactLegend
-        interactive
-      />
-    );
-  }
-
-  if (chart.kind === "sensitivity" && chart.sensitivity) {
-    return (
-      <SensitivityChart
-        title={chart.title}
-        subtitle={chart.sensitivity.subtitle}
-        baselineLabel={chart.sensitivity.baselineLabel}
-        stressedLabel={chart.sensitivity.stressedLabel}
-        baselineValue={chart.sensitivity.baselineValue}
-        stressedValue={chart.sensitivity.stressedValue}
-        formatValue={chart.formatValue}
-      />
-    );
-  }
-
-  if (chart.kind === "step") {
-    return (
-      <StepLineChart
-        title={chart.title}
-        subtitle={chart.subtitle}
-        slices={chart.slices ?? []}
-        formatValue={chart.formatValue}
-      />
-    );
-  }
-
-  if (chart.kind === "ranking") {
-    return (
-      <FleetRankingChart
-        title={chart.title}
-        subtitle={chart.subtitle}
-        slices={chart.slices ?? []}
-        formatValue={chart.formatValue}
-        highlightLabel={chart.highlightLabel}
-      />
-    );
-  }
-
-  if (chart.kind === "capacity" && chart.capacityRows) {
-    return (
-      <FleetCapacityChart
-        title={chart.title}
-        subtitle={chart.subtitle}
-        rows={chart.capacityRows}
-        highlightId={highlightId}
-        formatValue={chart.formatValue}
-      />
-    );
-  }
-
-  return (
-    <CompositionBarChart
-      title={chart.title}
-      subtitle={chart.subtitle}
-      slices={chart.slices ?? []}
-      formatValue={chart.formatValue}
-    />
-  );
-}
+import { TariffChartPanel } from "./TariffChartPanel";
+import { TariffEmptyState } from "./TariffEmptyState";
 
 export function TariffFleetOverview({
   machineTariffs,
   highlightId,
+  canEdit,
+  onAddMachine,
+  onMachineSelect,
+  includeArchived = false,
+  onIncludeArchivedChange,
+  hasArchived = false,
 }: {
   machineTariffs: MachineTariff[];
   highlightId?: string;
+  canEdit?: boolean;
+  onAddMachine?: () => void;
+  onMachineSelect?: (machineId: string) => void;
+  includeArchived?: boolean;
+  onIncludeArchivedChange?: (value: boolean) => void;
+  hasArchived?: boolean;
 }) {
   const [group, setGroup] = useState<FleetOverviewGroup>("rates");
 
@@ -144,22 +44,80 @@ export function TariffFleetOverview({
     [machineTariffs, highlightId],
   );
 
-  const activeGroup = FLEET_OVERVIEW_GROUPS.find((item) => item.id === group) ?? FLEET_OVERVIEW_GROUPS[0];
-  const charts = useMemo(
-    () => activeGroup.charts.map((id) => buildFleetOverviewChart(id, ctx)),
-    [activeGroup, ctx],
+  const groups = useMemo(
+    () =>
+      FLEET_OVERVIEW_GROUPS.map((item) => ({
+        id: item.id,
+        label: item.label,
+        charts: item.charts.map((id) => buildFleetOverviewChart(id, ctx)),
+      })),
+    [ctx],
   );
 
+  const fleetLegend = useMemo(() => {
+    const sample = machineTariffs[0];
+    if (!sample) return [];
+    const segments = buildMachineCostSegments(computeMachineCost(sample.inputs));
+    return segments.map((segment) => ({
+      id: segment.id,
+      label: segment.label,
+      color: segment.color,
+    }));
+  }, [machineTariffs]);
+
   if (machineTariffs.length === 0) {
-    return null;
+    return (
+      <details className="tariffs-card tariffs-card--overview" id="tariff-fleet-overview" open>
+        <summary className="tariffs-card__summary" aria-labelledby="tariffs-fleet-heading">
+          <span className="tariffs-card__summary-main">
+            <span className="tariffs-card__chevron" aria-hidden="true">
+              <ChevronDown />
+            </span>
+            <BarChart3 aria-hidden="true" />
+            <span id="tariffs-fleet-heading">Comparativo geral</span>
+          </span>
+          <span className="tariffs-card__summary-hint">Visão do parque</span>
+        </summary>
+        <div className="tariffs-overview__body tariffs-overview__empty">
+          <TariffEmptyState
+            className="tariffs-empty-state--panel"
+            icon={Package}
+            title="Nenhum ativo cadastrado"
+            description="Cadastre ativos para comparar tarifas e montar o parque do laboratório."
+            action={
+              canEdit && onAddMachine ? (
+                <Button type="button" size="lg" onClick={onAddMachine}>
+                  <Plus aria-hidden="true" />
+                  Cadastrar ativo
+                </Button>
+              ) : null
+            }
+          />
+        </div>
+      </details>
+    );
   }
 
   const rates = machineTariffs.map((tariff) => getMachineHourlyRate(tariff));
   const minRate = Math.min(...rates);
   const maxRate = Math.max(...rates);
 
+  const footer =
+    group === "structure" && fleetLegend.length > 0
+      ? (
+        <div className="tariffs-overview__legend chart-legend">
+          {fleetLegend.map((item) => (
+            <span key={item.id} className="chart-legend__item">
+              <span className="chart-legend__swatch" style={{ background: item.color }} />
+              {item.label}
+            </span>
+          ))}
+        </div>
+      )
+      : null;
+
   return (
-    <details className="tariffs-card tariffs-card--overview" open>
+    <details className="tariffs-card tariffs-card--overview" id="tariff-fleet-overview" open>
       <summary className="tariffs-card__summary" aria-labelledby="tariffs-fleet-heading">
         <span className="tariffs-card__summary-main">
           <span className="tariffs-card__chevron" aria-hidden="true">
@@ -170,49 +128,33 @@ export function TariffFleetOverview({
         </span>
         <span className="tariffs-card__summary-hint">
           Visão do parque · {machineTariffs.length} ativos · {formatCurrency(minRate)} – {formatCurrency(maxRate)}/h
+          {hasArchived && onIncludeArchivedChange ? (
+            <label
+              className="tariffs-overview__include-archived"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <input
+                type="checkbox"
+                checked={includeArchived}
+                onChange={(event) => onIncludeArchivedChange(event.target.checked)}
+                onClick={(event) => event.stopPropagation()}
+              />
+              Incluir arquivados
+            </label>
+          ) : null}
         </span>
       </summary>
 
       <div className="tariffs-overview__body">
-        <div className="tariffs-analysis__charts-panel tariffs-overview__panel">
-          <div className="tariffs-analysis__filter" role="tablist" aria-label="Grupo de visão do parque">
-            {FLEET_OVERVIEW_GROUPS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                aria-selected={group === item.id}
-                className={`tariffs-analysis__filter-btn${group === item.id ? " tariffs-analysis__filter-btn--active" : ""}`}
-                onClick={() => setGroup(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="tariffs-analysis__chart-stage tariffs-overview__charts" role="tabpanel">
-            {charts.map((chart) => (
-              <div key={chart.id} className="tariffs-analysis__chart-slot">
-                <FleetOverviewChart
-                  chart={chart}
-                  machineTariffs={machineTariffs}
-                  highlightId={highlightId}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {group === "structure" ? (
-          <div className="tariffs-overview__legend chart-legend">
-            {FLEET_LEGEND.map((item) => (
-              <span key={item.id} className="chart-legend__item">
-                <span className="chart-legend__swatch" style={{ background: item.color }} />
-                {item.label}
-              </span>
-            ))}
-          </div>
-        ) : null}
+        <TariffChartPanel
+          groups={groups}
+          activeGroup={group}
+          onGroupChange={setGroup}
+          tablistLabel="Grupo de visão do parque"
+          context={{ machineTariffs, highlightId, onMachineSelect }}
+          footer={footer}
+          className="tariffs-overview__panel"
+        />
       </div>
     </details>
   );

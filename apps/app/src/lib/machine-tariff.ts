@@ -44,6 +44,8 @@ export type MachineTariff = {
   resourceId: string;
   label: string;
   inputs: MachineCostInputs;
+  /** ISO timestamp when archived; undefined/null = active */
+  archivedAt?: string | null;
 };
 
 export function createMachineTariff(input: {
@@ -51,12 +53,14 @@ export function createMachineTariff(input: {
   resourceId: string;
   label: string;
   inputs: MachineCostInputs;
+  archivedAt?: string | null;
 }): MachineTariff {
   return {
     id: input.id,
     resourceId: input.resourceId,
     label: input.label,
     inputs: input.inputs,
+    archivedAt: input.archivedAt ?? null,
   };
 }
 

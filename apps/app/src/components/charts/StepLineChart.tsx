@@ -51,7 +51,7 @@ export function StepLineChart({
           <YAxis tick={{ fontSize: 10, fill: "var(--color-muted-foreground)" }} width={48} />
           <Tooltip
             content={({ active, payload, label }) => (
-              <RechartsTooltipContent active={active} payload={payload as never} label={label} formatValue={format} />
+              <RechartsTooltipContent active={active} payload={payload} label={label} formatValue={format} />
             )}
           />
           <Line

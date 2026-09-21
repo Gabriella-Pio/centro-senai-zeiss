@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import type { ReactNode } from "react";
 
 export function TariffSection({
+  id,
   title,
   badge,
   open,
@@ -11,6 +12,7 @@ export function TariffSection({
   children,
   variant = "default",
 }: {
+  id?: string;
   title: string;
   badge?: string;
   open: boolean;
@@ -20,6 +22,7 @@ export function TariffSection({
 }) {
   return (
     <section
+      id={id}
       className={`tariff-section${open ? " tariff-section--open" : ""}${variant === "highlight" ? " tariff-section--highlight" : ""}`}
     >
       <button

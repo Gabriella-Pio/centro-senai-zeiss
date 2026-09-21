@@ -18,7 +18,7 @@ export type ScatterPoint = {
 
 export type ParetoItem = { label: string; count: number; percent: number };
 
-export type DonutSlice = { label: string; value: number; color: string };
+export type DonutSlice = { label: string; value: number; color: string; id?: string };
 
 export type WaterfallStep = { label: string; value: number; color: string };
 

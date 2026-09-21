@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
 import { TariffBoard } from "./TariffBoard";
@@ -8,5 +9,9 @@ export default async function TariffsPage() {
     redirect("/login");
   }
 
-  return <TariffBoard canEdit={user.role === "ADMIN"} />;
+  return (
+    <Suspense fallback={null}>
+      <TariffBoard canEdit={user.role === "ADMIN"} />
+    </Suspense>
+  );
 }

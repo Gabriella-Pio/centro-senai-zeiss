@@ -63,7 +63,7 @@ export function SensitivityChart({
               content={({ active, payload, label }) => (
                 <RechartsTooltipContent
                   active={active}
-                  payload={payload as never}
+                  payload={payload}
                   label={label}
                   formatValue={formatValue}
                 />

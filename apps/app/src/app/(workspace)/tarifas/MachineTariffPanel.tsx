@@ -1,190 +1,130 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
-import { Button, Input, Label } from "@cem/ui";
-import { updateDemoState, updateMachineTariffInputs } from "@/lib/demo-store";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "@cem/ui";
+import { restoreMachineTariff, updateDemoState, updateMachineTariffInputs } from "@/lib/demo-store";
 import { MACHINE_EQUIPMENT_IMAGES } from "@/lib/machine-equipment-images";
 import {
-  FIXED_COST_ROWS,
-  FINAL_COST_ROWS,
-  INPUT_FIELD_HELP,
-  VARIABLE_COST_ROWS,
-} from "@/lib/machine-tariff-help";
-import {
   computeMachineCost,
-  type MachineCostComputed,
   type MachineCostInputs,
   type MachineTariff,
 } from "@/lib/machine-tariff";
-import { formatCurrency } from "@/lib/pricing";
+import {
+  filterActiveTariffs,
+  isMachineTariffActive,
+} from "@/lib/machine-tariff-utils";
+import {
+  hasValidationErrors,
+  tabsWithErrors,
+  validateMachineInputs,
+} from "@/lib/machine-tariff-validation";
 import { useDemoStore } from "@/lib/use-demo-store";
-import { BarChart3, Calculator, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
+import { BarChart3, ChevronDown, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
+import { MachineTariffBasicForm, type BasicTab } from "./MachineTariffBasicForm";
+import { MachineTariffComputedSections, type PanelSection } from "./MachineTariffComputedSections";
+import { MachineTariffHero } from "./MachineTariffHero";
+import { useTariffSectionNav } from "@/lib/use-tariff-section-nav";
 import { TariffAssetAnalysis } from "./TariffAssetAnalysis";
-import { TariffFieldHelp } from "./TariffFieldHelp";
-import { TariffSection } from "./TariffSection";
 
-type PanelSection = "basic" | "fixed" | "variable" | "final";
+type SectionKey = "basic" | PanelSection | "analysis";
 
-const PANEL_SECTIONS: PanelSection[] = ["basic", "fixed", "variable", "final"];
+const PANEL_SECTIONS: SectionKey[] = ["basic", "fixed", "variable", "final"];
 
-const DEFAULT_OPEN: Record<PanelSection, boolean> = {
+const DEFAULT_OPEN: Record<SectionKey, boolean> = {
   basic: true,
   fixed: false,
   variable: false,
   final: false,
+  analysis: false,
 };
 
-type BasicTab = "acquisition" | "installation" | "operation" | "labor";
+/** Ordem no DOM — usada pelo scroll spy. */
+const PANEL_SECTION_IDS = [
+  "tariff-section-analysis",
+  "tariff-section-basic",
+  "tariff-section-fixed",
+  "tariff-section-variable",
+  "tariff-section-final",
+] as const;
 
-type FieldDef = { key: keyof MachineCostInputs; label: string; step?: string };
-
-const BASIC_TABS: { id: BasicTab; label: string; fields: FieldDef[] }[] = [
-  {
-    id: "acquisition",
-    label: "Aquisição",
-    fields: [
-      { key: "acquisitionCost", label: "Custo total de aquisição", step: "0.01" },
-      { key: "usefulLifeYears", label: "Tempo de uso (anos)", step: "1" },
-      { key: "inflationRate", label: "Taxa de inflação (%)", step: "0.01" },
-      { key: "adoptedReplacementCost", label: "Custo de reposição adotado", step: "0.01" },
-      { key: "interestRatePercent", label: "Taxa de juros por ano (%)", step: "0.01" },
-    ],
-  },
-  {
-    id: "installation",
-    label: "Instalação",
-    fields: [
-      { key: "physicalSpaceSqm", label: "Espaço físico ocupado (m²)", step: "0.01" },
-      { key: "rentPerSqmMonthly", label: "Aluguel do m² mensal", step: "0.01" },
-      { key: "maintenancePercent", label: "Custo de manutenção (%)", step: "0.01" },
-    ],
-  },
-  {
-    id: "operation",
-    label: "Operação",
-    fields: [
-      { key: "machinePowerKw", label: "Potência da máquina (kW)", step: "0.01" },
-      { key: "operationTimePercent", label: "Tempo de operação (%)", step: "0.01" },
-      { key: "electricityCostPerKwh", label: "Custo da energia elétrica", step: "0.0001" },
-      { key: "toolingCostPerYear", label: "Custo de ferramental/ano", step: "0.01" },
-    ],
-  },
-  {
-    id: "labor",
-    label: "Mão de obra",
-    fields: [
-      { key: "hourlySalary", label: "Salário hora dos turnos", step: "0.01" },
-      { key: "variableSalaryHourly", label: "Salário hora nos custos variáveis", step: "0.01" },
-      { key: "extraSalaryPercent", label: "Custos extras de salário (%)", step: "0.01" },
-      { key: "administrativeOverheadPercent", label: "Overhead administrativo (%)", step: "0.01" },
-      { key: "machineCount", label: "Total de máquinas", step: "1" },
-      { key: "usefulHoursPerYear", label: "Horas úteis por ano", step: "1" },
-    ],
-  },
+const JUMP_LINKS: { id: string; label: string; section: SectionKey }[] = [
+  { id: "tariff-section-analysis", label: "Análise", section: "analysis" },
+  { id: "tariff-section-basic", label: "Dados", section: "basic" },
+  { id: "tariff-section-fixed", label: "Fixos", section: "fixed" },
+  { id: "tariff-section-variable", label: "Variáveis", section: "variable" },
+  { id: "tariff-section-final", label: "Custo hora/maq", section: "final" },
 ];
-
-const COMPUTED_VALUE_MAP: Record<string, (computed: MachineCostComputed) => number> = {
-  depreciation: (c) => c.depreciationAnnual,
-  interest: (c) => c.interestAnnual,
-  space: (c) => c.spaceAnnual,
-  maintenance: (c) => c.maintenanceAnnual,
-  fixedAnnual: (c) => c.fixedCostAnnual,
-  fixedHourly: (c) => c.fixedCostHourly,
-  energy: (c) => c.energyHourly,
-  tooling: (c) => c.toolingHourly,
-  salary: (c) => c.salaryHourly,
-  extraSalary: (c) => c.extraSalaryHourly,
-  variableWithout: (c) => c.variableWithoutSalary,
-  variableWith: (c) => c.variableWithSalary,
-  withoutLabor: (c) => c.costWithoutLabor,
-  withLabor: (c) => c.costWithLabor,
-  withAdmin: (c) => c.costWithAdministrative,
-};
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 }).format(value);
-}
-
-function formatComputedValue(value: number, hourly?: boolean) {
-  const formatted = hourly ? `${formatCurrency(value)}/h` : formatCurrency(value);
-  return formatted;
-}
-
-function ComputedTable({
-  rows,
-  computed,
-}: {
-  rows: typeof FIXED_COST_ROWS;
-  computed: MachineCostComputed;
-}) {
-  return (
-    <table className="machine-tariff-panel__table">
-      <tbody>
-        {rows.map((row) => {
-          const value = COMPUTED_VALUE_MAP[row.id]?.(computed) ?? 0;
-          return (
-            <tr key={row.id} className={row.emphasize ? "machine-tariff-panel__table-row--emphasis" : undefined}>
-              <td>
-                <span className="machine-tariff-panel__row-label">
-                  {row.label}
-                  <TariffFieldHelp hint={row.hint} formula={row.formula} />
-                </span>
-                <span className="machine-tariff-panel__row-formula">{row.formula}</span>
-              </td>
-              <td>{formatComputedValue(value, row.hourly)}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-}
-
-function FieldLabel({
-  fieldKey,
-  label,
-}: {
-  fieldKey: keyof MachineCostInputs;
-  label: string;
-}) {
-  const help = INPUT_FIELD_HELP[fieldKey];
-  return (
-    <span className="machine-tariff-panel__field-label">
-      <Label>{label}</Label>
-      {help ? <TariffFieldHelp hint={help.hint} formula={help.formula} /> : null}
-    </span>
-  );
-}
 
 export function MachineTariffPanel({
   tariff,
   canEdit,
-  embedded = false,
+  onDraftChange,
+  onArchived,
+  onDeleted,
+  onDuplicated,
+  onVocabularyNavigate,
 }: {
   tariff: MachineTariff;
   canEdit: boolean;
-  embedded?: boolean;
+  onDraftChange?: (hasDraft: boolean) => void;
+  onArchived?: () => void;
+  onDeleted?: () => void;
+  onDuplicated?: (tariffId: string) => void;
+  onVocabularyNavigate?: () => void;
 }) {
   const { machineTariffs } = useDemoStore();
   const current = machineTariffs.find((item) => item.id === tariff.id) ?? tariff;
   const [draft, setDraft] = useState<MachineCostInputs | null>(null);
   const [basicTab, setBasicTab] = useState<BasicTab>("acquisition");
-  const [openSections, setOpenSections] = useState<Record<PanelSection, boolean>>(DEFAULT_OPEN);
+  const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>(DEFAULT_OPEN);
+  const [savedMessage, setSavedMessage] = useState<string | null>(null);
+  const [undoInputs, setUndoInputs] = useState<MachineCostInputs | null>(null);
+  const analysisRef = useRef<HTMLDetailsElement>(null);
+  const { activeId: activeJumpId, scrollToSection } = useTariffSectionNav(PANEL_SECTION_IDS);
   const inputs = draft ?? current.inputs;
   const computed = useMemo(() => computeMachineCost(inputs), [inputs]);
   const equipmentImage = MACHINE_EQUIPMENT_IMAGES[current.id];
-  const activeCategory = BASIC_TABS.find((tab) => tab.id === basicTab) ?? BASIC_TABS[0];
+  const hasDraft = draft !== null;
+  const isArchived = !isMachineTariffActive(current);
+  const canEditPanel = canEdit && !isArchived;
+  const validationErrors = useMemo(() => validateMachineInputs(inputs), [inputs]);
+  const invalidTabs = useMemo(() => tabsWithErrors(validationErrors), [validationErrors]);
+  const activeFleet = useMemo(() => filterActiveTariffs(machineTariffs), [machineTariffs]);
+
+  useEffect(() => {
+    onDraftChange?.(hasDraft);
+  }, [hasDraft, onDraftChange]);
 
   useEffect(() => {
     setBasicTab("acquisition");
     setDraft(null);
     setOpenSections(DEFAULT_OPEN);
+    setSavedMessage(null);
+    setUndoInputs(null);
   }, [current.id]);
+
+  useEffect(() => {
+    if (!savedMessage) return;
+    const timer = window.setTimeout(() => {
+      setSavedMessage(null);
+      setUndoInputs(null);
+    }, 5000);
+    return () => window.clearTimeout(timer);
+  }, [savedMessage]);
+
+  useEffect(() => {
+    if (!hasDraft) return;
+    const handler = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [hasDraft]);
 
   const allExpanded = PANEL_SECTIONS.every((section) => openSections[section]);
 
-  function toggleSection(section: PanelSection) {
+  function toggleSection(section: SectionKey) {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   }
 
@@ -192,9 +132,12 @@ export function MachineTariffPanel({
     setOpenSections(
       PANEL_SECTIONS.reduce(
         (acc, section) => ({ ...acc, [section]: open }),
-        {} as Record<PanelSection, boolean>,
+        {} as Record<SectionKey, boolean>,
       ),
     );
+    if (analysisRef.current) {
+      analysisRef.current.open = open;
+    }
   }
 
   function updateField(key: keyof MachineCostInputs, raw: string) {
@@ -205,86 +148,98 @@ export function MachineTariffPanel({
   }
 
   function save() {
-    if (!draft) return;
+    if (!draft || hasValidationErrors(validationErrors)) return;
+    const previous = current.inputs;
     updateDemoState((state) => updateMachineTariffInputs(state, tariff.id, draft));
     setDraft(null);
+    setUndoInputs(previous);
+    setSavedMessage("Planilha salva");
   }
 
-  const hero = (
-    <div className={`machine-tariff-hero${equipmentImage ? "" : " machine-tariff-hero--no-photo"}`}>
-      {equipmentImage ? (
-        <div className="machine-tariff-hero__visual" aria-hidden="true">
-          <div className="machine-tariff-hero__photo-frame">
-            <Image
-              src={equipmentImage.src}
-              alt={equipmentImage.alt}
-              width={168}
-              height={252}
-              className="machine-tariff-hero__photo-img"
-              priority
-            />
-          </div>
-        </div>
-      ) : null}
-      <div className="machine-tariff-hero__content">
-        <div className="machine-tariff-hero__heading">
-          <p className="machine-tariff-hero__eyebrow">
-            <Calculator aria-hidden="true" />
-            Planilha hora-máquina
-          </p>
-          <h3 className="machine-tariff-hero__title">{current.label}</h3>
-          <p className="machine-tariff-hero__subtitle">Item 1 editável · itens 2 e 3 calculados automaticamente</p>
-        </div>
-        <div className="machine-tariff-hero__rates">
-          <div className="machine-tariff-hero__rate machine-tariff-hero__rate--primary">
-            <span className="machine-tariff-hero__rate-label">
-              Item 32 · Orçamentos
-              <TariffFieldHelp
-                hint="Tarifa usada nos orçamentos — inclui overhead administrativo."
-                formula="Item 31 × (1 + overhead administrativo ÷ 100)"
-              />
-            </span>
-            <strong>{formatCurrency(computed.costWithAdministrative)}/h</strong>
-            <small>Usada nos orçamentos</small>
-          </div>
-          <div className="machine-tariff-hero__rate">
-            <span className="machine-tariff-hero__rate-label">
-              Item 31 · Operacional
-              <TariffFieldHelp
-                hint="Custo operacional completo no chão de fábrica."
-                formula="Custo fixo/h + variáveis com salário/h"
-              />
-            </span>
-            <strong>{formatCurrency(computed.costWithLabor)}/h</strong>
-            <small>Com mão de obra</small>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  function undoSave() {
+    if (!undoInputs) return;
+    updateDemoState((state) => updateMachineTariffInputs(state, tariff.id, undoInputs));
+    setUndoInputs(null);
+    setSavedMessage(null);
+  }
+
+  function restoreAsset() {
+    updateDemoState((state) => restoreMachineTariff(state, tariff.id));
+  }
+
+  function jumpToSection(sectionId: string, section: SectionKey) {
+    if (section === "analysis") {
+      if (analysisRef.current) analysisRef.current.open = true;
+    } else {
+      setOpenSections((prev) => ({ ...prev, [section]: true }));
+    }
+
+    requestAnimationFrame(() => {
+      scrollToSection(sectionId);
+    });
+  }
 
   return (
-    <div className={`machine-tariff-panel${embedded ? " machine-tariff-panel--embedded" : ""}`}>
-      {hero}
+    <div className="machine-tariff-panel machine-tariff-panel--embedded">
+      <nav className="tariffs-segmented-bar tariffs-segmented-bar--panel" aria-label="Ir para seção da planilha">
+        <span className="tariffs-segmented-bar__label">Seções</span>
+        <div className="tariffs-segmented-bar__track machine-tariff-panel__jump-nav">
+          {JUMP_LINKS.map((link) => {
+            const active = activeJumpId === link.id;
+            return (
+              <button
+                key={link.id}
+                type="button"
+                className={`machine-tariff-panel__jump-link${active ? " machine-tariff-panel__jump-link--active" : ""}`}
+                onClick={() => jumpToSection(link.id, link.section)}
+                aria-current={active ? "location" : undefined}
+              >
+                {link.label}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
 
-      <section className="machine-tariff-panel__analysis" aria-label="Análise do ativo">
-        <header className="machine-tariff-panel__analysis-head">
-          <p className="machine-tariff-panel__analysis-eyebrow">
+      <MachineTariffHero
+        tariff={current}
+        computed={computed}
+        equipmentImage={equipmentImage}
+        hasDraft={hasDraft}
+        savedMessage={savedMessage}
+        canEdit={canEdit}
+        canUndo={Boolean(undoInputs)}
+        onUndo={undoSave}
+        onArchived={onArchived}
+        onDeleted={onDeleted}
+        onDuplicated={onDuplicated}
+        onRestore={restoreAsset}
+        onVocabularyNavigate={onVocabularyNavigate}
+      />
+
+      <details ref={analysisRef} className="tariffs-card tariffs-card--analysis" id="tariff-section-analysis">
+        <summary className="tariffs-card__summary">
+          <span className="tariffs-card__summary-main">
+            <span className="tariffs-card__chevron" aria-hidden="true">
+              <ChevronDown />
+            </span>
             <BarChart3 aria-hidden="true" />
-            Análise do ativo
-          </p>
-          <p className="machine-tariff-panel__analysis-intro">
-            Composição da tarifa e dos custos fixos de {current.label}.
-          </p>
-        </header>
-        <TariffAssetAnalysis
-          computed={computed}
-          inputs={inputs}
-          machineId={current.id}
-          machineLabel={current.label}
-          fleet={machineTariffs}
-        />
-      </section>
+            Análise do ativo · {current.label}
+          </span>
+          <span className="tariffs-card__summary-hint">
+            Composição da tarifa e dos custos fixos
+          </span>
+        </summary>
+        <div className="tariffs-card__body machine-tariff-panel__analysis">
+          <TariffAssetAnalysis
+            computed={computed}
+            inputs={inputs}
+            machineId={current.id}
+            machineLabel={current.label}
+            fleet={activeFleet.length > 0 ? activeFleet : machineTariffs}
+          />
+        </div>
+      </details>
 
       <div className="machine-tariff-panel__sections-toolbar">
         <Button
@@ -307,105 +262,31 @@ export function MachineTariffPanel({
       </div>
 
       <div className="machine-tariff-panel__sections">
-        <TariffSection
-          title="1. Dados básicos"
-          badge="Editável"
+        <MachineTariffBasicForm
+          inputs={inputs}
+          computed={computed}
+          canEdit={canEditPanel}
+          hasDraft={hasDraft}
+          basicTab={basicTab}
+          onBasicTabChange={setBasicTab}
           open={openSections.basic}
           onToggle={() => toggleSection("basic")}
-        >
-          <div className="machine-tariff-tabs" role="tablist" aria-label="Categorias dos dados básicos">
-            {BASIC_TABS.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={basicTab === tab.id}
-                className={`machine-tariff-tabs__btn${basicTab === tab.id ? " machine-tariff-tabs__btn--active" : ""}`}
-                onClick={() => setBasicTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          <div className="machine-tariff-tabpanel" role="tabpanel">
-            <div className="machine-tariff-panel__inputs">
-              {activeCategory.fields.map((field) => (
-                <div key={field.key}>
-                  <FieldLabel fieldKey={field.key} label={field.label} />
-                  <Input
-                    type="number"
-                    step={field.step}
-                    disabled={!canEdit}
-                    value={inputs[field.key] ?? ""}
-                    onChange={(event) => updateField(field.key, event.target.value)}
-                    className="h-11"
-                  />
-                </div>
-              ))}
-              {basicTab === "acquisition" ? (
-                <div>
-                  <span className="machine-tariff-panel__field-label">
-                    <Label>Custo de reposição teórico (calculado)</Label>
-                    <TariffFieldHelp
-                      hint="Estimativa de quanto custaria repor a máquina hoje, considerando inflação."
-                      formula="Aquisição × (1 + inflação %)^vida útil"
-                    />
-                  </span>
-                  <Input disabled value={formatNumber(computed.theoreticalReplacementCost)} className="h-11" />
-                </div>
-              ) : null}
-            </div>
-          </div>
-          {canEdit && draft ? (
-            <div className="machine-tariff-panel__actions">
-              <Button type="button" onClick={save}>Salvar máquina</Button>
-              <Button type="button" variant="outline" onClick={() => setDraft(null)}>Descartar</Button>
-            </div>
-          ) : null}
-        </TariffSection>
+          onFieldChange={updateField}
+          onSave={save}
+          onDiscard={() => setDraft(null)}
+          validationErrors={validationErrors}
+          invalidTabs={invalidTabs}
+        />
 
-        <TariffSection
-          title="2. Custos fixos"
-          badge={formatComputedValue(computed.fixedCostHourly, true)}
-          open={openSections.fixed}
-          onToggle={() => toggleSection("fixed")}
-        >
-          <ComputedTable rows={FIXED_COST_ROWS} computed={computed} />
-        </TariffSection>
-
-        <TariffSection
-          title="3. Custos variáveis"
-          badge={formatComputedValue(computed.variableWithSalary, true)}
-          open={openSections.variable}
-          onToggle={() => toggleSection("variable")}
-        >
-          <ComputedTable rows={VARIABLE_COST_ROWS} computed={computed} />
-        </TariffSection>
-
-        <TariffSection
-          title="4. Custo hora máquina"
-          badge={formatComputedValue(computed.costWithAdministrative, true)}
-          open={openSections.final}
-          onToggle={() => toggleSection("final")}
-          variant="highlight"
-        >
-          <div className="machine-tariff-final">
-            {FINAL_COST_ROWS.map((row) => {
-              const value = COMPUTED_VALUE_MAP[row.id]?.(computed) ?? 0;
-              const isHighlight = row.id === "withAdmin";
-              return (
-                <div key={row.id} className={isHighlight ? "machine-tariff-final__highlight" : undefined}>
-                  <span className="machine-tariff-final__label">
-                    {row.label}
-                    <TariffFieldHelp hint={row.hint} formula={row.formula} />
-                  </span>
-                  <code className="machine-tariff-final__formula">{row.formula}</code>
-                  <strong>{formatComputedValue(value, true)}</strong>
-                </div>
-              );
-            })}
-          </div>
-        </TariffSection>
+        <MachineTariffComputedSections
+          computed={computed}
+          openSections={{
+            fixed: openSections.fixed,
+            variable: openSections.variable,
+            final: openSections.final,
+          }}
+          onToggleSection={(section) => toggleSection(section)}
+        />
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ export type BarDatum = {
   value: number;
   fill: string;
   percent?: number;
+  id?: string;
 };
 
 export function slicesToBarData(slices: DonutSlice[], total?: number): BarDatum[] {
@@ -30,6 +31,7 @@ export function slicesToBarData(slices: DonutSlice[], total?: number): BarDatum[
     value: slice.value,
     fill: slice.color,
     percent: sum > 0 ? Math.round((slice.value / sum) * 100) : 0,
+    id: slice.id,
   }));
 }
 

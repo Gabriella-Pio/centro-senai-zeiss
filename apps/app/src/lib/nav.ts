@@ -55,14 +55,6 @@ export const NAV_ITEMS: NavItem[] = [
   },
   { href: '/demonstracao', label: 'Demonstração', icon: 'demo', group: 'manage', roles: ['ADMIN'] },
   {
-    href: '/usuarios',
-    label: 'Equipe',
-    icon: 'users',
-    group: 'manage',
-    roles: ['ADMIN'],
-    ready: true,
-  },
-  {
     href: '/solicitacoes',
     label: 'Solicitações',
     icon: 'requests',
@@ -76,6 +68,14 @@ export const NAV_ITEMS: NavItem[] = [
     icon: 'tariffs',
     group: 'manage',
     roles: ALL_ROLES,
+    ready: true,
+  },
+  {
+    href: '/usuarios',
+    label: 'Equipe',
+    icon: 'users',
+    group: 'manage',
+    roles: ['ADMIN'],
     ready: true,
   },
   {

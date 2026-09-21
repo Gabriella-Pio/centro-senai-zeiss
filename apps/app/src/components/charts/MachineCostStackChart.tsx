@@ -16,21 +16,32 @@ import { ChartCard } from "./ChartCard";
 import { RechartsTooltipContent } from "./RechartsTooltip";
 import { CHART_HEIGHT_COMPACT, CHART_MARGIN_LEFT, truncateLabel } from "./recharts-theme";
 
+function handleMachineBarClick(
+  payload: { id?: string } | undefined,
+  onMachineSelect?: (machineId: string) => void,
+) {
+  if (payload?.id && onMachineSelect) {
+    onMachineSelect(payload.id);
+  }
+}
+
 export function MachineCostStackChart({
   rows,
   highlightId,
+  onMachineSelect,
   dense = false,
   showLegend = true,
 }: {
   rows: MachineStackRow[];
   highlightId?: string;
+  onMachineSelect?: (machineId: string) => void;
   dense?: boolean;
   showLegend?: boolean;
 }) {
   if (rows.length === 0) {
     return (
       <ChartCard title="Composição do parque" subtitle="Como cada item 32 se divide entre fixo, variável, mão de obra e administrativo">
-        <p className="chart-card__empty">Cadastre máquinas para comparar composições.</p>
+        <p className="chart-card__empty">Cadastre ativos para comparar composições.</p>
       </ChartCard>
     );
   }
@@ -44,9 +55,12 @@ export function MachineCostStackChart({
     ...Object.fromEntries(row.segments.map((segment) => [segment.id, segment.value])),
   }));
   const height = dense ? Math.max(120, data.length * 30) : CHART_HEIGHT_COMPACT;
+  const subtitle = onMachineSelect
+    ? "Clique em uma barra para abrir a planilha do ativo"
+    : "Proporção do item 32 (R$/h) em cada ativo";
 
   return (
-    <ChartCard title="Composição do parque" subtitle="Proporção do item 32 (R$/h) em cada máquina">
+    <ChartCard title="Composição do parque" subtitle={subtitle} className="chart-card--interactive">
       <ResponsiveContainer width="100%" height={height}>
         <BarChart data={data} layout="vertical" margin={CHART_MARGIN_LEFT}>
           <CartesianGrid horizontal={false} stroke="var(--color-border)" strokeDasharray="3 3" />
@@ -81,6 +95,8 @@ export function MachineCostStackChart({
                 fill={segment?.color}
                 barSize={dense ? 12 : 16}
                 opacity={highlightId ? 0.92 : 1}
+                cursor={onMachineSelect ? "pointer" : undefined}
+                onClick={(bar) => handleMachineBarClick(bar?.payload as { id?: string }, onMachineSelect)}
               />
             );
           })}

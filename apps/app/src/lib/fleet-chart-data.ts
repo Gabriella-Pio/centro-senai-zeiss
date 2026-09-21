@@ -1,17 +1,20 @@
 import type { DonutSlice } from "./chart-data";
 import {
-  buildMachineCostSegments,
+  average,
+  BREAKEVEN_PALETTE,
+  buildFleetRankingSlices,
+  computeBreakevenHours,
   FLEET_AVERAGE_LABEL,
-} from "./tariff-chart-data";
+  PALETTE,
+  roundSlice,
+  toDonutSlices,
+} from "./chart-data-utils";
+import { buildMachineCostSegments } from "./tariff-chart-data";
 import {
   computeMachineCost,
   getMachineHourlyRate,
   type MachineTariff,
 } from "./machine-tariff";
-
-const PALETTE = ["#0057b8", "#e87722", "#16a34a", "#7c3aed"];
-const FLEET_PALETTE = ["#0057b8", "#6366f1", "#0891b2"];
-const BREAKEVEN_PALETTE = ["#e87722", "#16a34a"];
 
 export type FleetOverviewGroup = "rates" | "structure" | "capacity" | "evolution";
 
@@ -68,44 +71,6 @@ export const FLEET_OVERVIEW_GROUPS: {
   { id: "evolution", label: "Evolução", charts: ["avg-stages", "fleet-sensitivity"] },
 ];
 
-function roundSlice(value: number) {
-  return Math.round(value * 100) / 100;
-}
-
-function toDonutSlices(segments: { label: string; value: number; color: string }[]): DonutSlice[] {
-  return segments
-    .filter((segment) => segment.value > 0.001)
-    .map((segment) => ({
-      label: segment.label,
-      value: roundSlice(segment.value),
-      color: segment.color,
-    }));
-}
-
-function average(values: number[]) {
-  return values.length > 0 ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
-}
-
-export function buildFleetRankingSlices(tariffs: MachineTariff[], highlightId?: string): DonutSlice[] {
-  const rates = tariffs.map((tariff) => getMachineHourlyRate(tariff));
-  const fleetAverage = average(rates);
-
-  return toDonutSlices(
-    [...tariffs]
-      .map((tariff) => ({
-        label: tariff.label,
-        value: getMachineHourlyRate(tariff),
-        color: tariff.id === highlightId ? FLEET_PALETTE[0] : FLEET_PALETTE[1],
-      }))
-      .sort((a, b) => b.value - a.value)
-      .concat(
-        fleetAverage > 0
-          ? [{ label: FLEET_AVERAGE_LABEL, value: fleetAverage, color: FLEET_PALETTE[2] }]
-          : [],
-      ),
-  );
-}
-
 export function buildFleetAverageComposition(tariffs: MachineTariff[]): DonutSlice[] {
   if (tariffs.length === 0) return [];
 
@@ -148,14 +113,13 @@ export function buildFleetCapacityRows(tariffs: MachineTariff[]): FleetCapacityR
   return tariffs
     .map((tariff) => {
       const computed = computeMachineCost(tariff.inputs);
-      const contribution = computed.costWithAdministrative - computed.variableWithSalary;
-      const neededHours = contribution > 0 ? computed.fixedCostAnnual / contribution / 12 : 0;
+      const { neededHours, availableHours } = computeBreakevenHours(computed, tariff.inputs);
 
       return {
         id: tariff.id,
         label: tariff.label,
-        neededHours: roundSlice(neededHours),
-        availableHours: roundSlice(tariff.inputs.usefulHoursPerYear / 12),
+        neededHours,
+        availableHours,
       };
     })
     .sort((a, b) => b.neededHours - a.neededHours);
@@ -212,7 +176,7 @@ export function buildFleetOverviewChart(
       kind: "ranking",
       title: "Posição no parque",
       subtitle: "Tarifa item 32 vs média do parque (R$/h)",
-      slices: buildFleetRankingSlices(ctx.tariffs, ctx.highlightId),
+      slices: buildFleetRankingSlices(ctx.tariffs, { highlightId: ctx.highlightId }),
       formatValue: hourly,
       highlightLabel: highlight?.label,
     },

@@ -16,19 +16,30 @@ import { ChartCard } from "./ChartCard";
 import { RechartsTooltipContent } from "./RechartsTooltip";
 import { CHART_COLORS, CHART_HEIGHT_COMPACT, CHART_MARGIN_LEFT, truncateLabel } from "./recharts-theme";
 
+function handleMachineBarClick(
+  payload: { id?: string } | undefined,
+  onMachineSelect?: (machineId: string) => void,
+) {
+  if (payload?.id && onMachineSelect) {
+    onMachineSelect(payload.id);
+  }
+}
+
 export function MachineRateChart({
   rows,
   highlightId,
+  onMachineSelect,
   dense = false,
 }: {
   rows: MachineRateRow[];
   highlightId?: string;
+  onMachineSelect?: (machineId: string) => void;
   dense?: boolean;
 }) {
   if (rows.length === 0) {
     return (
       <ChartCard title="Tarifa hora do parque" subtitle="Item 32 — usada nos orçamentos">
-        <p className="chart-card__empty">Cadastre máquinas para comparar tarifas.</p>
+        <p className="chart-card__empty">Cadastre ativos para comparar tarifas.</p>
       </ChartCard>
     );
   }
@@ -39,9 +50,12 @@ export function MachineRateChart({
     id: row.id,
   }));
   const height = dense ? Math.max(120, data.length * 28) : CHART_HEIGHT_COMPACT;
+  const subtitle = onMachineSelect
+    ? "Item 32 (com administrativo) — clique em uma barra para abrir a planilha"
+    : "Item 32 (com administrativo) — maior para menor";
 
   return (
-    <ChartCard title="Tarifa hora do parque" subtitle="Item 32 (com administrativo) — maior para menor">
+    <ChartCard title="Tarifa hora do parque" subtitle={subtitle} className="chart-card--interactive">
       <ResponsiveContainer width="100%" height={height}>
         <BarChart data={data} layout="vertical" margin={CHART_MARGIN_LEFT}>
           <CartesianGrid horizontal={false} stroke="var(--color-border)" strokeDasharray="3 3" />
@@ -64,7 +78,13 @@ export function MachineRateChart({
               />
             )}
           />
-          <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={dense ? 12 : 16}>
+          <Bar
+            dataKey="value"
+            radius={[0, 6, 6, 0]}
+            barSize={dense ? 12 : 16}
+            cursor={onMachineSelect ? "pointer" : undefined}
+            onClick={(bar) => handleMachineBarClick(bar?.payload as { id?: string }, onMachineSelect)}
+          >
             {data.map((entry) => (
               <Cell
                 key={entry.id}

@@ -1,19 +1,25 @@
 import type { DonutSlice, WaterfallStep } from "./chart-data";
 import {
+  BREAKEVEN_PALETTE,
+  buildFleetRankingSlices,
+  computeBreakevenHours,
+  FLEET_AVERAGE_LABEL,
+  FIXED_PALETTE,
+  PALETTE,
+  roundSlice,
+  STAGES_PALETTE,
+  toDonutSlices,
+  VARIABLE_PALETTE,
+} from "./chart-data-utils";
+import {
   computeMachineCost,
   getMachineHourlyRate,
   type MachineCostComputed,
   type MachineCostInputs,
   type MachineTariff,
 } from "./machine-tariff";
-const PALETTE = ["#0057b8", "#e87722", "#16a34a", "#7c3aed"];
-const FIXED_PALETTE = ["#0057b8", "#0891b2", "#e87722", "#7c3aed"];
-const VARIABLE_PALETTE = ["#e87722", "#d97706", "#16a34a", "#059669"];
-const STAGES_PALETTE = ["#0057b8", "#16a34a", "#7c3aed"];
-const BREAKEVEN_PALETTE = ["#e87722", "#16a34a"];
-const FLEET_PALETTE = ["#0057b8", "#6366f1", "#0891b2"];
 
-export const FLEET_AVERAGE_LABEL = "Média do parque";
+export { FLEET_AVERAGE_LABEL };
 
 export type TariffAnalysisView =
   | "tariff"
@@ -75,20 +81,6 @@ export const TARIFF_ANALYSIS_GROUPS: {
   { id: "buildup", label: "Composição", charts: ["waterfall", "sensitivity"] },
   { id: "context", label: "Contexto", charts: ["breakeven", "fleet"] },
 ];
-
-function roundSlice(value: number) {
-  return Math.round(value * 100) / 100;
-}
-
-function toDonutSlices(segments: { label: string; value: number; color: string }[]): DonutSlice[] {
-  return segments
-    .filter((segment) => segment.value > 0.001)
-    .map((segment) => ({
-      label: segment.label,
-      value: roundSlice(segment.value),
-      color: segment.color,
-    }));
-}
 
 export type MachineCostSegment = {
   id: string;
@@ -184,35 +176,19 @@ function buildSensitivityScenario(ctx: TariffAnalysisContext) {
 }
 
 function buildBreakevenSlices(ctx: TariffAnalysisContext): DonutSlice[] {
-  const contribution = ctx.computed.costWithAdministrative - ctx.computed.variableWithSalary;
-  const hoursMonth =
-    contribution > 0 ? ctx.computed.fixedCostAnnual / contribution / 12 : 0;
-  const availableMonth = ctx.inputs.usefulHoursPerYear / 12;
+  const { neededHours, availableHours } = computeBreakevenHours(ctx.computed, ctx.inputs);
 
   return toDonutSlices([
-    { label: "Horas p/ cobrir fixos", value: hoursMonth, color: BREAKEVEN_PALETTE[0] },
-    { label: "Horas úteis/mês", value: availableMonth, color: BREAKEVEN_PALETTE[1] },
+    { label: "Horas p/ cobrir fixos", value: neededHours, color: BREAKEVEN_PALETTE[0] },
+    { label: "Horas úteis/mês", value: availableHours, color: BREAKEVEN_PALETTE[1] },
   ]);
 }
 
 function buildFleetSlices(ctx: TariffAnalysisContext): DonutSlice[] {
-  const rates = ctx.fleet.map((tariff) => getMachineHourlyRate(tariff));
-  const average = rates.length > 0 ? rates.reduce((sum, rate) => sum + rate, 0) / rates.length : 0;
-
-  return toDonutSlices(
-    [...ctx.fleet]
-      .map((tariff) => ({
-        label: tariff.id === ctx.machineId ? `${tariff.label} (este ativo)` : tariff.label,
-        value: getMachineHourlyRate(tariff),
-        color: tariff.id === ctx.machineId ? FLEET_PALETTE[0] : FLEET_PALETTE[1],
-      }))
-      .sort((a, b) => b.value - a.value)
-      .concat(
-        average > 0
-          ? [{ label: FLEET_AVERAGE_LABEL, value: average, color: FLEET_PALETTE[2] }]
-          : [],
-      ),
-  );
+  return buildFleetRankingSlices(ctx.fleet, {
+    highlightId: ctx.machineId,
+    highlightLabel: (tariff) => `${tariff.label} (este ativo)`,
+  });
 }
 
 export function buildTariffAnalysisChart(
@@ -312,20 +288,6 @@ export function buildTariffAnalysisChart(
   };
 
   return charts[id];
-}
-
-export function buildTariffAnalysisCharts(ctx: TariffAnalysisContext): TariffAnalysisChartConfig[] {
-  const chartIds: TariffAnalysisView[] = [
-    "tariff",
-    "fixed",
-    "variable",
-    "stages",
-    "waterfall",
-    "sensitivity",
-    "breakeven",
-    "fleet",
-  ];
-  return chartIds.map((id) => buildTariffAnalysisChart(id, ctx));
 }
 
 export function buildFleetRateRows(tariffs: MachineTariff[]): MachineRateRow[] {

@@ -53,13 +53,12 @@ export function AddMachineTariffDialog({
       (existing) => existing.toLocaleLowerCase("pt-BR") === trimmed.toLocaleLowerCase("pt-BR"),
     );
     if (duplicate) {
-      setError("Já existe uma máquina com esse nome.");
+      setError("Já existe um ativo com esse nome.");
       return;
     }
 
-    const stamp = Date.now();
-    const tariffId = `machine-${stamp}`;
-    updateDemoState((state) => addMachineTariff(state, trimmed));
+    const tariffId = `machine-${Date.now()}`;
+    updateDemoState((state) => addMachineTariff(state, trimmed, { tariffId }));
     onCreated(tariffId);
     handleOpenChange(false);
   }

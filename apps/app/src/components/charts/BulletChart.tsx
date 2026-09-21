@@ -54,7 +54,7 @@ export function BulletChart({
           <Tooltip
             cursor={{ fill: "color-mix(in srgb, var(--color-primary) 6%, transparent)" }}
             content={({ active, payload, label }) => (
-              <RechartsTooltipContent active={active} payload={payload as never} label={label} formatValue={format} />
+              <RechartsTooltipContent active={active} payload={payload} label={label} formatValue={format} />
             )}
           />
           <ReferenceLine
