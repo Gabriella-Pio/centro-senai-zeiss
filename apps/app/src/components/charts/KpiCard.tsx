@@ -1,5 +1,9 @@
+"use client";
+
 import type { LucideIcon } from "lucide-react";
+import { Line, LineChart, ResponsiveContainer } from "recharts";
 import "./charts.css";
+import { CHART_COLORS } from "./recharts-theme";
 
 export function KpiCard({
   label,
@@ -16,7 +20,7 @@ export function KpiCard({
   highlight?: boolean;
   sparkline?: number[];
 }) {
-  const sparkMax = sparkline ? Math.max(...sparkline, 1) : 1;
+  const sparkData = sparkline?.map((point, index) => ({ index, value: point })) ?? [];
 
   return (
     <article className={`dashboard-kpi${highlight ? " dashboard-kpi--highlight" : ""}`}>
@@ -26,19 +30,14 @@ export function KpiCard({
       </div>
       <strong className="dashboard-kpi__value">{value}</strong>
       <span className="dashboard-kpi__detail">{detail}</span>
-      {sparkline && sparkline.length > 1 ? (
-        <svg className="dashboard-kpi__spark" viewBox={`0 0 ${sparkline.length * 12} 32`} preserveAspectRatio="none" aria-hidden="true">
-          <polyline
-            fill="none"
-            stroke="#0057b8"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            points={sparkline
-              .map((value, index) => `${index * 12},${32 - (value / sparkMax) * 28}`)
-              .join(" ")}
-          />
-        </svg>
+      {sparkData.length > 1 ? (
+        <div className="dashboard-kpi__spark" aria-hidden="true">
+          <ResponsiveContainer width="100%" height={32}>
+            <LineChart data={sparkData}>
+              <Line type="monotone" dataKey="value" stroke={CHART_COLORS.primary} strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       ) : null}
     </article>
   );

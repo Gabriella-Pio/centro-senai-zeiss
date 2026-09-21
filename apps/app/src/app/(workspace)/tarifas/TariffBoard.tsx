@@ -1,23 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BarChart3, Calculator, Plus, TableProperties } from "lucide-react";
-import { computeMachineCost, getMachineHourlyRate } from "@/lib/machine-tariff";
+import { Calculator, ChevronDown, Plus, TableProperties } from "lucide-react";
+import { getMachineHourlyRate } from "@/lib/machine-tariff";
 import { computeQuoteCost, formatCurrency } from "@/lib/pricing";
 import { useDemoStore } from "@/lib/use-demo-store";
 import { MachineTariffPanel } from "./MachineTariffPanel";
-import { TariffAnalysisPanel } from "./TariffAnalysisPanel";
 import { TariffFleetOverview } from "./TariffFleetOverview";
 import { AddMachineTariffDialog } from "./AddMachineTariffDialog";
 import "./tariffs.css";
 import "@/components/charts/charts.css";
 
-type WorkspaceView = "sheet" | "analysis";
-
 export function TariffBoard({ canEdit }: { canEdit: boolean }) {
   const { vocabulary, labSettings, machineTariffs } = useDemoStore();
   const [selectedMachineId, setSelectedMachineId] = useState(machineTariffs[0]?.id ?? "");
-  const [workspaceView, setWorkspaceView] = useState<WorkspaceView>("sheet");
   const [addMachineOpen, setAddMachineOpen] = useState(false);
 
   const selectedMachine = machineTariffs.find((tariff) => tariff.id === selectedMachineId) ?? machineTariffs[0];
@@ -81,88 +77,69 @@ export function TariffBoard({ canEdit }: { canEdit: boolean }) {
         </div>
       </header>
 
+      <TariffFleetOverview machineTariffs={machineTariffs} highlightId={selectedMachine?.id} />
+
       <section className="tariffs-workspace" aria-label="Planilhas por máquina">
-        <TariffFleetOverview
-          machineTariffs={machineTariffs}
-          highlightId={selectedMachine?.id}
-          assetPicker={assetPicker}
-        />
+        <section className="tariffs-workspace__assets" aria-label="Ativos do laboratório">
+          <div className="tariffs-workspace__assets-head">
+            <h2>Ativos do laboratório</h2>
+            <p>Selecione um ativo para ver e editar a planilha hora-máquina.</p>
+          </div>
+          {assetPicker}
+        </section>
 
         <div className="tariffs-workspace__detail">
-          <div className="tariffs-workspace__views" role="tablist" aria-label="Visualização do ativo">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={workspaceView === "sheet"}
-              className={`tariffs-workspace__tab${workspaceView === "sheet" ? " tariffs-workspace__tab--active" : ""}`}
-              onClick={() => setWorkspaceView("sheet")}
-            >
-              <TableProperties aria-hidden="true" />
-              Planilha
-              {selectedMachine ? <span className="tariffs-workspace__tab-meta">{selectedMachine.label}</span> : null}
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={workspaceView === "analysis"}
-              className={`tariffs-workspace__tab${workspaceView === "analysis" ? " tariffs-workspace__tab--active" : ""}`}
-              onClick={() => setWorkspaceView("analysis")}
-            >
-              <BarChart3 aria-hidden="true" />
-              Análise do ativo
-            </button>
-          </div>
-
           {canEdit ? (
             <AddMachineTariffDialog
               open={addMachineOpen}
               onOpenChange={setAddMachineOpen}
               existingLabels={machineTariffs.map((tariff) => tariff.label)}
-              onCreated={(tariffId) => {
-                setSelectedMachineId(tariffId);
-                setWorkspaceView("sheet");
-              }}
+              onCreated={setSelectedMachineId}
             />
           ) : null}
 
-          <div className="tariffs-workspace__panel" id="tariff-detail-panel" role="tabpanel">
-            {workspaceView === "sheet" && selectedMachine ? (
+          <div className="tariffs-workspace__panel" id="tariff-detail-panel">
+            {selectedMachine ? (
               <MachineTariffPanel tariff={selectedMachine} canEdit={canEdit} embedded />
-            ) : null}
-            {workspaceView === "analysis" ? (
-              <TariffAnalysisPanel selectedMachine={selectedMachine} />
-            ) : null}
-            {workspaceView === "sheet" && !selectedMachine ? (
+            ) : (
               <p className="tariffs-workspace__empty">Cadastre ou selecione um ativo para editar a planilha.</p>
-            ) : null}
+            )}
           </div>
         </div>
       </section>
 
       <details className="tariffs-card tariffs-card--example">
         <summary className="tariffs-card__summary">
-          <span><Calculator aria-hidden="true" /> Exemplo de cálculo</span>
+          <span className="tariffs-card__summary-main">
+            <span className="tariffs-card__chevron" aria-hidden="true">
+              <ChevronDown />
+            </span>
+            <Calculator aria-hidden="true" />
+            Exemplo de cálculo
+          </span>
           <span className="tariffs-card__summary-hint">2 h ZRE + 8 h máquina + 2 h mão de obra técnica</span>
         </summary>
-        <table className="tariffs-example">
-          <tbody>
-            {example.lines.map((line) => (
-              <tr key={line.id}>
-                <td>{line.label}</td>
-                <td>{line.hours.toFixed(1)} h × {formatCurrency(line.rate)}/h</td>
-                <td>{formatCurrency(line.subtotal)}</td>
+        <div className="tariffs-card__body">
+          <table className="tariffs-example">
+            <tbody>
+              {example.lines.map((line) => (
+                <tr key={line.id}>
+                  <td className="tariffs-example__label">{line.label}</td>
+                  <td className="tariffs-example__calc">{line.hours.toFixed(1)} h × {formatCurrency(line.rate)}/h</td>
+                  <td className="tariffs-example__value">{formatCurrency(line.subtotal)}</td>
+                </tr>
+              ))}
+              <tr className="tariffs-example__total">
+                <td colSpan={2}>Custo estimado</td>
+                <td className="tariffs-example__value">{formatCurrency(example.totalCost)}</td>
               </tr>
-            ))}
-            <tr className="tariffs-example__total">
-              <td colSpan={2}>Custo estimado</td>
-              <td>{formatCurrency(example.totalCost)}</td>
-            </tr>
-            <tr className="tariffs-example__price">
-              <td colSpan={2}>Preço sugerido (margem {example.marginPercent}%)</td>
-              <td>{formatCurrency(example.suggestedPrice)}</td>
-            </tr>
-          </tbody>
-        </table>
+              <tr className="tariffs-example__price">
+                <td colSpan={2}>Preço sugerido (margem {example.marginPercent}%)</td>
+                <td className="tariffs-example__value">{formatCurrency(example.suggestedPrice)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </details>
     </main>
   );

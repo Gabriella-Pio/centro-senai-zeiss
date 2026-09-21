@@ -1,5 +1,19 @@
+"use client";
+
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { CaseBar } from "@/lib/chart-data";
 import { ChartCard } from "./ChartCard";
+import { RechartsTooltipContent } from "./RechartsTooltip";
+import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN_LEFT } from "./recharts-theme";
 
 export function CaseComparisonChart({ data }: { data: CaseBar[] }) {
   if (data.length === 0) {
@@ -10,25 +24,35 @@ export function CaseComparisonChart({ data }: { data: CaseBar[] }) {
     );
   }
 
-  const max = Math.max(...data.flatMap((item) => [item.estimated, item.actual]), 1);
+  const chartData = data.map((item) => ({
+    name: item.label,
+    estimated: item.estimated,
+    actual: item.actual,
+  }));
 
   return (
     <ChartCard title="Casos similares" subtitle="Horas orçadas vs realizadas em cada registro formalizado">
-      <div className="chart-bars">
-        {data.map((item) => (
-          <div key={item.id} className="chart-bars__row">
-            <span className="chart-bars__label">{item.label}</span>
-            <div className="chart-bars__track">
-              <div className="chart-bars__bar chart-bars__bar--estimated" style={{ width: `${(item.estimated / max) * 100}%` }} title={`Estimado: ${item.estimated}h`} />
-              <div className="chart-bars__bar chart-bars__bar--actual" style={{ width: `${(item.actual / max) * 100}%` }} title={`Realizado: ${item.actual}h`} />
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="chart-legend">
-        <span className="chart-legend__item"><span className="chart-legend__swatch" style={{ background: "#0057b8" }} /> Orçado</span>
-        <span className="chart-legend__item"><span className="chart-legend__swatch" style={{ background: "#e87722" }} /> Realizado</span>
-      </div>
+      <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
+        <BarChart data={chartData} layout="vertical" margin={CHART_MARGIN_LEFT}>
+          <CartesianGrid horizontal={false} stroke="var(--color-border)" strokeDasharray="3 3" />
+          <XAxis type="number" hide />
+          <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 10 }} />
+          <Tooltip
+            cursor={{ fill: "color-mix(in srgb, var(--color-primary) 6%, transparent)" }}
+            content={({ active, payload, label }) => (
+              <RechartsTooltipContent
+                active={active}
+                payload={payload as never}
+                label={label}
+                formatValue={(value) => `${value} h`}
+              />
+            )}
+          />
+          <Legend />
+          <Bar dataKey="estimated" name="Orçado" fill={CHART_COLORS.primary} radius={[0, 4, 4, 0]} barSize={10} />
+          <Bar dataKey="actual" name="Realizado" fill={CHART_COLORS.accent} radius={[0, 4, 4, 0]} barSize={10} />
+        </BarChart>
+      </ResponsiveContainer>
     </ChartCard>
   );
 }

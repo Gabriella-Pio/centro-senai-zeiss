@@ -1,5 +1,18 @@
+"use client";
+
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { ParetoItem } from "@/lib/chart-data";
 import { ChartCard } from "./ChartCard";
+import { RechartsTooltipContent } from "./RechartsTooltip";
+import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN_LEFT } from "./recharts-theme";
 
 export function ParetoChart({ data }: { data: ParetoItem[] }) {
   if (data.length === 0) {
@@ -10,23 +23,36 @@ export function ParetoChart({ data }: { data: ParetoItem[] }) {
     );
   }
 
-  const max = data[0]?.count ?? 1;
+  const chartData = data.map((item) => ({
+    name: item.label,
+    count: item.count,
+    percent: item.percent,
+  }));
 
   return (
     <ChartCard title="Causas de desvio" subtitle="Onde o laboratório mais erra na estimativa">
-      <div className="chart-pareto">
-        {data.map((item) => (
-          <div key={item.label}>
-            <p className="chart-pareto__label">{item.label}</p>
-            <div className="chart-pareto__row">
-              <div className="chart-pareto__track">
-                <div className="chart-pareto__fill" style={{ width: `${(item.count / max) * 100}%` }} />
-              </div>
-              <span className="chart-pareto__count">{item.count}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+      <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
+        <BarChart data={chartData} layout="vertical" margin={CHART_MARGIN_LEFT}>
+          <CartesianGrid horizontal={false} stroke="var(--color-border)" strokeDasharray="3 3" />
+          <XAxis type="number" hide />
+          <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11 }} />
+          <Tooltip
+            cursor={{ fill: "color-mix(in srgb, var(--color-primary) 6%, transparent)" }}
+            content={({ active, payload, label }) => (
+              <RechartsTooltipContent
+                active={active}
+                payload={payload as never}
+                label={label}
+                formatValue={(value) => {
+                  const percent = (payload?.[0]?.payload as { percent?: number })?.percent;
+                  return percent !== undefined ? `${value} casos (${percent}%)` : `${value} casos`;
+                }}
+              />
+            )}
+          />
+          <Bar dataKey="count" fill={CHART_COLORS.primary} radius={[0, 6, 6, 0]} barSize={18} />
+        </BarChart>
+      </ResponsiveContainer>
     </ChartCard>
   );
 }

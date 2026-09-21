@@ -1,6 +1,20 @@
+"use client";
+
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { MachineRateRow } from "@/lib/tariff-chart-data";
 import { formatCurrency } from "@/lib/pricing";
 import { ChartCard } from "./ChartCard";
+import { RechartsTooltipContent } from "./RechartsTooltip";
+import { CHART_COLORS, CHART_HEIGHT_COMPACT, CHART_MARGIN_LEFT, truncateLabel } from "./recharts-theme";
 
 export function MachineRateChart({
   rows,
@@ -19,24 +33,47 @@ export function MachineRateChart({
     );
   }
 
-  const max = rows[0]?.rate ?? 1;
+  const data = rows.map((row) => ({
+    name: row.label,
+    value: row.rate,
+    id: row.id,
+  }));
+  const height = dense ? Math.max(120, data.length * 28) : CHART_HEIGHT_COMPACT;
 
   return (
     <ChartCard title="Tarifa hora do parque" subtitle="Item 32 (com administrativo) — maior para menor">
-      <div className={`chart-machine-rates${dense ? " chart-machine-rates--dense" : ""}`}>
-        {rows.map((row) => (
-          <div key={row.id} className={`chart-machine-rates__row${row.id === highlightId ? " chart-machine-rates__row--active" : ""}`}>
-            <span className="chart-machine-rates__label">{row.label}</span>
-            <div className="chart-machine-rates__track">
-              <div
-                className="chart-machine-rates__fill"
-                style={{ width: `${(row.rate / max) * 100}%` }}
+      <ResponsiveContainer width="100%" height={height}>
+        <BarChart data={data} layout="vertical" margin={CHART_MARGIN_LEFT}>
+          <CartesianGrid horizontal={false} stroke="var(--color-border)" strokeDasharray="3 3" />
+          <XAxis type="number" hide />
+          <YAxis
+            type="category"
+            dataKey="name"
+            width={dense ? 72 : 96}
+            tick={{ fontSize: dense ? 9 : 11 }}
+            tickFormatter={(value) => truncateLabel(String(value), dense ? 10 : 14)}
+          />
+          <Tooltip
+            cursor={{ fill: "color-mix(in srgb, var(--color-primary) 6%, transparent)" }}
+            content={({ active, payload, label }) => (
+              <RechartsTooltipContent
+                active={active}
+                payload={payload as never}
+                label={label}
+                formatValue={(value) => `${formatCurrency(value)}/h`}
               />
-            </div>
-            <strong className="chart-machine-rates__value">{formatCurrency(row.rate)}/h</strong>
-          </div>
-        ))}
-      </div>
+            )}
+          />
+          <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={dense ? 12 : 16}>
+            {data.map((entry) => (
+              <Cell
+                key={entry.id}
+                fill={entry.id === highlightId ? CHART_COLORS.primary : "color-mix(in srgb, var(--color-primary) 55%, #3b82f6)"}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </ChartCard>
   );
 }

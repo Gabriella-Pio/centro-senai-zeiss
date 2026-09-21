@@ -19,8 +19,21 @@ import {
 } from "@/lib/machine-tariff";
 import { formatCurrency } from "@/lib/pricing";
 import { useDemoStore } from "@/lib/use-demo-store";
-import { Calculator } from "lucide-react";
+import { BarChart3, Calculator, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
+import { TariffAssetAnalysis } from "./TariffAssetAnalysis";
 import { TariffFieldHelp } from "./TariffFieldHelp";
+import { TariffSection } from "./TariffSection";
+
+type PanelSection = "basic" | "fixed" | "variable" | "final";
+
+const PANEL_SECTIONS: PanelSection[] = ["basic", "fixed", "variable", "final"];
+
+const DEFAULT_OPEN: Record<PanelSection, boolean> = {
+  basic: true,
+  fixed: false,
+  variable: false,
+  final: false,
+};
 
 type BasicTab = "acquisition" | "installation" | "operation" | "labor";
 
@@ -157,6 +170,7 @@ export function MachineTariffPanel({
   const current = machineTariffs.find((item) => item.id === tariff.id) ?? tariff;
   const [draft, setDraft] = useState<MachineCostInputs | null>(null);
   const [basicTab, setBasicTab] = useState<BasicTab>("acquisition");
+  const [openSections, setOpenSections] = useState<Record<PanelSection, boolean>>(DEFAULT_OPEN);
   const inputs = draft ?? current.inputs;
   const computed = useMemo(() => computeMachineCost(inputs), [inputs]);
   const equipmentImage = MACHINE_EQUIPMENT_IMAGES[current.id];
@@ -165,7 +179,23 @@ export function MachineTariffPanel({
   useEffect(() => {
     setBasicTab("acquisition");
     setDraft(null);
+    setOpenSections(DEFAULT_OPEN);
   }, [current.id]);
+
+  const allExpanded = PANEL_SECTIONS.every((section) => openSections[section]);
+
+  function toggleSection(section: PanelSection) {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  }
+
+  function setAllSections(open: boolean) {
+    setOpenSections(
+      PANEL_SECTIONS.reduce(
+        (acc, section) => ({ ...acc, [section]: open }),
+        {} as Record<PanelSection, boolean>,
+      ),
+    );
+  }
 
   function updateField(key: keyof MachineCostInputs, raw: string) {
     setDraft({
@@ -237,9 +267,52 @@ export function MachineTariffPanel({
     <div className={`machine-tariff-panel${embedded ? " machine-tariff-panel--embedded" : ""}`}>
       {hero}
 
-      <div className="machine-tariff-panel__grid">
-        <section className="machine-tariff-panel__section machine-tariff-panel__section--basic">
-          <h4>1. Dados básicos</h4>
+      <section className="machine-tariff-panel__analysis" aria-label="Análise do ativo">
+        <header className="machine-tariff-panel__analysis-head">
+          <p className="machine-tariff-panel__analysis-eyebrow">
+            <BarChart3 aria-hidden="true" />
+            Análise do ativo
+          </p>
+          <p className="machine-tariff-panel__analysis-intro">
+            Composição da tarifa e dos custos fixos de {current.label}.
+          </p>
+        </header>
+        <TariffAssetAnalysis
+          computed={computed}
+          inputs={inputs}
+          machineId={current.id}
+          machineLabel={current.label}
+          fleet={machineTariffs}
+        />
+      </section>
+
+      <div className="machine-tariff-panel__sections-toolbar">
+        <Button
+          type="button"
+          className="machine-tariff-panel__expand-btn"
+          onClick={() => setAllSections(!allExpanded)}
+        >
+          {allExpanded ? (
+            <>
+              <ChevronsDownUp aria-hidden="true" />
+              Recolher todas
+            </>
+          ) : (
+            <>
+              <ChevronsUpDown aria-hidden="true" />
+              Expandir todas
+            </>
+          )}
+        </Button>
+      </div>
+
+      <div className="machine-tariff-panel__sections">
+        <TariffSection
+          title="1. Dados básicos"
+          badge="Editável"
+          open={openSections.basic}
+          onToggle={() => toggleSection("basic")}
+        >
           <div className="machine-tariff-tabs" role="tablist" aria-label="Categorias dos dados básicos">
             {BASIC_TABS.map((tab) => (
               <button
@@ -289,22 +362,33 @@ export function MachineTariffPanel({
               <Button type="button" variant="outline" onClick={() => setDraft(null)}>Descartar</Button>
             </div>
           ) : null}
-        </section>
+        </TariffSection>
 
-        <div className="machine-tariff-panel__computed">
-          <section className="machine-tariff-panel__section">
-            <h4>2. Custos fixos</h4>
-            <ComputedTable rows={FIXED_COST_ROWS} computed={computed} />
-          </section>
+        <TariffSection
+          title="2. Custos fixos"
+          badge={formatComputedValue(computed.fixedCostHourly, true)}
+          open={openSections.fixed}
+          onToggle={() => toggleSection("fixed")}
+        >
+          <ComputedTable rows={FIXED_COST_ROWS} computed={computed} />
+        </TariffSection>
 
-          <section className="machine-tariff-panel__section">
-            <h4>3. Custos variáveis</h4>
-            <ComputedTable rows={VARIABLE_COST_ROWS} computed={computed} />
-          </section>
-        </div>
+        <TariffSection
+          title="3. Custos variáveis"
+          badge={formatComputedValue(computed.variableWithSalary, true)}
+          open={openSections.variable}
+          onToggle={() => toggleSection("variable")}
+        >
+          <ComputedTable rows={VARIABLE_COST_ROWS} computed={computed} />
+        </TariffSection>
 
-        <section className="machine-tariff-panel__section machine-tariff-panel__section--final">
-          <h4>4. Custo hora máquina</h4>
+        <TariffSection
+          title="4. Custo hora máquina"
+          badge={formatComputedValue(computed.costWithAdministrative, true)}
+          open={openSections.final}
+          onToggle={() => toggleSection("final")}
+          variant="highlight"
+        >
           <div className="machine-tariff-final">
             {FINAL_COST_ROWS.map((row) => {
               const value = COMPUTED_VALUE_MAP[row.id]?.(computed) ?? 0;
@@ -321,7 +405,7 @@ export function MachineTariffPanel({
               );
             })}
           </div>
-        </section>
+        </TariffSection>
       </div>
     </div>
   );

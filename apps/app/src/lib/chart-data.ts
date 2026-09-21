@@ -20,6 +20,8 @@ export type ParetoItem = { label: string; count: number; percent: number };
 
 export type DonutSlice = { label: string; value: number; color: string };
 
+export type WaterfallStep = { label: string; value: number; color: string };
+
 export type CaseBar = {
   id: string;
   label: string;
