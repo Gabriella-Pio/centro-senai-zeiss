@@ -38,7 +38,6 @@ export type ServiceRecord = {
   partTraitIds: string[];
   resourceIds: string[];
   estimatedHours: number | null;
-  estimatedEquipmentHours: number | null;
   estimatedCost: number | null;
   proposedValue: number | null;
   assumptions: string;

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@cem/ui";
-import { restoreMachineTariff, updateDemoState, updateMachineTariffInputs } from "@/lib/demo-store";
+import { restoreMachineTariff, updateDemoState, updateMachineTariffInputs } from "@/lib/demo/demo-store";
 import { MACHINE_EQUIPMENT_IMAGES } from "@/lib/machine-equipment-images";
 import {
   computeMachineCost,

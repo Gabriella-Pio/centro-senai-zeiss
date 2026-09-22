@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { Button } from "@cem/ui";
 import { apiRequest } from "@/lib/api";
-import { DEMO_LOGGED_OUT_KEY, DEMO_MODE, clearDemoUserCookie } from "@/lib/demo";
+import { DEMO_LOGGED_OUT_KEY, DEMO_MODE, clearDemoUserCookie } from "@/lib/demo/demo";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 export function LogoutButton({

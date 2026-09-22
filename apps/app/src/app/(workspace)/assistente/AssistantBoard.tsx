@@ -7,7 +7,7 @@ import { Badge, Button, Input, Label } from "@cem/ui";
 import { CostCompositionPanel } from "@/components/CostCompositionPanel";
 import { LabSettingsPanel } from "@/components/LabSettingsPanel";
 import { buildRecommendation, findSimilarRecords } from "@/lib/assistant";
-import { createEmptyRecord, updateDemoState } from "@/lib/demo-store";
+import { createEmptyRecord, updateDemoState } from "@/lib/demo/demo-store";
 import { CaseComparisonChart } from "@/components/charts/CaseComparisonChart";
 import { DonutChart } from "@/components/charts/DonutChart";
 import { HourRangeChart } from "@/components/charts/HourRangeChart";
@@ -114,8 +114,10 @@ export function AssistantBoard({
       serviceTypeId,
       partTraitIds,
       resourceIds,
-      estimatedHours: parsedTeamHours,
-      estimatedEquipmentHours: parsedEquipmentHours || parsedTeamHours * 0.6,
+      estimatedHours:
+        resourceIds.length > 0
+          ? parsedEquipmentHours || parsedTeamHours * 0.6
+          : parsedTeamHours,
       estimatedCost: snapshot.breakdown.totalCost,
       proposedValue: Number(proposedValue),
       quoteSnapshot: snapshot,

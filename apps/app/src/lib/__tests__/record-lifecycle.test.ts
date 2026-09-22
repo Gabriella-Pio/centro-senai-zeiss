@@ -19,7 +19,6 @@ function createRecord(overrides: Partial<ServiceRecord> = {}): ServiceRecord {
     partTraitIds: [],
     resourceIds: ["resource-1"],
     estimatedHours: 8,
-    estimatedEquipmentHours: 5,
     estimatedCost: 1000,
     proposedValue: 1500,
     actualHours: null,

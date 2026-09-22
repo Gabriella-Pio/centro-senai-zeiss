@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import type { UserRole } from "@/lib/api";
-import { createEmptyRecord, updateDemoState } from "@/lib/demo-store";
-import { getRecordDetailPath } from "@/lib/records-navigation";
-import { useDemoStore } from "@/lib/use-demo-store";
-import type { ServiceRecord, ServiceStatus } from "./types";
-import { countRecordsByStatus, filterRecords } from "./records-utils";
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import type { UserRole } from '@/lib/api';
+import { createEmptyRecord, updateDemoState } from '@/lib/demo/demo-store';
+import { getRecordDetailPath } from '@/lib/records-navigation';
+import { useDemoStore } from '@/lib/use-demo-store';
+import type { ServiceRecord, ServiceStatus } from './types';
+import { countRecordsByStatus, filterRecords } from './records-utils';
 
 function canViewRecord(record: ServiceRecord, role: UserRole) {
-  if (record.visibility === "RESTRICTED" && role === "CONSULTA") {
+  if (record.visibility === 'RESTRICTED' && role === 'CONSULTA') {
     return false;
   }
   return true;
@@ -20,16 +20,21 @@ export function useRecordsBoard(userRole: UserRole, userName: string) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { records, vocabulary } = useDemoStore();
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<"ALL" | ServiceStatus>("ALL");
-  const [company, setCompany] = useState("ALL");
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState<'ALL' | ServiceStatus>('ALL');
+  const [company, setCompany] = useState('ALL');
   const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [draft, setDraft] = useState({ company: "", requester: "", service: "", serviceTypeId: "" });
+  const [draft, setDraft] = useState({
+    company: '',
+    requester: '',
+    service: '',
+    serviceTypeId: '',
+  });
 
-  const registroId = searchParams.get("registro");
-  const serviceTypes = vocabulary.filter((term) => term.class === "SERVICE_TYPE" && term.active);
-  const canCreate = userRole !== "CONSULTA";
+  const registroId = searchParams.get('registro');
+  const serviceTypes = vocabulary.filter((term) => term.class === 'SERVICE_TYPE' && term.active);
+  const canCreate = userRole !== 'CONSULTA';
 
   useEffect(() => {
     if (!registroId) {
@@ -44,7 +49,10 @@ export function useRecordsBoard(userRole: UserRole, userName: string) {
   );
 
   const companies = useMemo(
-    () => [...new Set(visibleRecords.map((record) => record.company))].sort((a, b) => a.localeCompare(b, "pt-BR")),
+    () =>
+      [...new Set(visibleRecords.map((record) => record.company))].sort((a, b) =>
+        a.localeCompare(b, 'pt-BR'),
+      ),
     [visibleRecords],
   );
 
@@ -53,11 +61,11 @@ export function useRecordsBoard(userRole: UserRole, userName: string) {
     () => filterRecords(visibleRecords, query, status, company),
     [company, query, status, visibleRecords],
   );
-  const filtering = Boolean(query.trim()) || status !== "ALL" || company !== "ALL";
+  const filtering = Boolean(query.trim()) || status !== 'ALL' || company !== 'ALL';
 
   function createRecord() {
     if (!draft.company.trim() || !draft.requester.trim() || !draft.serviceTypeId) {
-      setFormError("Preencha empresa, solicitante e tipo de serviço.");
+      setFormError('Preencha empresa, solicitante e tipo de serviço.');
       return;
     }
     const serviceType = serviceTypes.find((term) => term.id === draft.serviceTypeId);
@@ -69,16 +77,16 @@ export function useRecordsBoard(userRole: UserRole, userName: string) {
       estimatedBy: userName,
     });
     updateDemoState((state) => ({ ...state, records: [...state.records, record] }));
-    setDraft({ company: "", requester: "", service: "", serviceTypeId: "" });
+    setDraft({ company: '', requester: '', service: '', serviceTypeId: '' });
     setFormError(null);
     setCreating(false);
     router.push(getRecordDetailPath(record.id));
   }
 
   function clearFilters() {
-    setQuery("");
-    setStatus("ALL");
-    setCompany("ALL");
+    setQuery('');
+    setStatus('ALL');
+    setCompany('ALL');
   }
 
   return {

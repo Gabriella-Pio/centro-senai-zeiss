@@ -1,6 +1,11 @@
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import { getRequestHref, getValidationHref } from "@/lib/records-navigation";
-import { stagesHaveResources, sumStageEstimatedHours } from "@/lib/record-stages";
+import { resolveBilledValue } from "@/lib/record-helpers";
+import {
+  stagesHaveResources,
+  sumStageActualHours,
+  sumStageEstimatedHours,
+} from "@/lib/record-stages";
 
 export type RecordBlock = "A" | "B" | "C";
 
@@ -38,7 +43,8 @@ export function isBlockDone(record: ServiceRecord, block: RecordBlock): boolean 
     );
   }
   if (block === "B") {
-    return Boolean(record.actualHours && record.billedValue);
+    const stageHours = sumStageActualHours(record.stages ?? [], { allowFallback: false });
+    return Boolean((stageHours ?? record.actualHours) && resolveBilledValue(record));
   }
   return Boolean(record.deviationCauseId && record.lesson.trim());
 }

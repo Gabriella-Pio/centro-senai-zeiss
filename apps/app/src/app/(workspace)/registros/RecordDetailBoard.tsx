@@ -99,6 +99,7 @@ export function RecordDetailBoard({
                 partTraits={board.partTraits}
                 resources={board.resources}
                 suggestedPrice={board.suggestedPrice}
+                suggestedUnitPrice={board.suggestedUnitPrice}
                 needsPriceOverride={Boolean(
                   board.needsPriceOverride
                 )}
@@ -111,6 +112,9 @@ export function RecordDetailBoard({
               <RecordBlockB
                 record={record}
                 readOnly={board.readOnly}
+                serviceTypes={board.serviceTypes}
+                resources={board.resources}
+                actualCost={board.actualCost}
                 onUpdate={board.updateRecord}
                 onSave={board.saveBlockB}
               />
@@ -121,8 +125,9 @@ export function RecordDetailBoard({
                 record={record}
                 readOnly={board.readOnly}
                 deviationCauses={board.deviationCauses}
-                relatedTopics={board.relatedTopics}
+                vocabulary={board.vocabulary}
                 onUpdate={board.updateRecord}
+                onCreateDeviationCause={board.createDeviationCause}
                 onComplete={board.completeService}
               />
             ) : null}
@@ -144,9 +149,12 @@ export function RecordDetailBoard({
             record={record}
             activeTab={board.activeTab}
             costBreakdown={board.costBreakdown}
+            actualBreakdown={board.actualBreakdown}
             priceHistory={board.priceHistory}
             frozenTariff={board.frozenTariff}
+            quoteOutdated={board.quoteOutdated}
             costDonut={board.costDonut}
+            financialSummary={board.financialSummary}
           />
         </aside>
       </div>

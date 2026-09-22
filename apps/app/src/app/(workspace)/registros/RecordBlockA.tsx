@@ -1,6 +1,6 @@
 import { Button, Input, Label } from "@cem/ui";
 import { formatCurrency } from "@/lib/pricing";
-import { getRecordQuantity, getRecordScopeMode } from "@/lib/record-helpers";
+import { getRecordQuantity, getRecordScopeMode, isBatchRecord } from "@/lib/record-helpers";
 import { getRecordStages } from "@/lib/record-stages";
 import type { VocabularyTerm } from "../vocabulario/types";
 import { RecordServiceStagesEditor } from "./RecordServiceStagesEditor";
@@ -14,6 +14,7 @@ export function RecordBlockA({
   partTraits,
   resources,
   suggestedPrice,
+  suggestedUnitPrice,
   needsPriceOverride,
   onUpdate,
   onSave,
@@ -24,12 +25,13 @@ export function RecordBlockA({
   partTraits: VocabularyTerm[];
   resources: VocabularyTerm[];
   suggestedPrice: number;
+  suggestedUnitPrice: number;
   needsPriceOverride: boolean;
   onUpdate: (patch: Partial<ServiceRecord>) => void;
   onSave: () => void;
 }) {
   const scopeMode = getRecordScopeMode(record);
-  const isBatch = scopeMode === "batch";
+  const isBatch = isBatchRecord(record);
   const stages = getRecordStages(record, serviceTypes);
 
   function setScopeMode(mode: "single" | "batch") {
@@ -143,7 +145,13 @@ export function RecordBlockA({
         ) : null}
         <div className="records-form__two-columns">
           <div>
-            <Label>Valor proposto (R$)</Label>
+            <Label>{isBatch ? "Valor proposto do lote (R$)" : "Valor proposto (R$)"}</Label>
+            {isBatch && suggestedUnitPrice > 0 ? (
+              <p className="record-detail-page__field-hint">
+                Unitário: {formatCurrency(suggestedUnitPrice)} · Total ({getRecordQuantity(record)} peças):{" "}
+                {formatCurrency(suggestedPrice)}
+              </p>
+            ) : null}
             <Input
               type="number"
               min="0"

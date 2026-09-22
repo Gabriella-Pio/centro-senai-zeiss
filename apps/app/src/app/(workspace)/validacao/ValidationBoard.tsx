@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { Badge, Button } from "@cem/ui";
-import { pushNotification, updateDemoState } from "@/lib/demo-store";
+import { pushNotification, updateDemoState } from "@/lib/demo/demo-store";
 import { getRecordDetailPath } from "@/lib/records-navigation";
 import { useDemoStore } from "@/lib/use-demo-store";
 import { LESSON_STATUS_LABELS, VISIBILITY_LABELS } from "../registros/types";

@@ -65,11 +65,45 @@ export function stagesHaveResources(stages: ServiceStage[]) {
   return stages.length > 0 && stages.every((stage) => Boolean(getStageResourceId(stage)));
 }
 
-export function sumStageEstimatedHours(stages: ServiceStage[]) {
-  if (stages.length === 0 || stages.some((stage) => stage.estimatedHours === null)) {
+export function sumStageHours(
+  stages: ServiceStage[],
+  field: "estimatedHours" | "actualHours",
+  { allowFallback = false }: { allowFallback?: boolean } = {},
+) {
+  if (stages.length === 0) {
     return null;
   }
-  return stages.reduce((total, stage) => total + (stage.estimatedHours ?? 0), 0);
+  let total = 0;
+  for (const stage of stages) {
+    const value =
+      stage[field] ??
+      (allowFallback && field === "actualHours" ? stage.estimatedHours : null);
+    if (value === null) {
+      return null;
+    }
+    total += value;
+  }
+  return total;
+}
+
+export function sumStageEstimatedHours(stages: ServiceStage[]) {
+  return sumStageHours(stages, "estimatedHours");
+}
+
+export function sumStageActualHours(
+  stages: ServiceStage[],
+  { allowFallback = false } = {},
+) {
+  return sumStageHours(stages, "actualHours", { allowFallback });
+}
+
+export function finalizeStagesForExecution(stages: ServiceStage[]) {
+  return stages.map((stage) =>
+    normalizeServiceStage({
+      ...stage,
+      actualHours: stage.actualHours ?? stage.estimatedHours,
+    }),
+  );
 }
 
 export function buildRecordPatchFromStages(
@@ -96,12 +130,33 @@ export function addServiceStage(
   serviceTypes: VocabularyTerm[],
   term: VocabularyTerm,
   resources: VocabularyTerm[] = [],
+  options: { allowDuplicate?: boolean } = {},
 ): Partial<ServiceRecord> {
   const stages = getRecordStages(record, serviceTypes);
-  if (stages.some((stage) => stage.serviceTypeId === term.id)) {
+  if (!options.allowDuplicate && stages.some((stage) => stage.serviceTypeId === term.id)) {
     return {};
   }
-  return buildRecordPatchFromStages(record, [...stages, createServiceStage(term, resources)]);
+  const nextStage = createServiceStage(term, resources);
+  if (options.allowDuplicate) {
+    nextStage.id = `stage-exec-${term.id}-${Date.now()}`;
+  }
+  return buildRecordPatchFromStages(record, [...stages, nextStage]);
+}
+
+export function buildRecordPatchFromExecutionStages(
+  record: ServiceRecord,
+  stages: ServiceStage[],
+  actualCost: number | null,
+): Partial<ServiceRecord> {
+  const normalizedStages = stages.map(normalizeServiceStage);
+  const actualHours = sumStageActualHours(normalizedStages);
+
+  return {
+    stages: normalizedStages,
+    resourceIds: collectStageResourceIds(normalizedStages),
+    actualHours: actualHours ?? record.actualHours,
+    actualCost,
+  };
 }
 
 export function removeServiceStage(

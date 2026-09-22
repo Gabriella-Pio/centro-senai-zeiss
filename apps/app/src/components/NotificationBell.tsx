@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import type { UserRole } from "@/lib/api";
-import { markAllNotificationsRead, markNotificationRead } from "@/lib/demo-store";
+import { markAllNotificationsRead, markNotificationRead } from "@/lib/demo/demo-store";
 import { useDemoStore } from "@/lib/use-demo-store";
 
 export function NotificationBell({ role }: { role: UserRole }) {

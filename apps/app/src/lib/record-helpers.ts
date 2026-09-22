@@ -32,11 +32,15 @@ export function isCompositeRecord(record: ServiceRecord) {
 
 export function getComparableHours(record: ServiceRecord, field: "estimated" | "actual") {
   const hours = field === "estimated" ? record.estimatedHours : record.actualHours;
-  if (hours === null) {
+  return hours ?? null;
+}
+
+export function getTotalEffortHours(record: ServiceRecord, field: "estimated" | "actual") {
+  const perPiece = getComparableHours(record, field);
+  if (perPiece === null) {
     return null;
   }
-  const quantity = getRecordQuantity(record);
-  return quantity > 1 ? hours / quantity : hours;
+  return Math.round(perPiece * getRecordQuantity(record) * 10) / 10;
 }
 
 export function formatEffort(record: ServiceRecord) {
@@ -45,10 +49,22 @@ export function formatEffort(record: ServiceRecord) {
   }
   const quantity = getRecordQuantity(record);
   if (quantity > 1) {
-    const perPiece = Math.round((record.estimatedHours / quantity) * 10) / 10;
-    return `${record.estimatedHours} h total · ${perPiece} h/peça × ${quantity}`;
+    const total = getTotalEffortHours(record, "estimated");
+    return `${record.estimatedHours} h/peça · ${total} h total (${quantity} peças)`;
   }
   return `${record.estimatedHours} h`;
+}
+
+export function formatActualEffort(record: ServiceRecord) {
+  if (!record.actualHours) {
+    return "—";
+  }
+  const quantity = getRecordQuantity(record);
+  if (quantity > 1) {
+    const total = getTotalEffortHours(record, "actual");
+    return `${record.actualHours} h/peça · ${total} h total (${quantity} peças)`;
+  }
+  return `${record.actualHours} h`;
 }
 
 export function getRecordChartLabel(record: ServiceRecord) {
@@ -59,4 +75,23 @@ export function getRecordChartLabel(record: ServiceRecord) {
     return record.recordNumber.replace("RS-2026-", "");
   }
   return record.service;
+}
+
+/** Termos de serviço e características usados no registro — alimentam busca e Assistente. */
+export function deriveRelatedTopicIds(record: ServiceRecord) {
+  const ids = new Set<string>();
+  record.partTraitIds.forEach((id) => ids.add(id));
+  if (record.serviceTypeId) {
+    ids.add(record.serviceTypeId);
+  }
+  record.stages?.forEach((stage) => {
+    if (stage.serviceTypeId) {
+      ids.add(stage.serviceTypeId);
+    }
+  });
+  return [...ids];
+}
+
+export function resolveBilledValue(record: ServiceRecord) {
+  return record.billedValue ?? record.proposedValue ?? null;
 }

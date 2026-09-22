@@ -1,16 +1,13 @@
-import { describe, expect, it } from "vitest";
-import {
-  buildFleetAverageComposition,
-  buildFleetCapacityRows,
-} from "@/lib/fleet-chart-data";
-import { computeBreakevenHours } from "@/lib/chart-data-utils";
-import { computeMachineCost } from "@/lib/machine-tariff";
-import { DEFAULT_MACHINE_INPUTS } from "@/lib/machine-tariff-seed";
-import { createMachineTariff } from "@/lib/machine-tariff";
-import { hasValidationErrors, validateMachineInputs } from "@/lib/machine-tariff-validation";
+import { describe, expect, it } from 'vitest';
+import { buildFleetAverageComposition, buildFleetCapacityRows } from '@/lib/fleet-chart-data';
+import { computeBreakevenHours } from '@/lib/chart-data-utils';
+import { computeMachineCost } from '@/lib/machine-tariff';
+import { DEFAULT_MACHINE_INPUTS } from '@/lib/seed/machine-tariff-seed';
+import { createMachineTariff } from '@/lib/machine-tariff';
+import { hasValidationErrors, validateMachineInputs } from '@/lib/machine-tariff-validation';
 
-describe("computeMachineCost", () => {
-  it("calculates fixed, variable and item 32 rates from default inputs", () => {
+describe('computeMachineCost', () => {
+  it('calculates fixed, variable and item 32 rates from default inputs', () => {
     const result = computeMachineCost(DEFAULT_MACHINE_INPUTS);
 
     expect(result.fixedCostHourly).toBeGreaterThan(0);
@@ -19,7 +16,7 @@ describe("computeMachineCost", () => {
     expect(result.costWithAdministrative).toBeGreaterThan(result.costWithLabor);
   });
 
-  it("increases item 32 when administrative overhead rises", () => {
+  it('increases item 32 when administrative overhead rises', () => {
     const baseline = computeMachineCost(DEFAULT_MACHINE_INPUTS);
     const stressed = computeMachineCost({
       ...DEFAULT_MACHINE_INPUTS,
@@ -31,8 +28,8 @@ describe("computeMachineCost", () => {
   });
 });
 
-describe("computeBreakevenHours", () => {
-  it("returns needed and available monthly hours", () => {
+describe('computeBreakevenHours', () => {
+  it('returns needed and available monthly hours', () => {
     const computed = computeMachineCost(DEFAULT_MACHINE_INPUTS);
     const breakeven = computeBreakevenHours(computed, DEFAULT_MACHINE_INPUTS);
 
@@ -41,19 +38,19 @@ describe("computeBreakevenHours", () => {
   });
 });
 
-describe("buildFleetCapacityRows", () => {
-  it("sorts assets by required breakeven hours descending", () => {
+describe('buildFleetCapacityRows', () => {
+  it('sorts assets by required breakeven hours descending', () => {
     const tariffs = [
       createMachineTariff({
-        id: "machine-a",
-        resourceId: "vocab-a",
-        label: "Ativo A",
+        id: 'machine-a',
+        resourceId: 'vocab-a',
+        label: 'Ativo A',
         inputs: { ...DEFAULT_MACHINE_INPUTS, adoptedReplacementCost: 300000 },
       }),
       createMachineTariff({
-        id: "machine-b",
-        resourceId: "vocab-b",
-        label: "Ativo B",
+        id: 'machine-b',
+        resourceId: 'vocab-b',
+        label: 'Ativo B',
         inputs: { ...DEFAULT_MACHINE_INPUTS, adoptedReplacementCost: 900000 },
       }),
     ];
@@ -66,8 +63,8 @@ describe("buildFleetCapacityRows", () => {
   });
 });
 
-describe("validateMachineInputs", () => {
-  it("flags invalid useful hours and machine count", () => {
+describe('validateMachineInputs', () => {
+  it('flags invalid useful hours and machine count', () => {
     const errors = validateMachineInputs({
       ...DEFAULT_MACHINE_INPUTS,
       usefulHoursPerYear: 0,
@@ -79,19 +76,19 @@ describe("validateMachineInputs", () => {
   });
 });
 
-describe("buildFleetAverageComposition", () => {
-  it("returns average composition segments for the fleet", () => {
+describe('buildFleetAverageComposition', () => {
+  it('returns average composition segments for the fleet', () => {
     const tariffs = [
       createMachineTariff({
-        id: "machine-a",
-        resourceId: "vocab-a",
-        label: "Ativo A",
+        id: 'machine-a',
+        resourceId: 'vocab-a',
+        label: 'Ativo A',
         inputs: DEFAULT_MACHINE_INPUTS,
       }),
       createMachineTariff({
-        id: "machine-b",
-        resourceId: "vocab-b",
-        label: "Ativo B",
+        id: 'machine-b',
+        resourceId: 'vocab-b',
+        label: 'Ativo B',
         inputs: {
           ...DEFAULT_MACHINE_INPUTS,
           administrativeOverheadPercent: DEFAULT_MACHINE_INPUTS.administrativeOverheadPercent + 5,

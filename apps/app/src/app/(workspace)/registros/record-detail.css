@@ -559,6 +559,52 @@
   padding: 1.25rem;
 }
 
+/* Donut no aside: layout empilhado + largura mínima para o Recharts renderizar */
+.record-aside-panel--chart .chart-card {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.record-aside-panel--chart .chart-card__head {
+  margin-bottom: 0.75rem;
+}
+
+.record-aside-panel--chart .chart-donut {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.85rem;
+}
+
+.record-aside-panel--chart .chart-donut__visual {
+  width: 100%;
+  max-width: 13.5rem;
+  margin: 0 auto;
+}
+
+.record-aside-panel--chart .chart-donut__chart-area {
+  width: 100%;
+  min-width: 9.5rem;
+  min-height: 9.5rem;
+  height: 9.5rem;
+}
+
+.record-aside-panel--chart .recharts-responsive-container {
+  width: 100% !important;
+  min-width: 9.5rem;
+}
+
+.record-aside-panel--chart .chart-donut__legend {
+  width: 100%;
+}
+
+.record-aside-panel--chart .chart-donut__legend-item {
+  width: 100%;
+  justify-content: flex-start;
+}
+
 /* Form sections */
 .record-section {
   padding: 1.25rem;
@@ -654,6 +700,14 @@
   color: var(--color-muted-foreground);
   font-size: 0.8125rem;
   line-height: 1.45;
+}
+
+.record-detail-page__tariff-note--warning {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-warning, #d97706) 35%, var(--color-border));
+  border-radius: calc(var(--radius) * 0.9);
+  background: color-mix(in srgb, var(--color-warning, #d97706) 8%, var(--color-card));
+  color: color-mix(in srgb, var(--color-warning, #d97706) 75%, var(--color-foreground));
 }
 
 /* Summary aside */
@@ -951,6 +1005,24 @@
   max-width: 7rem;
 }
 
+.record-stages-table__budgeted-hours {
+  color: var(--color-muted-foreground);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.record-stages-table__foot-note {
+  color: var(--color-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.record-block-b__readonly {
+  background: color-mix(in srgb, var(--color-muted) 28%, var(--color-card));
+  color: var(--color-foreground);
+  font-weight: 600;
+}
+
 .record-stages-editor__resource-select {
   width: 100%;
   min-width: 12rem;
@@ -1182,4 +1254,136 @@
   .record-detail-page__workspace-footer button {
     width: 100%;
   }
+}
+
+.record-block-b__apply-billed {
+  margin-top: 0.5rem;
+}
+
+.record-deviation-cause {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.record-deviation-cause__create {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.record-deviation-cause__create-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.record-deviation-cause__error {
+  margin: 0;
+  color: var(--color-destructive);
+  font-size: 0.8125rem;
+}
+
+.record-chip--readonly {
+  cursor: default;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--color-muted) 40%, var(--color-card));
+}
+
+.record-context-groups {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.record-context-group__label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--color-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.record-context-empty {
+  margin: 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.875rem;
+}
+
+.record-financial-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.record-financial-panel__header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.record-financial-panel__header p {
+  margin: 0.25rem 0 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.record-financial-panel__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.record-financial-panel__metrics > div {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-card);
+}
+
+.record-financial-panel__metrics dt {
+  margin: 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.record-financial-panel__metrics dd {
+  margin: 0.2rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.record-financial-panel__metric--highlight {
+  grid-column: 1 / -1;
+  border-color: color-mix(in srgb, var(--record-block-c-accent) 28%, var(--color-border));
+  background: color-mix(in srgb, var(--record-block-c-accent) 6%, var(--color-card));
+}
+
+.record-financial-panel__value--positive {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #167341;
+}
+
+.record-financial-panel__value--negative {
+  color: #b42318;
+}
+
+.record-financial-panel__value--positive svg,
+.record-financial-panel__value--negative svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.record-financial-panel__empty {
+  margin: 0;
+  padding: 1rem;
+  border: 1px dashed color-mix(in srgb, var(--record-block-c-accent) 35%, var(--color-border));
+  border-radius: var(--radius);
+  color: var(--color-muted-foreground);
+  font-size: 0.875rem;
+  text-align: center;
 }

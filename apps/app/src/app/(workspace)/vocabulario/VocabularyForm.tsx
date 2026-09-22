@@ -1,16 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { Button, Input, Label } from "@cem/ui";
+import { formatCurrency } from "@/lib/pricing";
 import type { VocabularyClass, VocabularyTerm } from "./types";
 import { VOCABULARY_CLASS_LABELS, VOCABULARY_CLASSES } from "./types";
 
 export function VocabularyForm({
   term,
+  tariffLinked = false,
+  tariffHref,
   onCancel,
   onSave,
 }: {
   term?: VocabularyTerm;
+  tariffLinked?: boolean;
+  tariffHref?: string;
   onCancel: () => void;
   onSave: (term: VocabularyTerm) => void;
 }) {
@@ -56,8 +63,39 @@ export function VocabularyForm({
       {termClass === "RESOURCE" ? (
         <div className="vocabulary-form__field">
           <Label htmlFor="vocabulary-rate" className="text-base">Tarifa horária (R$/h)</Label>
-          <Input id="vocabulary-rate" type="number" min="0" step="1" value={hourlyRate} onChange={(event) => setHourlyRate(event.target.value)} className="h-12 text-base" placeholder="Ex.: 380" />
-          <p className="vocabulary-form__hint">Valor da planilha hora-máquina do laboratório.</p>
+          {tariffLinked ? (
+            <div className="vocabulary-form__tariff-readonly">
+              <strong>{term?.hourlyRate ? `${formatCurrency(term.hourlyRate)}/h` : "—"}</strong>
+              <p>
+                Sincronizada pela planilha em Tarifas (item 32). Para alterar, edite o ativo na{" "}
+                {tariffHref ? (
+                  <Link href={tariffHref} className="vocabulary-form__tariff-link">
+                    folha de custos
+                    <ArrowUpRight aria-hidden="true" />
+                  </Link>
+                ) : (
+                  "folha de custos"
+                )}
+                .
+              </p>
+            </div>
+          ) : (
+            <>
+              <Input
+                id="vocabulary-rate"
+                type="number"
+                min="0"
+                step="1"
+                value={hourlyRate}
+                onChange={(event) => setHourlyRate(event.target.value)}
+                className="h-12 text-base"
+                placeholder="Ex.: 380"
+              />
+              <p className="vocabulary-form__hint">
+                Para equipamentos com planilha, cadastre em Tarifas — o recurso entra aqui automaticamente.
+              </p>
+            </>
+          )}
         </div>
       ) : null}
       <div className="vocabulary-form__field">

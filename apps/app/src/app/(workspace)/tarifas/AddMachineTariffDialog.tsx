@@ -13,9 +13,9 @@ import {
   Input,
   Label,
 } from "@cem/ui";
-import { addMachineTariff, updateDemoState } from "@/lib/demo-store";
+import { addMachineTariff, updateDemoState } from "@/lib/demo/demo-store";
 import { computeMachineCost } from "@/lib/machine-tariff";
-import { DEFAULT_MACHINE_INPUTS } from "@/lib/machine-tariff-seed";
+import { DEFAULT_MACHINE_INPUTS } from "@/lib/demo/seed/machine-tariff-seed";
 import { formatCurrency } from "@/lib/pricing";
 
 export function AddMachineTariffDialog({

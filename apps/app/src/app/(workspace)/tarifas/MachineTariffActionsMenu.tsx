@@ -23,7 +23,7 @@ import {
   renameMachineTariff,
   restoreMachineTariff,
   updateDemoState,
-} from "@/lib/demo-store";
+} from "@/lib/demo/demo-store";
 import { getMachineHourlyRate, type MachineTariff } from "@/lib/machine-tariff";
 import {
   getResourceUsageCount,

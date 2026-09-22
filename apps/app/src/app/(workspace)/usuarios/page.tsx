@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionUser, serverApi } from "@/lib/session";
-import { DEMO_MODE, getDemoUsers } from "@/lib/demo";
+import { DEMO_MODE } from "@/lib/demo/demo";
+import { getDemoUsers } from "@/lib/demo/seed/users";
 import { UsersBoard } from "./UsersBoard";
 import type { ListedUser } from "./types";
 

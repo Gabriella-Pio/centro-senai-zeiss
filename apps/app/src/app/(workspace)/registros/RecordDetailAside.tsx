@@ -2,9 +2,10 @@ import { CostCompositionPanel } from "@/components/CostCompositionPanel";
 import { DonutChart } from "@/components/charts/DonutChart";
 
 import type { RecordBlock } from "@/lib/record-lifecycle";
-import { formatEffort } from "@/lib/record-helpers";
+import { formatActualEffort, formatEffort } from "@/lib/record-helpers";
 
-import type { DonutSlice } from "@/lib/chart-data";
+import type { DonutSlice, RecordFinancialSummary } from "@/lib/chart-data";
+import { RecordFinancialSummaryPanel } from "./RecordFinancialSummaryPanel";
 import type {
   PriceHistoryStats,
   QuoteCostBreakdown,
@@ -18,22 +19,55 @@ export function RecordDetailAside({
   record,
   activeTab,
   costBreakdown,
+  actualBreakdown,
   priceHistory,
   frozenTariff,
+  quoteOutdated,
   costDonut,
+  financialSummary,
 }: {
   record: ServiceRecord;
   activeTab: RecordBlock;
   costBreakdown: QuoteCostBreakdown | null;
+  actualBreakdown: QuoteCostBreakdown | null;
   priceHistory: PriceHistoryStats | null;
   frozenTariff: boolean;
+  quoteOutdated: boolean;
   costDonut: DonutSlice[];
+  financialSummary: RecordFinancialSummary | null;
 }) {
+  if (activeTab === "C" && financialSummary) {
+    return (
+      <div className="record-aside-stack">
+        <div className="record-aside-panel">
+          <RecordFinancialSummaryPanel summary={financialSummary} />
+        </div>
+      </div>
+    );
+  }
+
+  if (activeTab === "B" && actualBreakdown && actualBreakdown.lines.length > 0) {
+    return (
+      <div className="record-aside-stack">
+        <div className="record-aside-panel">
+          <CostCompositionPanel
+            embedded
+            title="Custo real"
+            variant="actual"
+            breakdown={actualBreakdown}
+            proposedValue={record.billedValue}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (activeTab === "A" && costBreakdown) {
     return (
       <div className="record-aside-stack">
         <div className="record-aside-panel">
           <CostCompositionPanel
+            embedded
             breakdown={costBreakdown}
             priceHistory={priceHistory ?? undefined}
             proposedValue={record.proposedValue}
@@ -49,19 +83,27 @@ export function RecordDetailAside({
             }
           />
 
-          {!frozenTariff && record.quoteSnapshot ? (
+          {frozenTariff && quoteOutdated ? (
+            <p className="record-detail-page__tariff-note record-detail-page__tariff-note--warning">
+              Etapas ou tarifas mudaram desde o último salvamento. Salve o bloco A para atualizar o orçamento congelado.
+            </p>
+          ) : !frozenTariff ? (
             <p className="record-detail-page__tariff-note">
-              Prévia com tarifas atuais. Salve o bloco A para congelar
-              o orçamento.
+              Prévia com tarifas atuais. Salve o bloco A para congelar o orçamento.
             </p>
           ) : null}
         </div>
 
-        {costDonut.length > 0 ? (
+        {costBreakdown.lines.length > 0 ? (
           <div className="record-aside-panel record-aside-panel--chart">
             <DonutChart
-              title="Distribuição do custo"
+              title="Distribuição do preço"
+              subtitle={`Total ${formatCurrency(costBreakdown.suggestedPrice)}`}
               slices={costDonut}
+              centerLabel={formatCurrency(costBreakdown.suggestedPrice)}
+              compactLegend
+              interactive
+              formatValue={formatCurrency}
             />
           </div>
         ) : null}
@@ -117,7 +159,7 @@ export function RecordDetailAside({
         {record.actualHours ? (
           <div>
             <dt>Horas realizadas</dt>
-            <dd>{record.actualHours} h</dd>
+            <dd>{formatActualEffort(record)}</dd>
           </div>
         ) : null}
 
@@ -144,9 +186,9 @@ export function RecordDetailAside({
 
         {record.relatedTopicIds.length > 0 ? (
           <div>
-            <dt>Assuntos</dt>
+            <dt>Contexto</dt>
             <dd>
-              {record.relatedTopicIds.length} vinculados
+              {record.relatedTopicIds.length} termos
             </dd>
           </div>
         ) : null}

@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
-import { getRecordScopeMode, resolveQuoteHours } from "@/lib/record-helpers";
+import {
+  deriveRelatedTopicIds,
+  formatEffort,
+  getRecordScopeMode,
+  resolveBilledValue,
+  resolveQuoteHours,
+} from "@/lib/record-helpers";
 
 function createRecord(overrides: Partial<ServiceRecord> = {}): ServiceRecord {
   return {
@@ -14,7 +20,6 @@ function createRecord(overrides: Partial<ServiceRecord> = {}): ServiceRecord {
     partTraitIds: [],
     resourceIds: [],
     estimatedHours: 8,
-    estimatedEquipmentHours: null,
     estimatedCost: null,
     proposedValue: null,
     actualHours: null,
@@ -51,5 +56,43 @@ describe("record helpers", () => {
       teamHours: 10,
       equipmentHours: 0,
     });
+  });
+
+  it("formats batch effort as per-piece and total", () => {
+    expect(
+      formatEffort(
+        createRecord({
+          recordKind: "batch",
+          quantity: 16,
+          estimatedHours: 5,
+        }),
+      ),
+    ).toBe("5 h/peça · 80 h total (16 peças)");
+  });
+
+  it("derives related topics from stages and traits", () => {
+    expect(
+      deriveRelatedTopicIds(
+        createRecord({
+          serviceTypeId: "vocab-1",
+          partTraitIds: ["vocab-3"],
+          stages: [
+            {
+              id: "stage-1",
+              serviceTypeId: "vocab-2",
+              label: "Inspeção",
+              resourceIds: [],
+              estimatedHours: 4,
+              actualHours: null,
+            },
+          ],
+        }),
+      ),
+    ).toEqual(["vocab-3", "vocab-1", "vocab-2"]);
+  });
+
+  it("falls back billed value to proposed value", () => {
+    expect(resolveBilledValue(createRecord({ proposedValue: 1200 }))).toBe(1200);
+    expect(resolveBilledValue(createRecord({ proposedValue: 1200, billedValue: 900 }))).toBe(900);
   });
 });

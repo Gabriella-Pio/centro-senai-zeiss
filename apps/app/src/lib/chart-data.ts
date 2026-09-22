@@ -161,15 +161,74 @@ export function buildCaseComparison(cases: ServiceRecord[]): CaseBar[] {
   }));
 }
 
-export function buildCostDonut(lines: { label: string; subtotal: number }[]): DonutSlice[] {
+export function buildCostDonut(
+  lines: { id: string; label: string; resourceLabel?: string; subtotal: number }[],
+): DonutSlice[] {
   const palette = ["#0057b8", "#e87722", "#16a34a", "#7c3aed", "#0891b2", "#d97706"];
   return lines
     .filter((line) => line.subtotal > 0)
     .map((line, index) => ({
-      label: line.label,
+      id: line.id,
+      label: line.resourceLabel ?? line.label,
       value: line.subtotal,
       color: palette[index % palette.length],
     }));
+}
+
+export type RecordFinancialSummary = {
+  quotedPrice: number | null;
+  actualCost: number | null;
+  billedValue: number | null;
+  profit: number | null;
+  marginPercent: number | null;
+  costVariance: number | null;
+  hoursQuoted: number | null;
+  hoursActual: number | null;
+};
+
+export function buildRecordFinancialSummary(record: ServiceRecord): RecordFinancialSummary {
+  const quotedPrice = record.proposedValue ?? record.estimatedCost ?? null;
+  const actualCost = record.actualCost ?? null;
+  const billedValue = record.billedValue ?? record.proposedValue ?? null;
+  const profit =
+    billedValue !== null && actualCost !== null ? billedValue - actualCost : null;
+  const marginPercent = computeRealizedMargin(record);
+  const costVariance =
+    quotedPrice !== null && actualCost !== null ? actualCost - quotedPrice : null;
+  const hoursQuoted = record.estimatedHours ?? null;
+  const hoursActual = record.actualHours ?? null;
+
+  return {
+    quotedPrice,
+    actualCost,
+    billedValue,
+    profit,
+    marginPercent,
+    costVariance,
+    hoursQuoted,
+    hoursActual,
+  };
+}
+
+export function buildRecordFinancialBars(summary: RecordFinancialSummary): DonutSlice[] {
+  const palette = ["#397bc8", "#e08a16", "#16a34a"];
+  const items: Array<{ label: string; value: number }> = [];
+
+  if (summary.quotedPrice && summary.quotedPrice > 0) {
+    items.push({ label: "Orçado", value: summary.quotedPrice });
+  }
+  if (summary.actualCost && summary.actualCost > 0) {
+    items.push({ label: "Custo real", value: summary.actualCost });
+  }
+  if (summary.billedValue && summary.billedValue > 0) {
+    items.push({ label: "Faturado", value: summary.billedValue });
+  }
+
+  return items.map((item, index) => ({
+    label: item.label,
+    value: item.value,
+    color: palette[index % palette.length],
+  }));
 }
 
 export function computeAssertivenessRate(records: ServiceRecord[]) {

@@ -69,7 +69,7 @@ export function DonutChart({
                 >
                   {data.map((entry, index) => (
                     <Cell
-                      key={entry.name}
+                      key={slices[index]?.id ?? entry.name}
                       fill={entry.fill}
                       opacity={
                         !interactive || activeIndex === undefined || activeIndex === index ? 1 : 0.32

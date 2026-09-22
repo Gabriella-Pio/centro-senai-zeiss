@@ -1,31 +1,27 @@
-import type { UserRole } from "./api";
-import type { ServiceRecord } from "@/app/(workspace)/registros/types";
-import type { QuoteRequest } from "@/app/(workspace)/solicitacoes/types";
-import { upgradeQuoteRequest } from "./request-lifecycle";
-import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
-import { DEMO_SEED_VERSION } from "./cargill-demo-records";
-import { createSeedState } from "./demo-store-seed";
+import type { UserRole } from '../api';
+import type { ServiceRecord } from '@/app/(workspace)/registros/types';
+import type { QuoteRequest } from '@/app/(workspace)/solicitacoes/types';
+import { upgradeQuoteRequest } from '../request-lifecycle';
+import type { VocabularyTerm } from '@/app/(workspace)/vocabulario/types';
+// import { DEMO_SEED_VERSION } from '../cargill-demo-records';
+import { createSeedState, DEMO_SEED_VERSION } from './seed';
 import {
   applyMachineTariffsToVocabulary,
   createMachineTariff,
   type MachineCostInputs,
   type MachineTariff,
-} from "./machine-tariff";
-import { getResourceUsageCount } from "./machine-tariff-utils";
-import { DEFAULT_MACHINE_INPUTS } from "./machine-tariff-seed";
-import { DEFAULT_LAB_SETTINGS, type DemoNotification, type DemoState } from "./demo-store-types";
+} from '../machine-tariff';
+import { getResourceUsageCount } from '../machine-tariff-utils';
+import { DEFAULT_MACHINE_INPUTS } from './seed/machine-tariff-seed';
+import { DEFAULT_LAB_SETTINGS, type DemoNotification, type DemoState } from './demo-store-types';
 
-export const DEMO_STATE_KEY = "cem_demo_state";
-export const DEMO_CHANGED_EVENT = "cem-demo-changed";
+export const DEMO_STATE_KEY = 'cem_demo_state';
+export const DEMO_CHANGED_EVENT = 'cem-demo-changed';
 
-const LEGACY_KEYS = [
-  "cem_demo_quote_requests",
-  "cem_demo_service_records",
-  "cem_demo_vocabulary",
-];
+const LEGACY_KEYS = ['cem_demo_quote_requests', 'cem_demo_service_records', 'cem_demo_vocabulary'];
 
 function isBrowser() {
-  return typeof window !== "undefined";
+  return typeof window !== 'undefined';
 }
 
 function migrateLegacyState(): DemoState | null {
@@ -38,15 +34,15 @@ function migrateLegacyState(): DemoState | null {
   }
   const seed = createSeedState();
   try {
-    const requestsRaw = window.localStorage.getItem("cem_demo_quote_requests");
+    const requestsRaw = window.localStorage.getItem('cem_demo_quote_requests');
     if (requestsRaw) {
       seed.requests = (JSON.parse(requestsRaw) as QuoteRequest[]).map(upgradeQuoteRequest);
     }
-    const recordsRaw = window.localStorage.getItem("cem_demo_service_records");
+    const recordsRaw = window.localStorage.getItem('cem_demo_service_records');
     if (recordsRaw) {
       seed.records = (JSON.parse(recordsRaw) as ServiceRecord[]).map(upgradeRecord);
     }
-    const vocabularyRaw = window.localStorage.getItem("cem_demo_vocabulary");
+    const vocabularyRaw = window.localStorage.getItem('cem_demo_vocabulary');
     if (vocabularyRaw) {
       seed.vocabulary = JSON.parse(vocabularyRaw) as VocabularyTerm[];
     }
@@ -59,16 +55,16 @@ function migrateLegacyState(): DemoState | null {
 
 function upgradeRecord(record: ServiceRecord & { status?: string }): ServiceRecord {
   const legacyStatus = record.status as string | undefined;
-  let serviceStatus = record.serviceStatus ?? "DRAFT";
-  let lessonStatus = record.lessonStatus ?? "DRAFT";
-  if (legacyStatus === "IN_REVIEW") {
-    lessonStatus = "PENDING";
-    serviceStatus = "COMPLETED";
-  } else if (legacyStatus === "FORMALIZED") {
-    lessonStatus = "FORMALIZED";
-    serviceStatus = "COMPLETED";
-  } else if (legacyStatus === "DRAFT") {
-    serviceStatus = record.estimatedHours ? "QUOTED" : "DRAFT";
+  let serviceStatus = record.serviceStatus ?? 'DRAFT';
+  let lessonStatus = record.lessonStatus ?? 'DRAFT';
+  if (legacyStatus === 'IN_REVIEW') {
+    lessonStatus = 'PENDING';
+    serviceStatus = 'COMPLETED';
+  } else if (legacyStatus === 'FORMALIZED') {
+    lessonStatus = 'FORMALIZED';
+    serviceStatus = 'COMPLETED';
+  } else if (legacyStatus === 'DRAFT') {
+    serviceStatus = record.estimatedHours ? 'QUOTED' : 'DRAFT';
   }
   return {
     ...record,
@@ -84,9 +80,9 @@ function upgradeRecord(record: ServiceRecord & { status?: string }): ServiceReco
     rework: record.rework ?? false,
     scopeChange: record.scopeChange ?? false,
     deviationCauseId: record.deviationCauseId ?? null,
-    lesson: record.lesson ?? "",
+    lesson: record.lesson ?? '',
     relatedTopicIds: record.relatedTopicIds ?? [],
-    visibility: record.visibility ?? "PUBLIC",
+    visibility: record.visibility ?? 'PUBLIC',
     quantity: record.quantity ?? 1,
     stages: record.stages ?? [],
     quoteSnapshot: record.quoteSnapshot,
@@ -133,7 +129,7 @@ export function addMachineTariff(
   },
 ): DemoState {
   const trimmed = label.trim();
-  const stamp = options?.tariffId ? options.tariffId.replace(/^machine-/, "") : String(Date.now());
+  const stamp = options?.tariffId ? options.tariffId.replace(/^machine-/, '') : String(Date.now());
   const id = options?.tariffId ?? `machine-${stamp}`;
   const resourceId = `vocab-${stamp}`;
   const tariff = createMachineTariff({
@@ -145,8 +141,8 @@ export function addMachineTariff(
   const resource: VocabularyTerm = {
     id: resourceId,
     label: trimmed,
-    class: "RESOURCE",
-    guidance: "Recurso cadastrado na folha de custos por máquina.",
+    class: 'RESOURCE',
+    guidance: 'Recurso cadastrado na folha de custos por máquina.',
     active: true,
     updatedAt: new Date().toISOString(),
   };
@@ -246,7 +242,7 @@ function mergeVocabularyWithSeed(stored: VocabularyTerm[], seed: VocabularyTerm[
   const seedById = new Map(seed.map((term) => [term.id, term]));
   const merged = stored.map((term) => {
     const seedTerm = seedById.get(term.id);
-    if (term.class === "RESOURCE" && seedTerm?.hourlyRate && !term.hourlyRate) {
+    if (term.class === 'RESOURCE' && seedTerm?.hourlyRate && !term.hourlyRate) {
       return { ...term, hourlyRate: seedTerm.hourlyRate };
     }
     return term;
@@ -331,19 +327,15 @@ export function subscribeDemoStore(onChange: () => void) {
     return () => undefined;
   }
   const handler = () => onChange();
-  window.addEventListener("storage", handler);
+  window.addEventListener('storage', handler);
   window.addEventListener(DEMO_CHANGED_EVENT, handler);
   return () => {
-    window.removeEventListener("storage", handler);
+    window.removeEventListener('storage', handler);
     window.removeEventListener(DEMO_CHANGED_EVENT, handler);
   };
 }
 
-export function pushNotification(input: {
-  roles: UserRole[];
-  message: string;
-  href: string;
-}) {
+export function pushNotification(input: { roles: UserRole[]; message: string; href: string }) {
   updateDemoState((state) => ({
     ...state,
     notifications: [
@@ -379,7 +371,8 @@ export function markAllNotificationsRead(role: UserRole) {
 }
 
 export function unreadNotificationCount(role: UserRole) {
-  return readDemoState().notifications.filter((item) => item.roles.includes(role) && !item.read).length;
+  return readDemoState().notifications.filter((item) => item.roles.includes(role) && !item.read)
+    .length;
 }
 
 export function nextRecordNumber(records: ServiceRecord[]) {
@@ -388,7 +381,7 @@ export function nextRecordNumber(records: ServiceRecord[]) {
       const sequence = Number(record.recordNumber?.match(/-(\d{4})$/)?.[1] ?? 0);
       return Math.max(highest, sequence);
     }, 0) + 1;
-  return `RS-2026-${String(nextSequence).padStart(4, "0")}`;
+  return `RS-2026-${String(nextSequence).padStart(4, '0')}`;
 }
 
 export function nextRequestNumber(requests: QuoteRequest[]) {
@@ -397,10 +390,12 @@ export function nextRequestNumber(requests: QuoteRequest[]) {
       const sequence = Number(request.requestNumber?.match(/-(\d{4})$/)?.[1] ?? 0);
       return Math.max(highest, sequence);
     }, 0) + 1;
-  return `SO-2026-${String(nextSequence).padStart(4, "0")}`;
+  return `SO-2026-${String(nextSequence).padStart(4, '0')}`;
 }
 
-export function createEmptyRecord(partial: Partial<ServiceRecord> & Pick<ServiceRecord, "company" | "requester" | "service">): ServiceRecord {
+export function createEmptyRecord(
+  partial: Partial<ServiceRecord> & Pick<ServiceRecord, 'company' | 'requester' | 'service'>,
+): ServiceRecord {
   const state = readDemoState();
   return {
     id: `record-${Date.now()}`,
@@ -410,11 +405,10 @@ export function createEmptyRecord(partial: Partial<ServiceRecord> & Pick<Service
     partTraitIds: [],
     resourceIds: [],
     estimatedHours: null,
-    estimatedEquipmentHours: null,
     estimatedCost: null,
     proposedValue: null,
-    assumptions: "",
-    serviceStatus: "DRAFT",
+    assumptions: '',
+    serviceStatus: 'DRAFT',
     actualHours: null,
     actualCost: null,
     billedValue: null,
@@ -422,12 +416,12 @@ export function createEmptyRecord(partial: Partial<ServiceRecord> & Pick<Service
     rework: false,
     scopeChange: false,
     deviationCauseId: null,
-    lesson: "",
+    lesson: '',
     relatedTopicIds: [],
-    visibility: "PUBLIC",
-    lessonStatus: "DRAFT",
+    visibility: 'PUBLIC',
+    lessonStatus: 'DRAFT',
     quantity: 1,
-    recordKind: "single",
+    recordKind: 'single',
     stages: [],
     ...partial,
   };

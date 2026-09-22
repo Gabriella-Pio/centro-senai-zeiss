@@ -6,10 +6,14 @@ import type { LabSettings } from "./demo-store-types";
 export type CostLine = {
   id: string;
   label: string;
+  serviceLabel?: string;
+  resourceLabel?: string;
   hours: number;
   rate: number;
   subtotal: number;
 };
+
+export type StageHoursField = "estimatedHours" | "actualHours";
 
 export type QuoteCostBreakdown = {
   lines: CostLine[];
@@ -18,6 +22,9 @@ export type QuoteCostBreakdown = {
   marginPercent: number;
   /** Tarifa hora-máquina (item 32) já é preço — sem margem adicional. */
   tariffAsPrice?: boolean;
+  /** Preço de uma peça (antes de multiplicar pelo lote). */
+  unitPrice?: number;
+  quantity?: number;
   explanations: string[];
 };
 
@@ -141,14 +148,24 @@ export function computeStageQuoteCost(input: {
   stages: ServiceStage[];
   labSettings: LabSettings;
   resourceRates?: Record<string, number>;
+  hoursField?: StageHoursField;
+  quantity?: number;
 }): QuoteCostBreakdown {
-  const { vocabulary, stages, labSettings, resourceRates } = input;
+  const {
+    vocabulary,
+    stages,
+    labSettings,
+    resourceRates,
+    hoursField = "estimatedHours",
+    quantity = 1,
+  } = input;
   const lines: CostLine[] = [];
   const explanations: string[] = [];
+  const effectiveQuantity = Math.max(1, quantity);
 
   stages.forEach((stage) => {
     const resourceId = getStageResourceId(stage);
-    const hours = stage.estimatedHours;
+    const hours = stage[hoursField];
     if (!resourceId || !hours || hours <= 0) {
       return;
     }
@@ -160,6 +177,8 @@ export function computeStageQuoteCost(input: {
     lines.push({
       id: stage.id,
       label: `${stage.label} · ${resource.label}`,
+      serviceLabel: stage.label,
+      resourceLabel: resource.label,
       hours,
       rate,
       subtotal: hours * rate,
@@ -169,10 +188,22 @@ export function computeStageQuoteCost(input: {
     );
   });
 
-  const suggestedPrice = Math.round(lines.reduce((sum, line) => sum + line.subtotal, 0));
+  const unitPrice = Math.round(lines.reduce((sum, line) => sum + line.subtotal, 0));
+  const suggestedPrice = Math.round(unitPrice * effectiveQuantity);
+  const isBatch = effectiveQuantity > 1;
+  const isActual = hoursField === "actualHours";
 
-  if (suggestedPrice > 0) {
-    explanations.push("Preço por etapa com tarifa item 32 (já inclui overhead administrativo).");
+  if (unitPrice > 0) {
+    explanations.push(
+      isActual
+        ? "Custo real por etapa com tarifa item 32."
+        : "Tarifa item 32 por etapa — já inclui mão de obra, encargos e overhead administrativo.",
+    );
+    if (isBatch) {
+      explanations.push(
+        `Horas informadas por peça · lote de ${effectiveQuantity} peças.`,
+      );
+    }
   }
 
   explanations.unshift(`Tarifas: ${labSettings.tariffTableLabel}`);
@@ -181,6 +212,8 @@ export function computeStageQuoteCost(input: {
     lines,
     totalCost: suggestedPrice,
     suggestedPrice,
+    unitPrice,
+    quantity: isBatch ? effectiveQuantity : undefined,
     marginPercent: 0,
     tariffAsPrice: true,
     explanations,
@@ -270,15 +303,25 @@ export function resolveQuoteBreakdown(
   vocabulary: VocabularyTerm[],
   labSettings: LabSettings,
 ): QuoteCostBreakdown {
+  if (record.stages && record.stages.length > 0) {
+    return computeStageQuoteCost({
+      vocabulary,
+      stages: record.stages,
+      labSettings,
+      quantity: record.quantity ?? 1,
+      resourceRates: record.quoteSnapshot?.resourceRates,
+    });
+  }
   if (record.quoteSnapshot?.breakdown) {
     return record.quoteSnapshot.breakdown;
   }
   return computeQuoteCost({
     vocabulary,
     resourceIds: record.resourceIds,
-    teamHours: record.estimatedHours ?? 0,
-    equipmentHours: record.estimatedEquipmentHours ?? (record.estimatedHours ? record.estimatedHours * 0.6 : 0),
+    teamHours: 0,
+    equipmentHours: record.estimatedHours ?? 0,
     labSettings,
+    resourceRates: record.quoteSnapshot?.resourceRates,
   });
 }
 

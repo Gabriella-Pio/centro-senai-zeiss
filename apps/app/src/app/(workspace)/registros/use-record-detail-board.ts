@@ -1,27 +1,36 @@
-"use client";
+'use client';
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { UserRole } from "@/lib/api";
-import { findSimilarRecords } from "@/lib/assistant";
-import { buildCostDonut } from "@/lib/chart-data";
-import { pushNotification, updateDemoState } from "@/lib/demo-store";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { UserRole } from '@/lib/api';
+import { findSimilarRecords } from '@/lib/assistant';
+import { buildCostDonut } from '@/lib/chart-data';
+import { pushNotification, updateDemoState } from '@/lib/demo/demo-store';
 import {
   canAccessBlock,
   getRecordDetailNotices,
   getSuggestedBlock,
   isBlockDone,
   type RecordBlock,
-} from "@/lib/record-lifecycle";
-import { getRecordStages, stagesHaveResources, sumStageEstimatedHours } from "@/lib/record-stages";
-import { buildPriceHistory, buildStageQuoteSnapshot, computeStageQuoteCost } from "@/lib/pricing";
+} from '@/lib/record-lifecycle';
+import { deriveRelatedTopicIds, getRecordQuantity, resolveBilledValue } from '@/lib/record-helpers';
+import { buildRecordFinancialSummary } from '@/lib/chart-data';
+import { upsertVocabularyTerm } from '@/lib/vocabulary-mutations';
+import {
+  finalizeStagesForExecution,
+  getRecordStages,
+  stagesHaveResources,
+  sumStageActualHours,
+  sumStageEstimatedHours,
+} from '@/lib/record-stages';
+import { buildPriceHistory, buildStageQuoteSnapshot, computeStageQuoteCost } from '@/lib/pricing';
 import {
   getValidationHref,
   parseRecordBlockParam,
   setRecordBlockParam,
-} from "@/lib/records-navigation";
-import { useDemoStore } from "@/lib/use-demo-store";
-import type { ServiceRecord, ServiceStatus } from "./types";
+} from '@/lib/records-navigation';
+import { useDemoStore } from '@/lib/use-demo-store';
+import type { ServiceRecord, ServiceStatus } from './types';
 
 export function useRecordDetailBoard(recordId: string, userRole: UserRole, userName: string) {
   const router = useRouter();
@@ -29,34 +38,26 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
   const searchParams = useSearchParams();
   const { records, vocabulary, labSettings } = useDemoStore();
   const record = records.find((item) => item.id === recordId) ?? null;
-  const [activeTab, setActiveTab] = useState<RecordBlock>("A");
+  const [activeTab, setActiveTab] = useState<RecordBlock>('A');
   const [formError, setFormError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   const serviceTypes = useMemo(
-    () => vocabulary.filter((term) => term.class === "SERVICE_TYPE" && term.active),
+    () => vocabulary.filter((term) => term.class === 'SERVICE_TYPE' && term.active),
     [vocabulary],
   );
   const partTraits = useMemo(
-    () => vocabulary.filter((term) => term.class === "PART_TRAIT" && term.active),
+    () => vocabulary.filter((term) => term.class === 'PART_TRAIT' && term.active),
     [vocabulary],
   );
   const resources = useMemo(
-    () => vocabulary.filter((term) => term.class === "RESOURCE" && term.active),
+    () => vocabulary.filter((term) => term.class === 'RESOURCE' && term.active),
     [vocabulary],
   );
   const deviationCauses = useMemo(
-    () => vocabulary.filter((term) => term.class === "DEVIATION_CAUSE" && term.active),
+    () => vocabulary.filter((term) => term.class === 'DEVIATION_CAUSE' && term.active),
     [vocabulary],
   );
-  const relatedTopics = useMemo(
-    () =>
-      vocabulary.filter(
-        (term) => term.active && (term.class === "SERVICE_TYPE" || term.class === "PART_TRAIT"),
-      ),
-    [vocabulary],
-  );
-
   const syncBlockParam = useCallback(
     (block: RecordBlock) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -80,7 +81,7 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     const match = records.find((item) => item.id === recordId);
     if (!match) return;
 
-    const blockFromUrl = parseRecordBlockParam(searchParams.get("bloco"));
+    const blockFromUrl = parseRecordBlockParam(searchParams.get('bloco'));
     if (blockFromUrl && canAccessBlock(match, blockFromUrl)) {
       setActiveTab(blockFromUrl);
       return;
@@ -93,6 +94,8 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     }
   }, [recordId, records, searchParams, syncBlockParam]);
 
+  const quantity = record ? getRecordQuantity(record) : 1;
+
   const liveBreakdown = useMemo(() => {
     if (!record) return null;
     const stages = getRecordStages(record, serviceTypes);
@@ -100,18 +103,36 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       vocabulary,
       stages,
       labSettings,
+      quantity,
+      resourceRates: record.quoteSnapshot?.resourceRates,
     });
-  }, [record, serviceTypes, vocabulary, labSettings]);
+  }, [record, serviceTypes, vocabulary, labSettings, quantity]);
 
-  const costBreakdown = useMemo(() => {
+  const actualBreakdown = useMemo(() => {
     if (!record) return null;
-    if (record.quoteSnapshot && record.serviceStatus !== "DRAFT") {
-      return record.quoteSnapshot.breakdown;
-    }
-    return liveBreakdown;
-  }, [record, liveBreakdown]);
+    const stages = getRecordStages(record, serviceTypes).map((stage) => ({
+      ...stage,
+      actualHours: stage.actualHours ?? stage.estimatedHours,
+    }));
+    return computeStageQuoteCost({
+      vocabulary,
+      stages,
+      labSettings,
+      hoursField: 'actualHours',
+      quantity,
+      resourceRates: record.quoteSnapshot?.resourceRates,
+    });
+  }, [record, serviceTypes, vocabulary, labSettings, quantity]);
 
-  const frozenTariff = Boolean(record?.quoteSnapshot && record.serviceStatus !== "DRAFT");
+  const costBreakdown = liveBreakdown;
+
+  const frozenTariff = Boolean(record?.quoteSnapshot && record.serviceStatus !== 'DRAFT');
+  const quoteOutdated = useMemo(() => {
+    if (!record?.quoteSnapshot?.breakdown || !liveBreakdown) {
+      return false;
+    }
+    return record.quoteSnapshot.breakdown.suggestedPrice !== liveBreakdown.suggestedPrice;
+  }, [record, liveBreakdown]);
   const detailNotices = useMemo(() => (record ? getRecordDetailNotices(record) : []), [record]);
 
   const priceHistory = useMemo(() => {
@@ -127,7 +148,8 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
 
   const suggestedPrice = priceHistory?.median
     ? Math.round(priceHistory.median)
-    : costBreakdown?.suggestedPrice ?? 0;
+    : (costBreakdown?.suggestedPrice ?? 0);
+  const suggestedUnitPrice = costBreakdown?.unitPrice ?? suggestedPrice;
 
   const needsPriceOverride =
     record &&
@@ -135,23 +157,81 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     record.proposedValue &&
     Math.abs(record.proposedValue - suggestedPrice) > suggestedPrice * 0.05;
 
-  const readOnly = Boolean(record && (userRole === "CONSULTA" || record.serviceStatus === "COMPLETED"));
+  const financialSummary = useMemo(
+    () => (record ? buildRecordFinancialSummary(record) : null),
+    [record],
+  );
+
+  const readOnly = Boolean(
+    record && (userRole === 'CONSULTA' || record.serviceStatus === 'COMPLETED'),
+  );
 
   function updateRecord(patch: Partial<ServiceRecord>) {
     if (!record) return;
+    const merged = { ...record, ...patch };
+    const nextPatch: Partial<ServiceRecord> = {
+      ...patch,
+      relatedTopicIds: deriveRelatedTopicIds(merged),
+    };
+
+    if (patch.stages && record.serviceStatus === 'QUOTED') {
+      const stages = getRecordStages(merged, serviceTypes).map((stage) => ({
+        ...stage,
+        actualHours: stage.actualHours ?? stage.estimatedHours,
+      }));
+      const perPieceHours = sumStageActualHours(stages);
+      if (perPieceHours) {
+        const breakdown = computeStageQuoteCost({
+          vocabulary,
+          stages,
+          labSettings,
+          hoursField: 'actualHours',
+          quantity: getRecordQuantity(merged),
+          resourceRates: record.quoteSnapshot?.resourceRates,
+        });
+        if (breakdown.suggestedPrice > 0) {
+          nextPatch.actualHours = perPieceHours;
+          nextPatch.actualCost = breakdown.suggestedPrice;
+        }
+      }
+    }
+
     updateDemoState((state) => ({
       ...state,
-      records: state.records.map((item) => (item.id === record.id ? { ...item, ...patch } : item)),
+      records: state.records.map((item) =>
+        item.id === record.id ? { ...item, ...nextPatch } : item,
+      ),
     }));
   }
 
+  function createDeviationCause(label: string) {
+    if (!record) return;
+    updateDemoState((state) => {
+      const { vocabulary: nextVocabulary, term } = upsertVocabularyTerm(state.vocabulary, {
+        label,
+        class: 'DEVIATION_CAUSE',
+      });
+      const merged = { ...record, deviationCauseId: term.id };
+      return {
+        ...state,
+        vocabulary: nextVocabulary,
+        records: state.records.map((item) =>
+          item.id === record.id
+            ? { ...item, deviationCauseId: term.id, relatedTopicIds: deriveRelatedTopicIds(merged) }
+            : item,
+        ),
+      };
+    });
+    setNotice(`Causa "${label.trim()}" salva no vocabulário.`);
+  }
+
   function handleBlockedSelect(block: RecordBlock) {
-    if (block === "B") {
-      setFormError("Salve o bloco A para liberar a execução.");
+    if (block === 'B') {
+      setFormError('Salve o bloco A para liberar a execução.');
       return;
     }
-    if (block === "C") {
-      setFormError("Preencha e salve o bloco B antes de registrar a lição.");
+    if (block === 'C') {
+      setFormError('Preencha e salve o bloco B antes de registrar a lição.');
     }
   }
 
@@ -160,65 +240,105 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     const stages = getRecordStages(record, serviceTypes);
     const stageHours = sumStageEstimatedHours(stages);
     if (stages.length === 0 || !stageHours || !stagesHaveResources(stages)) {
-      setFormError("Informe etapas do serviço, recurso por etapa e horas orçadas no bloco A.");
+      setFormError('Informe etapas do serviço, recurso por etapa e horas orçadas no bloco A.');
       return;
     }
     if (needsPriceOverride && !record.priceOverrideReason?.trim()) {
-      setFormError("Justifique o valor diferente do sugerido.");
+      setFormError('Justifique o valor diferente do sugerido.');
       return;
     }
     const snapshot = buildStageQuoteSnapshot({
       vocabulary,
-      stages,
+      stages: stages.map((stage) => ({
+        ...stage,
+        actualHours: stage.actualHours ?? stage.estimatedHours,
+      })),
       labSettings,
     });
+    const pricedBreakdown = computeStageQuoteCost({
+      vocabulary,
+      stages,
+      labSettings,
+      quantity: getRecordQuantity(record),
+    });
+    const proposedValue = record.proposedValue ?? pricedBreakdown.suggestedPrice;
     updateRecord({
-      serviceStatus: "QUOTED",
+      serviceStatus: 'QUOTED',
       estimatedBy: userName,
       estimatedHours: stageHours,
-      estimatedCost: snapshot.breakdown.suggestedPrice,
-      estimatedEquipmentHours: stageHours,
-      proposedValue: record.proposedValue ?? snapshot.breakdown.suggestedPrice,
-      quoteSnapshot: snapshot,
+      estimatedCost: pricedBreakdown.suggestedPrice,
+      proposedValue,
+      billedValue: record.billedValue ?? proposedValue,
+      quoteSnapshot: {
+        ...snapshot,
+        breakdown: pricedBreakdown,
+      },
+      stages: stages.map((stage) => ({
+        ...stage,
+        actualHours: stage.actualHours ?? stage.estimatedHours,
+      })),
     });
     setFormError(null);
-    setNotice("Orçamento salvo e congelado. Você já pode registrar a execução no bloco B.");
-    selectBlock("B");
+    setNotice('Orçamento salvo e congelado. Você já pode registrar a execução no bloco B.');
+    selectBlock('B');
   }
 
   function saveBlockB() {
     if (!record) return;
-    if (!record.actualHours || !record.billedValue) {
-      setFormError("Informe horas realizadas e valor faturado no bloco B.");
+    const stages = finalizeStagesForExecution(getRecordStages(record, serviceTypes));
+    const perPieceHours = sumStageActualHours(stages);
+    const breakdown = computeStageQuoteCost({
+      vocabulary,
+      stages,
+      labSettings,
+      hoursField: 'actualHours',
+      quantity: getRecordQuantity(record),
+      resourceRates: record.quoteSnapshot?.resourceRates,
+    });
+
+    const billedValue = resolveBilledValue(record);
+    if (!perPieceHours || !stagesHaveResources(stages) || !billedValue) {
+      setFormError('Informe horas realizadas por etapa, recursos e valor faturado no bloco B.');
       return;
     }
+
+    updateRecord({
+      stages,
+      actualHours: perPieceHours,
+      actualCost: breakdown.suggestedPrice,
+      billedValue,
+    });
     setFormError(null);
-    setNotice("Execução registrada. Complete a lição no bloco C para concluir o serviço.");
-    selectBlock("C");
+    setNotice('Execução registrada. Complete a lição no bloco C para concluir o serviço.');
+    selectBlock('C');
   }
 
   function completeService() {
     if (!record) return;
-    if (!isBlockDone(record, "B")) {
-      setFormError("Salve o bloco B antes de concluir o serviço.");
-      selectBlock("B");
+    if (!isBlockDone(record, 'B')) {
+      setFormError('Salve o bloco B antes de concluir o serviço.');
+      selectBlock('B');
       return;
     }
     if (!record.deviationCauseId || !record.lesson.trim()) {
-      setFormError("Preencha causa do desvio e lição aprendida no bloco C.");
-      selectBlock("C");
+      setFormError('Preencha causa do desvio e lição aprendida no bloco C.');
+      selectBlock('C');
       return;
     }
     updateDemoState((state) => ({
       ...state,
       records: state.records.map((item) =>
         item.id === record.id
-          ? { ...item, serviceStatus: "COMPLETED" as ServiceStatus, lessonStatus: "PENDING" as const }
+          ? {
+              ...item,
+              serviceStatus: 'COMPLETED' as ServiceStatus,
+              lessonStatus: 'PENDING' as const,
+            }
           : item,
       ),
     }));
     pushNotification({
-      roles: ["VALIDADOR", "ADMIN"],
+      roles: ['VALIDADOR', 'ADMIN'],
       message: `Lição de ${record.recordNumber} aguarda validação.`,
       href: getValidationHref(record.id),
     });
@@ -235,13 +355,18 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     partTraits,
     resources,
     deviationCauses,
-    relatedTopics,
+    vocabulary,
     costBreakdown,
+    financialSummary,
+    actualBreakdown,
     frozenTariff,
+    quoteOutdated,
     detailNotices,
     priceHistory,
     costDonut,
     suggestedPrice,
+    suggestedUnitPrice,
+    actualCost: actualBreakdown?.suggestedPrice ?? record?.actualCost ?? null,
     needsPriceOverride,
     readOnly,
     updateRecord,
@@ -250,5 +375,6 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     saveBlockA,
     saveBlockB,
     completeService,
+    createDeviationCause,
   };
 }

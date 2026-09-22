@@ -1,25 +1,20 @@
-import { cookies } from "next/headers";
-import { ApiError, type AuthUser } from "./api";
-import {
-  DEMO_CURRENT_USER,
-  DEMO_LOGGED_OUT_KEY,
-  DEMO_MODE,
-  DEMO_USER_COOKIE,
-  findDemoUserById,
-} from "./demo";
+import { cookies } from 'next/headers';
+import { ApiError, type AuthUser } from './api';
+import { DEMO_CURRENT_USER, findDemoUserById } from './demo/seed/users';
+import { DEMO_LOGGED_OUT_KEY, DEMO_MODE, DEMO_USER_COOKIE } from './demo/demo';
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1").replace(
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333/api/v1').replace(
   /\/$/,
-  "",
+  '',
 );
 
 async function cookieHeader(): Promise<HeadersInit> {
-  const token = (await cookies()).get("cem_session")?.value;
+  const token = (await cookies()).get('cem_session')?.value;
   return token ? { Cookie: `cem_session=${token}` } : {};
 }
 
 function demoUserFromCookies(): AuthUser | null {
-  if (typeof window !== "undefined" && window.localStorage.getItem(DEMO_LOGGED_OUT_KEY) === "1") {
+  if (typeof window !== 'undefined' && window.localStorage.getItem(DEMO_LOGGED_OUT_KEY) === '1') {
     return null;
   }
   return DEMO_CURRENT_USER;
@@ -28,7 +23,7 @@ function demoUserFromCookies(): AuthUser | null {
 export async function getSessionUser(): Promise<AuthUser | null> {
   if (DEMO_MODE) {
     const jar = await cookies();
-    if (jar.get(DEMO_LOGGED_OUT_KEY)?.value === "1") {
+    if (jar.get(DEMO_LOGGED_OUT_KEY)?.value === '1') {
       return null;
     }
     const demoUserId = jar.get(DEMO_USER_COOKIE)?.value;
@@ -41,14 +36,14 @@ export async function getSessionUser(): Promise<AuthUser | null> {
     return DEMO_CURRENT_USER;
   }
 
-  const token = (await cookies()).get("cem_session")?.value;
+  const token = (await cookies()).get('cem_session')?.value;
   if (!token) {
     return null;
   }
 
   const response = await fetch(`${API_BASE_URL}/auth/me`, {
     headers: await cookieHeader(),
-    cache: "no-store",
+    cache: 'no-store',
   });
 
   if (!response.ok) {
@@ -60,23 +55,23 @@ export async function getSessionUser(): Promise<AuthUser | null> {
 }
 
 export async function serverApi<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}/${path.replace(/^\//, "")}`, {
+  const response = await fetch(`${API_BASE_URL}/${path.replace(/^\//, '')}`, {
     ...init,
     headers: {
-      Accept: "application/json",
-      ...(init.body ? { "Content-Type": "application/json" } : {}),
+      Accept: 'application/json',
+      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
       ...(await cookieHeader()),
       ...init.headers,
     },
-    cache: "no-store",
+    cache: 'no-store',
   });
 
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
     const message =
-      typeof payload === "object" && payload !== null && "message" in payload
+      typeof payload === 'object' && payload !== null && 'message' in payload
         ? String(Array.isArray(payload.message) ? payload.message[0] : payload.message)
-        : "Não foi possível concluir a solicitação.";
+        : 'Não foi possível concluir a solicitação.';
     throw new ApiError(message, response.status);
   }
 

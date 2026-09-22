@@ -11,6 +11,6 @@ export const RECORD_BLOCK_COPY: Record<RecordBlock, { title: string; description
   },
   C: {
     title: "Lição aprendida",
-    description: "Documente desvios, aprendizados e assuntos para validação do conhecimento.",
+    description: "Documente desvios e aprendizados. O contexto do serviço é montado automaticamente.",
   },
 };

@@ -1,8 +1,8 @@
-import type { UserRole } from "./api";
+import type { UserRole } from "../api";
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import type { QuoteRequest } from "@/app/(workspace)/solicitacoes/types";
 import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
-import type { MachineTariff } from "./machine-tariff";
+import type { MachineTariff } from "../machine-tariff";
 
 export type DemoNotification = {
   id: string;

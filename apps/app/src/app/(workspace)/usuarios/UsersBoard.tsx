@@ -17,7 +17,7 @@ import { ROLE_LABELS, type UserRole } from "@/lib/api";
 import { CreateUserForm } from "./CreateUserForm";
 import { EditUserForm } from "./EditUserForm";
 import type { ListedUser } from "./types";
-import { DEMO_USERS_KEY } from "@/lib/demo";
+import { DEMO_USERS_KEY } from "@/lib/demo/demo";
 import "./users.css";
 
 const ROLES: UserRole[] = ["CONSULTA", "TECNICO", "VALIDADOR", "ADMIN"];
