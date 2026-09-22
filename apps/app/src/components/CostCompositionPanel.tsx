@@ -160,9 +160,9 @@ export function CostCompositionPanel({
                 </span>
                 <span className="cost-panel__total-hero-hint">
                   {isBatch
-                    ? `${breakdown.quantity} peças · tarifa item 32`
+                    ? `${breakdown.quantity} peças · tarifa`
                     : breakdown.tariffAsPrice
-                      ? "Tarifa item 32 — já inclui mão de obra e overhead"
+                      ? "Tarifa — já inclui mão de obra e overhead"
                       : `Inclui margem de ${breakdown.marginPercent}%`}
                 </span>
               </div>

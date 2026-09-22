@@ -7,6 +7,6 @@ export const SEED_NOTIFICATIONS: DemoNotification[] = [
     message: "2 novas solicitações de orçamento aguardando análise.",
     href: "/solicitacoes",
     read: false,
-    createdAt: "2026-09-21T10:30:00.000Z",
+    createdAt: "2026-06-24T12:00:00.000Z",
   },
 ];

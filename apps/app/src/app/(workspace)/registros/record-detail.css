@@ -799,6 +799,54 @@
   box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 18%, transparent);
 }
 
+.record-quote-mode-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-muted) 35%, var(--color-card));
+}
+
+.record-quote-mode-toggle__option {
+  flex: 1 1 10rem;
+  padding: 0.65rem 0.85rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.record-quote-mode-toggle__option:hover {
+  color: var(--color-primary);
+}
+
+.record-quote-mode-toggle__option--active {
+  background: var(--color-card);
+  color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(28, 25, 23, 0.08);
+}
+
+.record-detail-page__quote-mode-badge {
+  display: inline-flex;
+  margin: 0 0 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-card));
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
 .record-scope-toggle {
   display: inline-flex;
   gap: 0.35rem;

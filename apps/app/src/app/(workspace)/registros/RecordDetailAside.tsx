@@ -11,6 +11,7 @@ import type {
   QuoteCostBreakdown,
 } from "@/lib/pricing";
 import { formatCurrency } from "@/lib/pricing";
+import { getRecordQuoteMode, QUOTE_MODE_LABELS } from "@/lib/quote-mode";
 
 import { formatDeliveredAt } from "./records-utils";
 import type { ServiceRecord } from "./types";
@@ -62,6 +63,55 @@ export function RecordDetailAside({
     );
   }
 
+  const quoteMode = getRecordQuoteMode(record);
+
+  if (activeTab === "A" && quoteMode === "hourly_package") {
+    return (
+      <div className="record-aside-stack">
+        <div className="record-summary-card">
+          <div className="record-summary-card__header">
+            <h3>Pacote / contrato</h3>
+            <p>{QUOTE_MODE_LABELS.hourly_package}</p>
+          </div>
+          <dl>
+            <div>
+              <dt>Referência</dt>
+              <dd>{record.hoursPackageRef ?? "—"}</dd>
+            </div>
+            <div>
+              <dt>Horas do pacote</dt>
+              <dd>{record.estimatedHours ? `${record.estimatedHours} h` : "—"}</dd>
+            </div>
+            <div>
+              <dt>Valor do contrato</dt>
+              <dd>{record.proposedValue ? formatCurrency(record.proposedValue) : "—"}</dd>
+            </div>
+          </dl>
+          {costBreakdown && costBreakdown.lines.length > 0 ? (
+            <p className="record-detail-page__tariff-note">
+              Composição por etapas abaixo é referência do consumo previsto — o valor contratual é o do pacote.
+            </p>
+          ) : (
+            <p className="record-detail-page__tariff-note">
+              Salve o bloco A para congelar o pacote. Etapas são opcionais para detalhar o escopo.
+            </p>
+          )}
+        </div>
+        {costBreakdown && costBreakdown.lines.length > 0 ? (
+          <div className="record-aside-panel">
+            <CostCompositionPanel
+              embedded
+              breakdown={costBreakdown}
+              proposedValue={record.proposedValue}
+              frozenAt={frozenTariff ? record.quoteSnapshot?.savedAt : undefined}
+              tariffLabel="Referência por etapas"
+            />
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   if (activeTab === "A" && costBreakdown) {
     return (
       <div className="record-aside-stack">
@@ -79,15 +129,23 @@ export function RecordDetailAside({
             tariffLabel={
               frozenTariff
                 ? record.quoteSnapshot?.tariffTableLabel
-                : undefined
+                : quoteMode === "commercial_fixed"
+                  ? "Tarifa (referência)"
+                  : undefined
             }
           />
+
+          {quoteMode === "commercial_fixed" ? (
+            <p className="record-detail-page__tariff-note">
+              Valor comercial fechado da proposta. A composição tarifária é apenas referência.
+            </p>
+          ) : null}
 
           {frozenTariff && quoteOutdated ? (
             <p className="record-detail-page__tariff-note record-detail-page__tariff-note--warning">
               Etapas ou tarifas mudaram desde o último salvamento. Salve o bloco A para atualizar o orçamento congelado.
             </p>
-          ) : !frozenTariff ? (
+          ) : !frozenTariff && quoteMode === "tariff" ? (
             <p className="record-detail-page__tariff-note">
               Prévia com tarifas atuais. Salve o bloco A para congelar o orçamento.
             </p>

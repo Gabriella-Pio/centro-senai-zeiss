@@ -93,7 +93,7 @@ export function RecordServiceStagesEditor({
         <p className="record-detail-page__field-hint">
           {isActual
             ? `Horas por peça em cada etapa${isBatch ? ` · lote de ${quantity} peças` : ""}. Ajuste o realizado ou adicione etapas extras não previstas no orçamento.`
-            : `Cada etapa combina tipo de serviço, recurso e horas${isBatch ? " por peça" : ""}. O preço vem da tarifa item 32.`}
+            : `Cada etapa combina tipo de serviço, recurso e horas${isBatch ? " por peça" : ""}. O preço vem da tarifa.`}
         </p>
       </div>
 

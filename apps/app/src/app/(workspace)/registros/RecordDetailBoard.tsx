@@ -95,6 +95,7 @@ export function RecordDetailBoard({
               <RecordBlockA
                 record={record}
                 readOnly={board.readOnly}
+                canEditQuoteMode={board.canEditQuoteMode}
                 serviceTypes={board.serviceTypes}
                 partTraits={board.partTraits}
                 resources={board.resources}

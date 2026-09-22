@@ -14,6 +14,7 @@ import {
   type RecordBlock,
 } from '@/lib/record-lifecycle';
 import { deriveRelatedTopicIds, getRecordQuantity, resolveBilledValue } from '@/lib/record-helpers';
+import { getRecordQuoteMode, needsPriceOverrideReason } from '@/lib/quote-mode';
 import { buildRecordFinancialSummary } from '@/lib/chart-data';
 import { upsertVocabularyTerm } from '@/lib/vocabulary-mutations';
 import {
@@ -151,19 +152,18 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     : (costBreakdown?.suggestedPrice ?? 0);
   const suggestedUnitPrice = costBreakdown?.unitPrice ?? suggestedPrice;
 
-  const needsPriceOverride =
-    record &&
-    suggestedPrice > 0 &&
-    record.proposedValue &&
-    Math.abs(record.proposedValue - suggestedPrice) > suggestedPrice * 0.05;
+  const readOnly = Boolean(
+    record && (userRole === 'CONSULTA' || record.serviceStatus === 'COMPLETED'),
+  );
+
+  const quoteMode = record ? getRecordQuoteMode(record) : 'tariff';
+  const needsPriceOverride = record ? needsPriceOverrideReason(record, suggestedPrice) : false;
+  const canEditQuoteMode =
+    (userRole === 'ADMIN' || userRole === 'VALIDADOR') && !readOnly;
 
   const financialSummary = useMemo(
     () => (record ? buildRecordFinancialSummary(record) : null),
     [record],
-  );
-
-  const readOnly = Boolean(
-    record && (userRole === 'CONSULTA' || record.serviceStatus === 'COMPLETED'),
   );
 
   function updateRecord(patch: Partial<ServiceRecord>) {
@@ -237,6 +237,62 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
 
   function saveBlockA() {
     if (!record) return;
+    const mode = getRecordQuoteMode(record);
+
+    if (mode === 'hourly_package') {
+      if (!record.hoursPackageRef?.trim() || !record.estimatedHours || !record.proposedValue) {
+        setFormError('Informe referência do pacote, horas totais e valor do contrato no bloco A.');
+        return;
+      }
+
+      const stages = getRecordStages(record, serviceTypes);
+      const stageHours = sumStageEstimatedHours(stages);
+      const hasPricedStages =
+        stages.length > 0 && stageHours && stagesHaveResources(stages);
+
+      let quoteSnapshot = record.quoteSnapshot;
+      let estimatedCost = record.estimatedCost;
+
+      if (hasPricedStages) {
+        const snapshot = buildStageQuoteSnapshot({
+          vocabulary,
+          stages: stages.map((stage) => ({
+            ...stage,
+            actualHours: stage.actualHours ?? stage.estimatedHours,
+          })),
+          labSettings,
+        });
+        const pricedBreakdown = computeStageQuoteCost({
+          vocabulary,
+          stages,
+          labSettings,
+          quantity: getRecordQuantity(record),
+        });
+        quoteSnapshot = { ...snapshot, breakdown: pricedBreakdown };
+        estimatedCost = pricedBreakdown.suggestedPrice;
+      }
+
+      updateRecord({
+        serviceStatus: 'QUOTED',
+        estimatedBy: userName,
+        estimatedCost,
+        proposedValue: record.proposedValue,
+        billedValue: record.billedValue ?? record.proposedValue,
+        quoteSnapshot,
+        priceOverrideReason: undefined,
+        stages: hasPricedStages
+          ? stages.map((stage) => ({
+              ...stage,
+              actualHours: stage.actualHours ?? stage.estimatedHours,
+            }))
+          : record.stages,
+      });
+      setFormError(null);
+      setNotice('Pacote salvo e congelado. Você já pode registrar a execução no bloco B.');
+      selectBlock('B');
+      return;
+    }
+
     const stages = getRecordStages(record, serviceTypes);
     const stageHours = sumStageEstimatedHours(stages);
     if (stages.length === 0 || !stageHours || !stagesHaveResources(stages)) {
@@ -244,7 +300,7 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       return;
     }
     if (needsPriceOverride && !record.priceOverrideReason?.trim()) {
-      setFormError('Justifique o valor diferente do sugerido.');
+      setFormError('Justifique o valor diferente do sugerido pela tarifa.');
       return;
     }
     const snapshot = buildStageQuoteSnapshot({
@@ -261,7 +317,14 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       labSettings,
       quantity: getRecordQuantity(record),
     });
-    const proposedValue = record.proposedValue ?? pricedBreakdown.suggestedPrice;
+    const proposedValue =
+      mode === 'tariff'
+        ? (record.proposedValue ?? pricedBreakdown.suggestedPrice)
+        : record.proposedValue;
+    if (!proposedValue) {
+      setFormError('Informe o valor proposto no bloco A.');
+      return;
+    }
     updateRecord({
       serviceStatus: 'QUOTED',
       estimatedBy: userName,
@@ -269,6 +332,7 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       estimatedCost: pricedBreakdown.suggestedPrice,
       proposedValue,
       billedValue: record.billedValue ?? proposedValue,
+      priceOverrideReason: mode === 'tariff' ? record.priceOverrideReason : undefined,
       quoteSnapshot: {
         ...snapshot,
         breakdown: pricedBreakdown,
@@ -279,7 +343,11 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       })),
     });
     setFormError(null);
-    setNotice('Orçamento salvo e congelado. Você já pode registrar a execução no bloco B.');
+    setNotice(
+      mode === 'commercial_fixed'
+        ? 'Valor comercial salvo e congelado. Você já pode registrar a execução no bloco B.'
+        : 'Orçamento salvo e congelado. Você já pode registrar a execução no bloco B.',
+    );
     selectBlock('B');
   }
 
@@ -368,6 +436,8 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     suggestedUnitPrice,
     actualCost: actualBreakdown?.suggestedPrice ?? record?.actualCost ?? null,
     needsPriceOverride,
+    quoteMode,
+    canEditQuoteMode,
     readOnly,
     updateRecord,
     selectBlock,

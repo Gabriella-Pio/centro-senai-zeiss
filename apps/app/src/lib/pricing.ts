@@ -196,8 +196,8 @@ export function computeStageQuoteCost(input: {
   if (unitPrice > 0) {
     explanations.push(
       isActual
-        ? "Custo real por etapa com tarifa item 32."
-        : "Tarifa item 32 por etapa — já inclui mão de obra, encargos e overhead administrativo.",
+        ? "Custo real por etapa com tarifa."
+        : "Tarifa por etapa — já inclui mão de obra, encargos e overhead administrativo.",
     );
     if (isBatch) {
       explanations.push(

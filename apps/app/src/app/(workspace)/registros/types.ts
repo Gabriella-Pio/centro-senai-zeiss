@@ -2,6 +2,7 @@ export type LessonStatus = "DRAFT" | "PENDING" | "FORMALIZED" | "SUPERSEDED";
 export type ServiceStatus = "DRAFT" | "QUOTED" | "COMPLETED";
 export type RecordVisibility = "PUBLIC" | "RESTRICTED";
 export type RecordKind = "single" | "batch" | "composite";
+export type QuoteMode = "tariff" | "commercial_fixed" | "hourly_package";
 
 import type { QuoteSnapshot } from "@/lib/pricing";
 
@@ -34,6 +35,7 @@ export type ServiceRecord = {
   stages?: ServiceStage[];
 
   // Bloco A — orçado
+  quoteMode?: QuoteMode;
   serviceTypeId?: string;
   partTraitIds: string[];
   resourceIds: string[];

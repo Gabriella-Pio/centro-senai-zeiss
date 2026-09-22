@@ -171,7 +171,7 @@ export function VocabularyBoard({ canEdit }: { canEdit: boolean }) {
 
           <p className="vocabulary-page__intro">
             Organize os termos usados pela equipe nos registros. Recursos com
-            planilha em Tarifas entram aqui automaticamente com a tarifa item 32.
+            planilha em Tarifas entram aqui automaticamente.
           </p>
         </div>
 

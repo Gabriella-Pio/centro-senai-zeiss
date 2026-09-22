@@ -422,6 +422,7 @@ export function createEmptyRecord(
     lessonStatus: 'DRAFT',
     quantity: 1,
     recordKind: 'single',
+    quoteMode: 'tariff',
     stages: [],
     ...partial,
   };

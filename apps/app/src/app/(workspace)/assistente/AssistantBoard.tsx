@@ -124,6 +124,7 @@ export function AssistantBoard({
       assumptions: recommendation.detail,
       estimatedBy: userName,
       estimationOverrideReason: needsHoursOverride ? hoursOverrideReason.trim() : undefined,
+      quoteMode: "tariff",
       priceOverrideReason: needsPriceOverride ? priceOverrideReason.trim() : undefined,
       serviceStatus: "QUOTED",
     });

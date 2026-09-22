@@ -279,7 +279,7 @@ export function buildTariffAnalysisChart(
       id: "fleet",
       label: "Comparativo do parque",
       title: "Posição no parque",
-      subtitle: "Tarifa item 32 vs média do parque de máquinas (R$/h)",
+      subtitle: "Tarifa vs média do parque de máquinas (R$/h)",
       kind: "ranking",
       slices: buildFleetSlices(ctx),
       formatValue: hourly,

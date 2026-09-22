@@ -175,7 +175,7 @@ export function buildFleetOverviewChart(
       id: "position",
       kind: "ranking",
       title: "Posição no parque",
-      subtitle: "Tarifa item 32 vs média do parque (R$/h)",
+      subtitle: "Tarifa vs média do parque (R$/h)",
       slices: buildFleetRankingSlices(ctx.tariffs, { highlightId: ctx.highlightId }),
       formatValue: hourly,
       highlightLabel: highlight?.label,

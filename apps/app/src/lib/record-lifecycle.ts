@@ -1,6 +1,7 @@
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import { getRequestHref, getValidationHref } from "@/lib/records-navigation";
 import { resolveBilledValue } from "@/lib/record-helpers";
+import { getRecordQuoteMode } from "@/lib/quote-mode";
 import {
   stagesHaveResources,
   sumStageActualHours,
@@ -35,6 +36,13 @@ function hasStageResources(record: ServiceRecord) {
 
 export function isBlockDone(record: ServiceRecord, block: RecordBlock): boolean {
   if (block === "A") {
+    if (getRecordQuoteMode(record) === "hourly_package") {
+      return Boolean(
+        record.hoursPackageRef?.trim() &&
+          record.estimatedHours &&
+          record.proposedValue,
+      );
+    }
     return Boolean(
       hasServiceStages(record) &&
         hasEstimatedHours(record) &&

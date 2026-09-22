@@ -42,6 +42,18 @@ function createRecord(overrides: Partial<ServiceRecord> = {}): ServiceRecord {
 }
 
 describe("record lifecycle", () => {
+  it("tracks block completion for hourly package mode", () => {
+    const packageRecord = createRecord({
+      quoteMode: "hourly_package",
+      hoursPackageRef: "Pacote anual 120 h",
+      estimatedHours: 120,
+      proposedValue: 16200,
+      stages: [],
+      estimatedCost: null,
+    });
+    expect(isBlockDone(packageRecord, "A")).toBe(true);
+  });
+
   it("tracks block completion", () => {
     const draft = createRecord();
     expect(isBlockDone(draft, "A")).toBe(true);

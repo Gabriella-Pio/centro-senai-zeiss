@@ -4,7 +4,8 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Input, Label } from "@cem/ui";
 import { ApiError, apiRequest } from "@/lib/api";
-import { DEMO_MODE, DEMO_USERS } from "@/lib/seed/demo";
+import { DEMO_MODE } from "@/lib/demo/demo";
+import { DEMO_USERS } from "@/lib/demo/seed/users";
 
 const LOGIN_FAILED = "E-mail ou senha inválidos.";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
