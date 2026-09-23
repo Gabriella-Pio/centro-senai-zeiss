@@ -11,6 +11,7 @@ export function DonutChart({
   subtitle,
   slices,
   centerLabel,
+  centerCaption,
   formatValue,
   compactLegend = false,
   interactive = false,
@@ -19,6 +20,7 @@ export function DonutChart({
   subtitle?: string;
   slices: DonutSlice[];
   centerLabel?: string;
+  centerCaption?: string;
   formatValue?: (value: number) => string;
   compactLegend?: boolean;
   interactive?: boolean;
@@ -26,7 +28,9 @@ export function DonutChart({
   const format = formatValue ?? ((value: number) => String(value));
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
-  if (slices.length === 0) {
+  const visibleSlices = slices.filter((slice) => slice.value > 0);
+
+  if (visibleSlices.length === 0) {
     return (
       <ChartCard title={title} subtitle={subtitle}>
         <p className="chart-card__empty">Sem dados para exibir.</p>
@@ -34,8 +38,8 @@ export function DonutChart({
     );
   }
 
-  const total = slices.reduce((sum, slice) => sum + slice.value, 0);
-  const data = slices.map((slice) => ({
+  const total = visibleSlices.reduce((sum, slice) => sum + slice.value, 0);
+  const data = visibleSlices.map((slice) => ({
     name: slice.label,
     value: slice.value,
     fill: slice.color,
@@ -69,7 +73,7 @@ export function DonutChart({
                 >
                   {data.map((entry, index) => (
                     <Cell
-                      key={slices[index]?.id ?? entry.name}
+                      key={visibleSlices[index]?.id ?? entry.name}
                       fill={entry.fill}
                       opacity={
                         !interactive || activeIndex === undefined || activeIndex === index ? 1 : 0.32
@@ -90,7 +94,12 @@ export function DonutChart({
                 </span>
               </>
             ) : centerLabel ? (
-              <span className="chart-donut__center-text chart-donut__center-text--total">{centerLabel}</span>
+              <>
+                <span className="chart-donut__center-text chart-donut__center-text--percent">{centerLabel}</span>
+                {centerCaption ? (
+                  <span className="chart-donut__center-text chart-donut__center-text--caption">{centerCaption}</span>
+                ) : null}
+              </>
             ) : (
               <span className="chart-donut__center-text chart-donut__center-text--percent">
                 {data[0]?.percent ?? 0}%
@@ -111,6 +120,9 @@ export function DonutChart({
             >
               <span className="chart-legend__swatch" style={{ background: slice.fill }} aria-hidden="true" />
               <span className="chart-donut__legend-name">{slice.name}</span>
+              {!compactLegend ? (
+                <span className="chart-donut__legend-value">{slice.percent}%</span>
+              ) : null}
             </button>
           ))}
         </div>

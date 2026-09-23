@@ -23,7 +23,6 @@ import {
 import { ROLE_LABELS, type AuthUser } from "@/lib/api";
 import { navForRole, type NavIcon } from "@/lib/nav";
 import { AppBrand } from "./AppBrand";
-import { DemoBanner } from "./DemoBanner";
 import { LogoutButton } from "./LogoutButton";
 import { NotificationBell } from "./NotificationBell";
 import "./app-shell.css";
@@ -231,7 +230,6 @@ export function AppShell({ user, children }: { user: AuthUser; children: ReactNo
       </aside>
 
       <div className="shell__main">
-        <DemoBanner />
         <div className="shell__content">{children}</div>
       </div>
     </div>

@@ -12,7 +12,7 @@ import {
 import type { ParetoItem } from "@/lib/chart-data";
 import { ChartCard } from "./ChartCard";
 import { RechartsTooltipContent } from "./RechartsTooltip";
-import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN_LEFT } from "./recharts-theme";
+import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN_LEFT, truncateLabel } from "./recharts-theme";
 
 export function ParetoChart({ data }: { data: ParetoItem[] }) {
   if (data.length === 0) {
@@ -25,6 +25,7 @@ export function ParetoChart({ data }: { data: ParetoItem[] }) {
 
   const chartData = data.map((item) => ({
     name: item.label,
+    shortName: truncateLabel(item.label, 28),
     count: item.count,
     percent: item.percent,
   }));
@@ -32,10 +33,15 @@ export function ParetoChart({ data }: { data: ParetoItem[] }) {
   return (
     <ChartCard title="Causas de desvio" subtitle="Onde o laboratório mais erra na estimativa">
       <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-        <BarChart data={chartData} layout="vertical" margin={CHART_MARGIN_LEFT}>
+        <BarChart data={chartData} layout="vertical" margin={{ ...CHART_MARGIN_LEFT, left: 4, bottom: 12 }}>
           <CartesianGrid horizontal={false} stroke="var(--color-border)" strokeDasharray="3 3" />
           <XAxis type="number" hide />
-          <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11 }} />
+          <YAxis
+            type="category"
+            dataKey="shortName"
+            width={148}
+            tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+          />
           <Tooltip
             cursor={{ fill: "color-mix(in srgb, var(--color-primary) 6%, transparent)" }}
             content={({ active, payload, label }) => (

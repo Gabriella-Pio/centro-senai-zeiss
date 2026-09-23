@@ -13,8 +13,24 @@ export const CHART_HEIGHT = 220;
 export const CHART_HEIGHT_COMPACT = 180;
 export const CHART_HEIGHT_DONUT = 176;
 
-export const CHART_MARGIN = { top: 8, right: 16, left: 8, bottom: 8 };
-export const CHART_MARGIN_LEFT = { top: 8, right: 16, left: 4, bottom: 8 };
+export const CHART_MARGIN = { top: 12, right: 20, left: 12, bottom: 12 };
+export const CHART_MARGIN_WITH_LEGEND = { top: 12, right: 20, left: 12, bottom: 36 };
+export const CHART_MARGIN_LEFT = { top: 12, right: 24, left: 8, bottom: 16 };
+
+export function formatChartHours(value: number) {
+  const rounded = Math.round(Number(value) * 10) / 10;
+  const text = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  return `${text} h`;
+}
+
+export function niceChartMax(values: number[], padding = 1.12) {
+  const max = Math.max(...values, 0);
+  if (max <= 0) return 1;
+  const padded = max * padding;
+  if (padded <= 4) return Math.ceil(padded * 2) / 2;
+  if (padded <= 24) return Math.ceil(padded);
+  return Math.ceil(padded / 5) * 5;
+}
 
 export type BarDatum = {
   name: string;

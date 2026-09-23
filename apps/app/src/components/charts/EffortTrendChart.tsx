@@ -13,7 +13,7 @@ import {
 import type { TrendPoint } from "@/lib/chart-data";
 import { ChartCard } from "./ChartCard";
 import { RechartsTooltipContent } from "./RechartsTooltip";
-import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN } from "./recharts-theme";
+import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN_WITH_LEGEND, formatChartHours } from "./recharts-theme";
 
 export function EffortTrendChart({ data }: { data: TrendPoint[] }) {
   if (data.length === 0) {
@@ -26,11 +26,15 @@ export function EffortTrendChart({ data }: { data: TrendPoint[] }) {
 
   return (
     <ChartCard title="Evolução do esforço" subtitle="Média mensal de horas estimadas vs realizadas nos casos formalizados">
-      <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-        <LineChart data={data} margin={CHART_MARGIN}>
+      <ResponsiveContainer width="100%" height={CHART_HEIGHT + 40}>
+        <LineChart data={data} margin={CHART_MARGIN_WITH_LEGEND}>
           <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" />
           <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
-          <YAxis tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} width={40} />
+          <YAxis
+            tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+            tickFormatter={(value) => formatChartHours(Number(value))}
+            width={48}
+          />
           <Tooltip
             content={({ active, payload, label }) => (
               <RechartsTooltipContent
@@ -41,7 +45,7 @@ export function EffortTrendChart({ data }: { data: TrendPoint[] }) {
               />
             )}
           />
-          <Legend />
+          <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: 10 }} />
           <Line type="monotone" dataKey="estimated" name="Estimado" stroke={CHART_COLORS.primary} strokeWidth={2.5} dot={{ r: 3 }} />
           <Line type="monotone" dataKey="actual" name="Realizado" stroke={CHART_COLORS.accent} strokeWidth={2.5} dot={{ r: 3 }} />
         </LineChart>
