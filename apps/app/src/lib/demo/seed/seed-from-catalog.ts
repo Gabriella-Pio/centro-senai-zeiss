@@ -148,6 +148,12 @@ function buildRecord(proposal: RealProposal, requestId: string, requestNum: stri
     batchLabel: proposal.batchLabel,
     hoursPackageRef: proposal.hoursPackageRef,
     quoteMode,
+    stageHoursScope:
+      quoteMode === 'hourly_package'
+        ? 'total'
+        : proposal.recordKind === 'batch'
+          ? 'per_piece'
+          : 'total',
     stages: hasStages ? stages : undefined,
     serviceTypeId: proposal.serviceTypeId,
     partTraitIds: proposal.partTraitIds,

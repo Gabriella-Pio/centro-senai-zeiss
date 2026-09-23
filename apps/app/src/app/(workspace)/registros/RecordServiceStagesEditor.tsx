@@ -3,7 +3,14 @@
 import { useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
 import { Button, Input, Label } from "@cem/ui";
-import { getRecordQuantity, isBatchRecord } from "@/lib/record-helpers";
+import {
+  getRecordQuantity,
+  getStageHoursScope,
+  isBatchRecord,
+  isPerPieceStageHours,
+  shouldShowStageHoursScopeToggle,
+} from "@/lib/record-helpers";
+import { getRecordQuoteMode } from "@/lib/quote-mode";
 import { getStageResourceOptions } from "@/lib/record-stage-resources";
 import {
   addServiceStage,
@@ -15,8 +22,9 @@ import {
 } from "@/lib/record-stages";
 import { formatCurrency } from "@/lib/pricing";
 import type { VocabularyTerm } from "../vocabulario/types";
+import { RecordFieldError } from "./RecordFieldLabel";
 import { RecordVocabularyAddPanel } from "./RecordVocabularyAddPanel";
-import type { ServiceRecord } from "./types";
+import type { ServiceRecord, StageHoursScope } from "./types";
 
 function normalize(value: string) {
   return value.trim().toLowerCase();
@@ -28,6 +36,7 @@ export function RecordServiceStagesEditor({
   resources,
   readOnly,
   mode = "estimate",
+  stagesError,
   onUpdate,
 }: {
   record: ServiceRecord;
@@ -35,6 +44,7 @@ export function RecordServiceStagesEditor({
   resources: VocabularyTerm[];
   readOnly: boolean;
   mode?: "estimate" | "actual";
+  stagesError?: string;
   onUpdate: (patch: Partial<ServiceRecord>) => void;
 }) {
   const [query, setQuery] = useState("");
@@ -42,14 +52,27 @@ export function RecordServiceStagesEditor({
   const stages = getRecordStages(record, serviceTypes);
   const isActual = mode === "actual";
   const isBatch = isBatchRecord(record);
+  const quoteMode = getRecordQuoteMode(record);
+  const hoursScope = getStageHoursScope(record);
+  const perPieceHours = isPerPieceStageHours(record);
+  const showHoursScopeToggle = shouldShowStageHoursScopeToggle(record);
   const quantity = getRecordQuantity(record);
   const totalEstimated = sumStageEstimatedHours(stages);
   const totalActual = sumStageActualHours(stages, { allowFallback: true });
+  const stageTotal = isActual ? totalActual : totalEstimated;
 
   const sortedServiceTypes = useMemo(
     () => [...serviceTypes].sort((left, right) => left.label.localeCompare(right.label, "pt-BR")),
     [serviceTypes],
   );
+
+  const canAddStages = useMemo(() => {
+    if (isActual) {
+      return sortedServiceTypes.length > 0;
+    }
+    const selectedIds = new Set(stages.map((stage) => stage.serviceTypeId));
+    return sortedServiceTypes.some((term) => !selectedIds.has(term.id));
+  }, [isActual, sortedServiceTypes, stages]);
 
   const available = useMemo(() => {
     const selectedIds = isActual
@@ -84,17 +107,71 @@ export function RecordServiceStagesEditor({
     });
   }
 
-  const hoursSuffix = isBatch ? "/peça" : "";
+  const hoursSuffix = perPieceHours ? "/peça" : "";
+
+  function setHoursScope(scope: StageHoursScope) {
+    onUpdate({ stageHoursScope: scope });
+  }
+
+  function hoursHint() {
+    if (isActual) {
+      if (perPieceHours) {
+        return `Horas por peça em cada etapa · lote de ${quantity} peças. Ajuste o realizado ou adicione etapas extras.`;
+      }
+      if (quoteMode === "hourly_package") {
+        return "Horas totais do pacote em cada etapa. Ajuste o realizado ou adicione etapas extras.";
+      }
+      return "Horas totais em cada etapa. Ajuste o realizado ou adicione etapas extras.";
+    }
+    if (perPieceHours) {
+      return `Cada etapa combina tipo de serviço, recurso e horas por peça · lote de ${quantity} peças.`;
+    }
+    if (quoteMode === "hourly_package") {
+      return "Informe as horas totais de cada etapa do pacote/contrato — útil para distribuir o volume contratado.";
+    }
+    return "Cada etapa combina tipo de serviço, recurso e horas totais do serviço.";
+  }
 
   return (
     <div className="record-stages-editor">
       <div className="record-stages-editor__header">
         <Label>{isActual ? "Etapas realizadas" : "Etapas do serviço"}</Label>
-        <p className="record-detail-page__field-hint">
-          {isActual
-            ? `Horas por peça em cada etapa${isBatch ? ` · lote de ${quantity} peças` : ""}. Ajuste o realizado ou adicione etapas extras não previstas no orçamento.`
-            : `Cada etapa combina tipo de serviço, recurso e horas${isBatch ? " por peça" : ""}. O preço vem da tarifa.`}
-        </p>
+        <p className="record-detail-page__field-hint">{hoursHint()}</p>
+        {!isActual && showHoursScopeToggle && !readOnly ? (
+          <div
+            className="record-scope-toggle record-stages-editor__hours-scope"
+            role="radiogroup"
+            aria-label="Como informar horas nas etapas"
+          >
+            <button
+              type="button"
+              role="radio"
+              aria-checked={hoursScope === "per_piece"}
+              className={`record-scope-toggle__option${
+                hoursScope === "per_piece" ? " record-scope-toggle__option--active" : ""
+              }`}
+              onClick={() => setHoursScope("per_piece")}
+            >
+              Por peça
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={hoursScope === "total"}
+              className={`record-scope-toggle__option${
+                hoursScope === "total" ? " record-scope-toggle__option--active" : ""
+              }`}
+              onClick={() => setHoursScope("total")}
+            >
+              {quoteMode === "hourly_package" ? "Total do pacote" : "Horas totais"}
+            </button>
+          </div>
+        ) : !isActual && showHoursScopeToggle ? (
+          <p className="record-detail-page__quote-mode-badge">
+            {hoursScope === "per_piece" ? "Horas por peça" : quoteMode === "hourly_package" ? "Horas totais do pacote" : "Horas totais"}
+          </p>
+        ) : null}
+        <RecordFieldError error={stagesError} />
       </div>
 
       {stages.length > 0 ? (
@@ -224,27 +301,30 @@ export function RecordServiceStagesEditor({
                 );
               })}
             </tbody>
-            {(isActual ? totalActual : totalEstimated) !== null ? (
+            {stageTotal !== null ? (
               <tfoot>
                 <tr>
                   <td colSpan={isActual ? 2 : 2}>
                     <strong>{isActual ? "Total realizado" : "Total previsto"}</strong>
-                    {isBatch ? (
+                    {perPieceHours ? (
                       <span className="record-stages-table__foot-note">
                         {" "}
-                        · {(isActual ? totalActual : totalEstimated)?.toFixed(1)} h/peça
+                        · {stageTotal.toFixed(1)} h/peça
                         {" "}
-                        ·{" "}
-                        {(
-                          ((isActual ? totalActual : totalEstimated) ?? 0) * quantity
-                        ).toFixed(1)}{" "}
-                        h no lote
+                        · {(stageTotal * quantity).toFixed(1)} h no lote
                       </span>
+                    ) : isBatch ? (
+                      <span className="record-stages-table__foot-note">
+                        {" "}
+                        · total do lote ({quantity} peças)
+                      </span>
+                    ) : quoteMode === "hourly_package" ? (
+                      <span className="record-stages-table__foot-note"> · total do pacote</span>
                     ) : null}
                   </td>
                   {isActual ? <td /> : null}
                   <td>
-                    <strong>{(isActual ? totalActual : totalEstimated)?.toFixed(1)} h</strong>
+                    <strong>{stageTotal.toFixed(1)} h</strong>
                   </td>
                   {!readOnly ? <td /> : null}
                 </tr>
@@ -263,7 +343,7 @@ export function RecordServiceStagesEditor({
       {!readOnly ? (
         <RecordVocabularyAddPanel
           addLabel={isActual ? "Adicionar etapa extra" : "Adicionar etapa"}
-          canAdd={available.length > 0}
+          canAdd={canAddStages}
           query={query}
           onQueryChange={setQuery}
           open={addOpen}
@@ -272,7 +352,11 @@ export function RecordServiceStagesEditor({
           searchAriaLabel="Buscar tipo de serviço"
         >
           {available.length === 0 ? (
-            <p className="record-vocab-picker__empty-list">Nenhum tipo de serviço disponível.</p>
+            <p className="record-vocab-picker__empty-list">
+              {query.trim()
+                ? `Nenhum tipo de serviço encontrado para "${query.trim()}".`
+                : "Nenhum tipo de serviço disponível."}
+            </p>
           ) : (
             available.map((term) => (
               <button

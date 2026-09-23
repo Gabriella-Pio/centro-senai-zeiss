@@ -9,7 +9,7 @@ import {
   type DemoState,
 } from "../demo-store-types";
 
-export const DEMO_SEED_VERSION = 6;
+export const DEMO_SEED_VERSION = 7;
 
 export function createSeedState(): DemoState {
   return {

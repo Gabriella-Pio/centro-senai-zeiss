@@ -150,6 +150,7 @@ export function computeStageQuoteCost(input: {
   resourceRates?: Record<string, number>;
   hoursField?: StageHoursField;
   quantity?: number;
+  stageHoursScope?: "per_piece" | "total";
 }): QuoteCostBreakdown {
   const {
     vocabulary,
@@ -158,10 +159,12 @@ export function computeStageQuoteCost(input: {
     resourceRates,
     hoursField = "estimatedHours",
     quantity = 1,
+    stageHoursScope = "per_piece",
   } = input;
   const lines: CostLine[] = [];
   const explanations: string[] = [];
-  const effectiveQuantity = Math.max(1, quantity);
+  const effectiveQuantity =
+    stageHoursScope === "total" ? 1 : Math.max(1, quantity);
 
   stages.forEach((stage) => {
     const resourceId = getStageResourceId(stage);
@@ -199,10 +202,12 @@ export function computeStageQuoteCost(input: {
         ? "Custo real por etapa com tarifa."
         : "Tarifa por etapa — já inclui mão de obra, encargos e overhead administrativo.",
     );
-    if (isBatch) {
+    if (isBatch && stageHoursScope === "per_piece") {
       explanations.push(
         `Horas informadas por peça · lote de ${effectiveQuantity} peças.`,
       );
+    } else if (quantity > 1 && stageHoursScope === "total") {
+      explanations.push(`Horas totais do lote (${quantity} peças).`);
     }
   }
 

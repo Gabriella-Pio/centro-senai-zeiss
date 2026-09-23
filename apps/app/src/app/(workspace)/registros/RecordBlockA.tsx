@@ -1,4 +1,4 @@
-import { Button, Input, Label } from "@cem/ui";
+import { Button, Input } from "@cem/ui";
 import { formatCurrency } from "@/lib/pricing";
 import {
   QUOTE_MODE_DESCRIPTIONS,
@@ -6,8 +6,10 @@ import {
   getRecordQuoteMode,
 } from "@/lib/quote-mode";
 import { getRecordQuantity, isBatchRecord } from "@/lib/record-helpers";
-import { getRecordStages } from "@/lib/record-stages";
+import { getRecordStages, sumStageEstimatedHours } from "@/lib/record-stages";
 import type { VocabularyTerm } from "../vocabulario/types";
+import { RecordFieldError, RecordFieldLabel } from "./RecordFieldLabel";
+import type { RecordBlockAFieldErrors } from "./record-block-field-errors";
 import { RecordServiceStagesEditor } from "./RecordServiceStagesEditor";
 import { RecordVocabularyPicker } from "./RecordVocabularyPicker";
 import type { QuoteMode, ServiceRecord } from "./types";
@@ -24,6 +26,7 @@ export function RecordBlockA({
   suggestedPrice,
   suggestedUnitPrice,
   needsPriceOverride,
+  fieldErrors,
   onUpdate,
   onSave,
 }: {
@@ -36,13 +39,17 @@ export function RecordBlockA({
   suggestedPrice: number;
   suggestedUnitPrice: number;
   needsPriceOverride: boolean;
+  fieldErrors?: RecordBlockAFieldErrors;
   onUpdate: (patch: Partial<ServiceRecord>) => void;
   onSave: () => void;
 }) {
+  const errors = fieldErrors ?? {};
   const quoteMode = getRecordQuoteMode(record);
   const isBatch = isBatchRecord(record);
   const stages = getRecordStages(record, serviceTypes);
+  const stageHoursTotal = sumStageEstimatedHours(stages);
   const isPackageMode = quoteMode === "hourly_package";
+  const packageHoursFromStages = Boolean(isPackageMode && stages.length > 0 && stageHoursTotal);
 
   function setScopeMode(mode: "single" | "batch") {
     if (mode === "single") {
@@ -59,6 +66,9 @@ export function RecordBlockA({
     const patch: Partial<ServiceRecord> = { quoteMode: mode };
     if (mode !== "tariff") {
       patch.priceOverrideReason = undefined;
+    }
+    if (mode === "hourly_package") {
+      patch.stageHoursScope = "total";
     }
     onUpdate(patch);
   }
@@ -122,8 +132,9 @@ export function RecordBlockA({
         {isBatch ? (
           <div className="records-form__two-columns">
             <div>
-              <Label>Quantidade de peças</Label>
+              <RecordFieldLabel htmlFor="record-batch-quantity">Quantidade de peças</RecordFieldLabel>
               <Input
+                id="record-batch-quantity"
                 type="number"
                 min="2"
                 disabled={readOnly}
@@ -138,8 +149,9 @@ export function RecordBlockA({
               />
             </div>
             <div>
-              <Label>Identificação do lote</Label>
+              <RecordFieldLabel htmlFor="record-batch-label">Identificação do lote</RecordFieldLabel>
               <Input
+                id="record-batch-label"
                 disabled={readOnly}
                 value={record.batchLabel ?? ""}
                 onChange={(event) => onUpdate({ batchLabel: event.target.value })}
@@ -150,8 +162,9 @@ export function RecordBlockA({
           </div>
         ) : (
           <div>
-            <Label>Identificação da peça</Label>
+            <RecordFieldLabel htmlFor="record-piece-label">Identificação da peça</RecordFieldLabel>
             <Input
+              id="record-piece-label"
               disabled={readOnly}
               value={record.batchLabel ?? ""}
               onChange={(event) => onUpdate({ batchLabel: event.target.value })}
@@ -166,35 +179,53 @@ export function RecordBlockA({
         <div className="record-section">
           <h2>Pacote / contrato</h2>
           <div>
-            <Label>Referência do pacote</Label>
+            <RecordFieldLabel required htmlFor="record-package-ref">
+              Referência do pacote
+            </RecordFieldLabel>
             <Input
+              id="record-package-ref"
               disabled={readOnly}
               value={record.hoursPackageRef ?? ""}
               onChange={(event) => onUpdate({ hoursPackageRef: event.target.value })}
-              className="h-12"
+              className={`h-12${errors.hoursPackageRef ? " records-form__input--error" : ""}`}
               placeholder="Ex.: Pacote anual 120 h — Cargill 2026"
+              aria-invalid={errors.hoursPackageRef ? true : undefined}
             />
+            <RecordFieldError error={errors.hoursPackageRef} />
           </div>
           <div className="records-form__two-columns">
             <div>
-              <Label>Horas totais do pacote</Label>
+              <RecordFieldLabel required htmlFor="record-package-hours">
+                Horas totais do pacote
+              </RecordFieldLabel>
+              {packageHoursFromStages ? (
+                <p className="record-detail-page__field-hint">
+                  Atualizado automaticamente pela soma das etapas ({stageHoursTotal?.toFixed(1)} h).
+                </p>
+              ) : null}
               <Input
+                id="record-package-hours"
                 type="number"
                 min="0"
                 step="0.5"
-                disabled={readOnly}
+                disabled={readOnly || packageHoursFromStages}
                 value={record.estimatedHours ?? ""}
                 onChange={(event) =>
                   onUpdate({
                     estimatedHours: event.target.value ? Number(event.target.value) : null,
                   })
                 }
-                className="h-12"
+                className={`h-12${errors.estimatedHours ? " records-form__input--error" : ""}`}
+                aria-invalid={errors.estimatedHours ? true : undefined}
               />
+              <RecordFieldError error={errors.estimatedHours} />
             </div>
             <div>
-              <Label>Valor do contrato (R$)</Label>
+              <RecordFieldLabel required htmlFor="record-package-value">
+                Valor do contrato (R$)
+              </RecordFieldLabel>
               <Input
+                id="record-package-value"
                 type="number"
                 min="0"
                 disabled={readOnly}
@@ -202,8 +233,10 @@ export function RecordBlockA({
                 onChange={(event) =>
                   onUpdate({ proposedValue: event.target.value ? Number(event.target.value) : null })
                 }
-                className="h-12"
+                className={`h-12${errors.proposedValue ? " records-form__input--error" : ""}`}
+                aria-invalid={errors.proposedValue ? true : undefined}
               />
+              <RecordFieldError error={errors.proposedValue} />
             </div>
           </div>
           <p className="record-detail-page__field-hint">
@@ -219,6 +252,7 @@ export function RecordBlockA({
           serviceTypes={serviceTypes}
           resources={resources}
           readOnly={readOnly}
+          stagesError={errors.stages}
           onUpdate={onUpdate}
         />
 
@@ -249,7 +283,7 @@ export function RecordBlockA({
           ) : null}
           <div className="records-form__two-columns">
             <div>
-              <Label>
+              <RecordFieldLabel required htmlFor="record-proposed-value">
                 {quoteMode === "commercial_fixed"
                   ? isBatch
                     ? "Valor fechado do lote (R$)"
@@ -257,7 +291,7 @@ export function RecordBlockA({
                   : isBatch
                     ? "Valor proposto do lote (R$)"
                     : "Valor proposto (R$)"}
-              </Label>
+              </RecordFieldLabel>
               {isBatch && suggestedUnitPrice > 0 && quoteMode === "tariff" ? (
                 <p className="record-detail-page__field-hint">
                   Unitário: {formatCurrency(suggestedUnitPrice)} · Total ({getRecordQuantity(record)} peças):{" "}
@@ -265,6 +299,7 @@ export function RecordBlockA({
                 </p>
               ) : null}
               <Input
+                id="record-proposed-value"
                 type="number"
                 min="0"
                 disabled={readOnly}
@@ -272,9 +307,11 @@ export function RecordBlockA({
                 onChange={(event) =>
                   onUpdate({ proposedValue: event.target.value ? Number(event.target.value) : null })
                 }
-                className="h-12"
+                className={`h-12${errors.proposedValue ? " records-form__input--error" : ""}`}
                 placeholder={suggestedPrice ? String(suggestedPrice) : ""}
+                aria-invalid={errors.proposedValue ? true : undefined}
               />
+              <RecordFieldError error={errors.proposedValue} />
             </div>
             {!readOnly && suggestedPrice > 0 && quoteMode === "tariff" ? (
               <div className="records-form__apply-price">
@@ -291,19 +328,25 @@ export function RecordBlockA({
           </div>
           {needsPriceOverride ? (
             <div>
-              <Label>Justificativa para valor diferente da tarifa</Label>
+              <RecordFieldLabel required htmlFor="record-price-override">
+                Justificativa para valor diferente da tarifa
+              </RecordFieldLabel>
               <textarea
+                id="record-price-override"
                 disabled={readOnly}
                 value={record.priceOverrideReason ?? ""}
                 onChange={(event) => onUpdate({ priceOverrideReason: event.target.value })}
-                className="records-form__textarea"
+                className={`records-form__textarea${errors.priceOverrideReason ? " records-form__input--error" : ""}`}
                 rows={2}
+                aria-invalid={errors.priceOverrideReason ? true : undefined}
               />
+              <RecordFieldError error={errors.priceOverrideReason} />
             </div>
           ) : null}
           <div>
-            <Label>Premissas</Label>
+            <RecordFieldLabel htmlFor="record-assumptions">Premissas</RecordFieldLabel>
             <textarea
+              id="record-assumptions"
               disabled={readOnly}
               value={record.assumptions}
               onChange={(event) => onUpdate({ assumptions: event.target.value })}
@@ -319,8 +362,9 @@ export function RecordBlockA({
         </div>
       ) : (
         <div className="record-section">
-          <h2>Premissas</h2>
+          <RecordFieldLabel htmlFor="record-package-assumptions">Premissas</RecordFieldLabel>
           <textarea
+            id="record-package-assumptions"
             disabled={readOnly}
             value={record.assumptions}
             onChange={(event) => onUpdate({ assumptions: event.target.value })}

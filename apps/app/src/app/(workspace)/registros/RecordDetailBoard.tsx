@@ -104,6 +104,7 @@ export function RecordDetailBoard({
                 needsPriceOverride={Boolean(
                   board.needsPriceOverride
                 )}
+                fieldErrors={board.blockAFieldErrors}
                 onUpdate={board.updateRecord}
                 onSave={board.saveBlockA}
               />
@@ -116,6 +117,7 @@ export function RecordDetailBoard({
                 serviceTypes={board.serviceTypes}
                 resources={board.resources}
                 actualCost={board.actualCost}
+                fieldErrors={board.blockBFieldErrors}
                 onUpdate={board.updateRecord}
                 onSave={board.saveBlockB}
               />
@@ -127,6 +129,7 @@ export function RecordDetailBoard({
                 readOnly={board.readOnly}
                 deviationCauses={board.deviationCauses}
                 vocabulary={board.vocabulary}
+                fieldErrors={board.blockCFieldErrors}
                 onUpdate={board.updateRecord}
                 onCreateDeviationCause={board.createDeviationCause}
                 onComplete={board.completeService}

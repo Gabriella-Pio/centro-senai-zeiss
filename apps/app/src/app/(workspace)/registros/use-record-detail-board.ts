@@ -13,7 +13,12 @@ import {
   isBlockDone,
   type RecordBlock,
 } from '@/lib/record-lifecycle';
-import { deriveRelatedTopicIds, getRecordQuantity, resolveBilledValue } from '@/lib/record-helpers';
+import {
+  deriveRelatedTopicIds,
+  getPricingQuantity,
+  getStageHoursScope,
+  resolveBilledValue,
+} from '@/lib/record-helpers';
 import { getRecordQuoteMode, needsPriceOverrideReason } from '@/lib/quote-mode';
 import { buildRecordFinancialSummary } from '@/lib/chart-data';
 import { upsertVocabularyTerm } from '@/lib/vocabulary-mutations';
@@ -31,6 +36,12 @@ import {
   setRecordBlockParam,
 } from '@/lib/records-navigation';
 import { useDemoStore } from '@/lib/use-demo-store';
+import type {
+  RecordBlockAFieldErrors,
+  RecordBlockBFieldErrors,
+  RecordBlockCFieldErrors,
+} from './record-block-field-errors';
+import { syncPackageHoursFromStages } from '@/lib/record-package-hours';
 import type { ServiceRecord, ServiceStatus } from './types';
 
 export function useRecordDetailBoard(recordId: string, userRole: UserRole, userName: string) {
@@ -41,6 +52,9 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
   const record = records.find((item) => item.id === recordId) ?? null;
   const [activeTab, setActiveTab] = useState<RecordBlock>('A');
   const [formError, setFormError] = useState<string | null>(null);
+  const [blockAFieldErrors, setBlockAFieldErrors] = useState<RecordBlockAFieldErrors>({});
+  const [blockBFieldErrors, setBlockBFieldErrors] = useState<RecordBlockBFieldErrors>({});
+  const [blockCFieldErrors, setBlockCFieldErrors] = useState<RecordBlockCFieldErrors>({});
   const [notice, setNotice] = useState<string | null>(null);
 
   const serviceTypes = useMemo(
@@ -72,6 +86,9 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
   const selectBlock = useCallback(
     (block: RecordBlock) => {
       setFormError(null);
+      if (block !== 'A') setBlockAFieldErrors({});
+      if (block !== 'B') setBlockBFieldErrors({});
+      if (block !== 'C') setBlockCFieldErrors({});
       setActiveTab(block);
       syncBlockParam(block);
     },
@@ -95,7 +112,8 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     }
   }, [recordId, records, searchParams, syncBlockParam]);
 
-  const quantity = record ? getRecordQuantity(record) : 1;
+  const pricingQuantity = record ? getPricingQuantity(record) : 1;
+  const stageHoursScope = record ? getStageHoursScope(record) : 'total';
 
   const liveBreakdown = useMemo(() => {
     if (!record) return null;
@@ -104,10 +122,11 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       vocabulary,
       stages,
       labSettings,
-      quantity,
+      quantity: pricingQuantity,
+      stageHoursScope,
       resourceRates: record.quoteSnapshot?.resourceRates,
     });
-  }, [record, serviceTypes, vocabulary, labSettings, quantity]);
+  }, [record, serviceTypes, vocabulary, labSettings, pricingQuantity, stageHoursScope]);
 
   const actualBreakdown = useMemo(() => {
     if (!record) return null;
@@ -120,10 +139,11 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       stages,
       labSettings,
       hoursField: 'actualHours',
-      quantity,
+      quantity: pricingQuantity,
+      stageHoursScope,
       resourceRates: record.quoteSnapshot?.resourceRates,
     });
-  }, [record, serviceTypes, vocabulary, labSettings, quantity]);
+  }, [record, serviceTypes, vocabulary, labSettings, pricingQuantity, stageHoursScope]);
 
   const costBreakdown = liveBreakdown;
 
@@ -174,6 +194,37 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       relatedTopicIds: deriveRelatedTopicIds(merged),
     };
 
+    if (patch.hoursPackageRef !== undefined) {
+      setBlockAFieldErrors((current) => ({ ...current, hoursPackageRef: undefined }));
+    }
+    if (patch.estimatedHours !== undefined) {
+      setBlockAFieldErrors((current) => ({ ...current, estimatedHours: undefined }));
+    }
+    if (patch.proposedValue !== undefined) {
+      setBlockAFieldErrors((current) => ({ ...current, proposedValue: undefined }));
+    }
+    if (patch.priceOverrideReason !== undefined) {
+      setBlockAFieldErrors((current) => ({ ...current, priceOverrideReason: undefined }));
+    }
+    if (patch.stages !== undefined) {
+      setBlockAFieldErrors((current) => ({ ...current, stages: undefined }));
+      setBlockBFieldErrors((current) => ({ ...current, stages: undefined }));
+    }
+    if (patch.billedValue !== undefined) {
+      setBlockBFieldErrors((current) => ({ ...current, billedValue: undefined }));
+    }
+    if (patch.deviationCauseId !== undefined) {
+      setBlockCFieldErrors((current) => ({ ...current, deviationCauseId: undefined }));
+    }
+    if (patch.lesson !== undefined) {
+      setBlockCFieldErrors((current) => ({ ...current, lesson: undefined }));
+    }
+
+    const syncedPackageHours = syncPackageHoursFromStages(merged, serviceTypes);
+    if (syncedPackageHours !== null) {
+      nextPatch.estimatedHours = syncedPackageHours;
+    }
+
     if (patch.stages && record.serviceStatus === 'QUOTED') {
       const stages = getRecordStages(merged, serviceTypes).map((stage) => ({
         ...stage,
@@ -186,7 +237,8 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
           stages,
           labSettings,
           hoursField: 'actualHours',
-          quantity: getRecordQuantity(merged),
+          quantity: getPricingQuantity(merged),
+          stageHoursScope: getStageHoursScope(merged),
           resourceRates: record.quoteSnapshot?.resourceRates,
         });
         if (breakdown.suggestedPrice > 0) {
@@ -235,17 +287,51 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     }
   }
 
+  function validateBlockAStages(stages: ReturnType<typeof getRecordStages>, required: boolean) {
+    const stageHours = sumStageEstimatedHours(stages);
+    if (required && (stages.length === 0 || !stageHours)) {
+      return 'Adicione pelo menos uma etapa com horas orçadas.';
+    }
+    if (stages.length > 0 && stageHours && !stagesHaveResources(stages)) {
+      return 'Selecione o recurso de cada etapa informada.';
+    }
+    if (stages.length > 0 && !stageHours) {
+      return 'Informe as horas de cada etapa.';
+    }
+    return undefined;
+  }
+
   function saveBlockA() {
     if (!record) return;
     const mode = getRecordQuoteMode(record);
+    const stages = getRecordStages(record, serviceTypes);
+    const syncedHours = syncPackageHoursFromStages(record, serviceTypes);
+    const effectiveEstimatedHours = syncedHours ?? record.estimatedHours;
 
     if (mode === 'hourly_package') {
-      if (!record.hoursPackageRef?.trim() || !record.estimatedHours || !record.proposedValue) {
-        setFormError('Informe referência do pacote, horas totais e valor do contrato no bloco A.');
+      const errors: RecordBlockAFieldErrors = {};
+      if (!record.hoursPackageRef?.trim()) {
+        errors.hoursPackageRef = 'Informe a referência do pacote ou contrato.';
+      }
+      if (!effectiveEstimatedHours) {
+        errors.estimatedHours =
+          stages.length > 0
+            ? 'Informe horas nas etapas ou no total do pacote.'
+            : 'Informe as horas totais do pacote.';
+      }
+      if (!record.proposedValue) {
+        errors.proposedValue = 'Informe o valor do contrato.';
+      }
+      const stagesError = validateBlockAStages(stages, false);
+      if (stagesError) {
+        errors.stages = stagesError;
+      }
+      if (Object.keys(errors).length > 0) {
+        setBlockAFieldErrors(errors);
+        setFormError('Corrija os campos obrigatórios destacados no bloco A.');
         return;
       }
 
-      const stages = getRecordStages(record, serviceTypes);
       const stageHours = sumStageEstimatedHours(stages);
       const hasPricedStages =
         stages.length > 0 && stageHours && stagesHaveResources(stages);
@@ -266,7 +352,8 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
           vocabulary,
           stages,
           labSettings,
-          quantity: getRecordQuantity(record),
+          quantity: getPricingQuantity(record),
+          stageHoursScope: getStageHoursScope(record),
         });
         quoteSnapshot = { ...snapshot, breakdown: pricedBreakdown };
         estimatedCost = pricedBreakdown.suggestedPrice;
@@ -275,6 +362,7 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       updateRecord({
         serviceStatus: 'QUOTED',
         estimatedBy: userName,
+        estimatedHours: effectiveEstimatedHours,
         estimatedCost,
         proposedValue: record.proposedValue,
         billedValue: record.billedValue ?? record.proposedValue,
@@ -287,22 +375,31 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
             }))
           : record.stages,
       });
+      setBlockAFieldErrors({});
       setFormError(null);
       setNotice('Pacote salvo e congelado. Você já pode registrar a execução no bloco B.');
       selectBlock('B');
       return;
     }
 
-    const stages = getRecordStages(record, serviceTypes);
-    const stageHours = sumStageEstimatedHours(stages);
-    if (stages.length === 0 || !stageHours || !stagesHaveResources(stages)) {
-      setFormError('Informe etapas do serviço, recurso por etapa e horas orçadas no bloco A.');
-      return;
+    const errors: RecordBlockAFieldErrors = {};
+    const stagesError = validateBlockAStages(stages, true);
+    if (stagesError) {
+      errors.stages = stagesError;
+    }
+    if (!record.proposedValue) {
+      errors.proposedValue = 'Informe o valor proposto do orçamento.';
     }
     if (needsPriceOverride && !record.priceOverrideReason?.trim()) {
-      setFormError('Justifique o valor diferente do sugerido pela tarifa.');
+      errors.priceOverrideReason = 'Justifique o valor diferente do sugerido pela tarifa.';
+    }
+    if (Object.keys(errors).length > 0) {
+      setBlockAFieldErrors(errors);
+      setFormError('Corrija os campos obrigatórios destacados no bloco A.');
       return;
     }
+
+    const stageHours = sumStageEstimatedHours(stages);
     const snapshot = buildStageQuoteSnapshot({
       vocabulary,
       stages: stages.map((stage) => ({
@@ -315,16 +412,13 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       vocabulary,
       stages,
       labSettings,
-      quantity: getRecordQuantity(record),
+      quantity: getPricingQuantity(record),
+      stageHoursScope: getStageHoursScope(record),
     });
     const proposedValue =
       mode === 'tariff'
         ? (record.proposedValue ?? pricedBreakdown.suggestedPrice)
         : record.proposedValue;
-    if (!proposedValue) {
-      setFormError('Informe o valor proposto no bloco A.');
-      return;
-    }
     updateRecord({
       serviceStatus: 'QUOTED',
       estimatedBy: userName,
@@ -342,6 +436,7 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
         actualHours: stage.actualHours ?? stage.estimatedHours,
       })),
     });
+    setBlockAFieldErrors({});
     setFormError(null);
     setNotice(
       mode === 'commercial_fixed'
@@ -354,28 +449,40 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
   function saveBlockB() {
     if (!record) return;
     const stages = finalizeStagesForExecution(getRecordStages(record, serviceTypes));
-    const perPieceHours = sumStageActualHours(stages);
+    const actualHours = sumStageActualHours(stages);
     const breakdown = computeStageQuoteCost({
       vocabulary,
       stages,
       labSettings,
       hoursField: 'actualHours',
-      quantity: getRecordQuantity(record),
+      quantity: getPricingQuantity(record),
+      stageHoursScope: getStageHoursScope(record),
       resourceRates: record.quoteSnapshot?.resourceRates,
     });
 
     const billedValue = resolveBilledValue(record);
-    if (!perPieceHours || !stagesHaveResources(stages) || !billedValue) {
-      setFormError('Informe horas realizadas por etapa, recursos e valor faturado no bloco B.');
+    const errors: RecordBlockBFieldErrors = {};
+    if (!actualHours) {
+      errors.stages = 'Informe as horas realizadas em cada etapa.';
+    } else if (!stagesHaveResources(stages)) {
+      errors.stages = 'Selecione o recurso de cada etapa realizada.';
+    }
+    if (!billedValue) {
+      errors.billedValue = 'Informe o valor faturado ao cliente.';
+    }
+    if (Object.keys(errors).length > 0) {
+      setBlockBFieldErrors(errors);
+      setFormError('Corrija os campos obrigatórios destacados no bloco B.');
       return;
     }
 
     updateRecord({
       stages,
-      actualHours: perPieceHours,
+      actualHours,
       actualCost: breakdown.suggestedPrice,
       billedValue,
     });
+    setBlockBFieldErrors({});
     setFormError(null);
     setNotice('Execução registrada. Complete a lição no bloco C para concluir o serviço.');
     selectBlock('C');
@@ -388,11 +495,20 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       selectBlock('B');
       return;
     }
-    if (!record.deviationCauseId || !record.lesson.trim()) {
-      setFormError('Preencha causa do desvio e lição aprendida no bloco C.');
+    const nextBlockCErrors: RecordBlockCFieldErrors = {};
+    if (!record.deviationCauseId) {
+      nextBlockCErrors.deviationCauseId = 'Selecione ou cadastre uma causa do desvio.';
+    }
+    if (!record.lesson.trim()) {
+      nextBlockCErrors.lesson = 'Descreva o que a equipe deve lembrar na próxima vez.';
+    }
+    if (nextBlockCErrors.deviationCauseId || nextBlockCErrors.lesson) {
+      setBlockCFieldErrors(nextBlockCErrors);
+      setFormError('Corrija os campos obrigatórios destacados no bloco C.');
       selectBlock('C');
       return;
     }
+    setBlockCFieldErrors({});
     updateDemoState((state) => ({
       ...state,
       records: state.records.map((item) =>
@@ -418,6 +534,9 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     record,
     activeTab,
     formError,
+    blockAFieldErrors,
+    blockBFieldErrors,
+    blockCFieldErrors,
     notice,
     serviceTypes,
     partTraits,

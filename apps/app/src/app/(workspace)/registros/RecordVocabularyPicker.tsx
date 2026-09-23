@@ -102,7 +102,11 @@ export function RecordVocabularyPicker({
           searchAriaLabel={`Buscar ${label.toLowerCase()}`}
         >
           {filtered.length === 0 ? (
-            <p className="record-vocab-picker__empty-list">{emptyLabel}</p>
+            <p className="record-vocab-picker__empty-list">
+              {query.trim()
+                ? `Nenhum resultado para "${query.trim()}".`
+                : emptyLabel}
+            </p>
           ) : (
             filtered.map((term) => {
               const meta = renderMeta?.(term);

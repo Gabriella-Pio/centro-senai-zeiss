@@ -2,56 +2,65 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { Button, Input, Label } from "@cem/ui";
+import { Button, Input } from "@cem/ui";
 import type { VocabularyTerm } from "../vocabulario/types";
+import { RecordFieldError, RecordFieldLabel } from "./RecordFieldLabel";
 
 export function RecordDeviationCauseField({
   value,
   causes,
   readOnly,
+  error,
   onChange,
   onCreateCause,
 }: {
   value: string | null;
   causes: VocabularyTerm[];
   readOnly: boolean;
+  error?: string;
   onChange: (causeId: string | null) => void;
   onCreateCause: (label: string) => void;
 }) {
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   function submitNewCause() {
     const label = draft.trim();
     if (label.length < 2) {
-      setError("Informe uma causa com pelo menos 2 caracteres.");
+      setCreateError("Informe uma causa com pelo menos 2 caracteres.");
       return;
     }
     onCreateCause(label);
     setDraft("");
     setCreating(false);
-    setError(null);
+    setCreateError(null);
   }
 
   return (
     <div className="record-deviation-cause">
-      <Label>Causa do desvio</Label>
+      <RecordFieldLabel required htmlFor="record-deviation-cause">
+        Causa do desvio
+      </RecordFieldLabel>
       <p className="record-detail-page__field-hint">
         Selecione um padrão existente ou cadastre um novo — ele será salvo no vocabulário para reutilizar.
       </p>
 
       <select
+        id="record-deviation-cause"
         disabled={readOnly}
         value={value ?? ""}
         onChange={(event) => onChange(event.target.value || null)}
-        className="record-select"
+        className={`record-select${error ? " records-form__input--error" : ""}`}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? "record-deviation-cause-error" : undefined}
       >
         <option value="">Selecionar</option>
         {causes.map((term) => (
           <option key={term.id} value={term.id}>{term.label}</option>
         ))}
       </select>
+      <RecordFieldError id="record-deviation-cause-error" error={error} />
 
       {!readOnly ? (
         creating ? (
@@ -60,7 +69,7 @@ export function RecordDeviationCauseField({
               value={draft}
               onChange={(event) => {
                 setDraft(event.target.value);
-                setError(null);
+                setCreateError(null);
               }}
               className="h-11"
               placeholder="Ex.: Geometria complexa não prevista"
@@ -78,13 +87,15 @@ export function RecordDeviationCauseField({
                 onClick={() => {
                   setCreating(false);
                   setDraft("");
-                  setError(null);
+                  setCreateError(null);
                 }}
               >
                 Cancelar
               </Button>
             </div>
-            {error ? <p className="record-deviation-cause__error" role="alert">{error}</p> : null}
+            {createError ? (
+              <p className="record-deviation-cause__error" role="alert">{createError}</p>
+            ) : null}
           </div>
         ) : (
           <button

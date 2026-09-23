@@ -38,7 +38,7 @@ export function RecordVocabularyAddPanel({
     }
   }
 
-  if (!canAdd) {
+  if (!canAdd && !open) {
     return null;
   }
 

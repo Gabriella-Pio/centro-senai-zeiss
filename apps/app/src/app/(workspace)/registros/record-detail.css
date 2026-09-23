@@ -481,6 +481,23 @@
   background: color-mix(in srgb, var(--color-muted) 32%, var(--color-card));
 }
 
+.records-form__required {
+  color: var(--color-destructive);
+  font-weight: 800;
+}
+
+.records-form__field-error {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-destructive);
+}
+
+.records-form__input--error {
+  border-color: color-mix(in srgb, var(--color-destructive) 55%, var(--color-border)) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-destructive) 20%, transparent);
+}
+
 .record-detail-page__field-hint {
   margin: 0.35rem 0 0.75rem;
   color: var(--color-muted-foreground);
@@ -845,6 +862,10 @@
   color: var(--color-primary);
   font-size: 0.8125rem;
   font-weight: 700;
+}
+
+.record-stages-editor__hours-scope {
+  margin-top: 0.75rem;
 }
 
 .record-scope-toggle {

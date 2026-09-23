@@ -3,6 +3,7 @@ export type ServiceStatus = "DRAFT" | "QUOTED" | "COMPLETED";
 export type RecordVisibility = "PUBLIC" | "RESTRICTED";
 export type RecordKind = "single" | "batch" | "composite";
 export type QuoteMode = "tariff" | "commercial_fixed" | "hourly_package";
+export type StageHoursScope = "per_piece" | "total";
 
 import type { QuoteSnapshot } from "@/lib/pricing";
 
@@ -36,6 +37,8 @@ export type ServiceRecord = {
 
   // Bloco A — orçado
   quoteMode?: QuoteMode;
+  /** Como interpretar horas nas etapas: por peça (lote) ou total do serviço/pacote. */
+  stageHoursScope?: StageHoursScope;
   serviceTypeId?: string;
   partTraitIds: string[];
   resourceIds: string[];

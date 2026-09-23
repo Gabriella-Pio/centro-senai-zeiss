@@ -3,7 +3,9 @@ import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import {
   deriveRelatedTopicIds,
   formatEffort,
+  getPricingQuantity,
   getRecordScopeMode,
+  getStageHoursScope,
   resolveBilledValue,
   resolveQuoteHours,
 } from "@/lib/record-helpers";
@@ -68,6 +70,17 @@ describe("record helpers", () => {
         }),
       ),
     ).toBe("5 h/peça · 80 h total (16 peças)");
+  });
+
+  it("uses total hours scope for packages and pricing quantity", () => {
+    const packageRecord = createRecord({
+      quoteMode: "hourly_package",
+      estimatedHours: 120,
+      quantity: 5,
+    });
+    expect(getStageHoursScope(packageRecord)).toBe("total");
+    expect(getPricingQuantity(packageRecord)).toBe(1);
+    expect(formatEffort(packageRecord)).toBe("120 h total (5 peças)");
   });
 
   it("derives related topics from stages and traits", () => {

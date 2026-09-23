@@ -1,10 +1,12 @@
 import { Lock } from "lucide-react";
-import { Button, Label } from "@cem/ui";
+import { Button } from "@cem/ui";
 import { canAccessBlock } from "@/lib/record-lifecycle";
 import { deriveRelatedTopicIds } from "@/lib/record-helpers";
 import type { VocabularyTerm } from "../vocabulario/types";
 import { VOCABULARY_CLASS_LABELS } from "../vocabulario/types";
 import { RecordDeviationCauseField } from "./RecordDeviationCauseField";
+import { RecordFieldError, RecordFieldLabel } from "./RecordFieldLabel";
+import type { RecordBlockCFieldErrors } from "./record-block-field-errors";
 import { VISIBILITY_LABELS, type RecordVisibility, type ServiceRecord } from "./types";
 
 export function RecordBlockC({
@@ -12,6 +14,7 @@ export function RecordBlockC({
   readOnly,
   deviationCauses,
   vocabulary,
+  fieldErrors,
   onUpdate,
   onCreateDeviationCause,
   onComplete,
@@ -20,11 +23,13 @@ export function RecordBlockC({
   readOnly: boolean;
   deviationCauses: VocabularyTerm[];
   vocabulary: VocabularyTerm[];
+  fieldErrors?: RecordBlockCFieldErrors;
   onUpdate: (patch: Partial<ServiceRecord>) => void;
   onCreateDeviationCause: (label: string) => void;
   onComplete: () => void;
 }) {
   const accessible = canAccessBlock(record, "C");
+  const errors = fieldErrors ?? {};
 
   if (!accessible) {
     return (
@@ -51,24 +56,31 @@ export function RecordBlockC({
         value={record.deviationCauseId}
         causes={deviationCauses}
         readOnly={readOnly}
+        error={errors.deviationCauseId}
         onChange={(deviationCauseId) => onUpdate({ deviationCauseId })}
         onCreateCause={onCreateDeviationCause}
       />
 
       <div>
-        <Label>Lição aprendida</Label>
+        <RecordFieldLabel required htmlFor="record-lesson">
+          Lição aprendida
+        </RecordFieldLabel>
         <textarea
+          id="record-lesson"
           disabled={readOnly}
           value={record.lesson}
           onChange={(event) => onUpdate({ lesson: event.target.value })}
-          className="records-form__textarea"
+          className={`records-form__textarea${errors.lesson ? " records-form__input--error" : ""}`}
           rows={5}
           placeholder="O que a equipe deve lembrar na próxima vez?"
+          aria-invalid={errors.lesson ? true : undefined}
+          aria-describedby={errors.lesson ? "record-lesson-error" : undefined}
         />
+        <RecordFieldError id="record-lesson-error" error={errors.lesson} />
       </div>
 
       <div>
-        <Label>Contexto do registro</Label>
+        <RecordFieldLabel>Contexto do registro</RecordFieldLabel>
         <p className="record-detail-page__field-hint">
           Montado automaticamente a partir dos blocos A e B — serviços e características já informados.
           Alimenta buscas e recomendações do Assistente.
@@ -110,8 +122,9 @@ export function RecordBlockC({
       </div>
 
       <div>
-        <Label>Sigilo</Label>
+        <RecordFieldLabel htmlFor="record-visibility">Sigilo</RecordFieldLabel>
         <select
+          id="record-visibility"
           disabled={readOnly}
           value={record.visibility}
           onChange={(event) => onUpdate({ visibility: event.target.value as RecordVisibility })}
