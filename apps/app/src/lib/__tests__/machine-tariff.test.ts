@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildFleetAverageComposition, buildFleetCapacityRows } from '@/lib/fleet-chart-data';
 import { computeBreakevenHours } from '@/lib/chart-data-utils';
 import { computeMachineCost } from '@/lib/machine-tariff';
-import { DEFAULT_MACHINE_INPUTS } from '@/lib/seed/machine-tariff-seed';
+import { DEFAULT_MACHINE_INPUTS } from '@/lib/demo/seed/machine-tariff-seed';
 import { createMachineTariff } from '@/lib/machine-tariff';
 import { hasValidationErrors, validateMachineInputs } from '@/lib/machine-tariff-validation';
 

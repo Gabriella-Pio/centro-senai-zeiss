@@ -40,8 +40,6 @@ export function RequestsTable({
                 <Link href={getRecordDetailPath(request.linkedRecordId)} className="requests-page__record-link">
                   {request.linkedRecordNumber}
                 </Link>
-              ) : request.assignedToName ? (
-                <span className="requests-page__assignee">Responsável: {request.assignedToName}</span>
               ) : (
                 <span className="requests-page__meta-muted">Sem registro</span>
               )}

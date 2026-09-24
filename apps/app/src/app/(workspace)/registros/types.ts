@@ -27,6 +27,8 @@ export type ServiceRecord = {
   company: string;
   service: string;
   requester: string;
+  cnpj?: string;
+  phone?: string;
   createdAt: string;
   isDemo: boolean;
   recordKind?: RecordKind;

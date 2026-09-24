@@ -8,5 +8,5 @@ export default async function IndicatorsPage() {
     redirect("/login");
   }
 
-  return <IndicatorsBoard />;
+  return <IndicatorsBoard userRole={user.role} />;
 }

@@ -21,6 +21,7 @@ import {
   computeAssertivenessRate,
 } from "@/lib/chart-data";
 import { computeIndicators } from "@/lib/indicators";
+import { canViewRecord, isDemoFormalizedCase } from "@/lib/formalized-knowledge";
 import { useDemoStore } from "@/lib/use-demo-store";
 import { DonutChart } from "@/components/charts/DonutChart";
 import { EffortTrendChart } from "@/components/charts/EffortTrendChart";
@@ -30,24 +31,33 @@ import "./home.css";
 export function HomeDashboard({ role, name }: { role: UserRole; name: string }) {
   const { requests, records, vocabulary, notifications, labSettings } = useDemoStore();
   const firstName = name.trim().split(/\s+/)[0] || "equipe";
+  const visibleRecords = useMemo(
+    () => records.filter((record) => canViewRecord(record, role)),
+    [records, role],
+  );
+
   const newRequests = requests.filter((item) => item.status === "NEW").length;
+  const ongoingRequests = requests.filter((item) => item.status === "ON_GOING").length;
   const pendingLessons = records.filter((item) => item.lessonStatus === "PENDING").length;
   const draftRecords = records.filter((item) => item.serviceStatus === "DRAFT").length;
-  const formalized = records.filter((item) => item.lessonStatus === "FORMALIZED").length;
+  const formalized = visibleRecords.filter(isDemoFormalizedCase).length;
   const unread = notifications.filter((item) => item.roles.includes(role) && !item.read).length;
 
   const summary = useMemo(
-    () => computeIndicators(records, vocabulary, labSettings),
-    [records, vocabulary, labSettings],
+    () => computeIndicators(visibleRecords, vocabulary, labSettings),
+    [visibleRecords, vocabulary, labSettings],
   );
-  const effortTrend = useMemo(() => buildEffortTrend(records), [records]);
-  const confidenceDonut = useMemo(() => buildConfidenceDonut(records, vocabulary), [records, vocabulary]);
-  const assertiveness = useMemo(() => computeAssertivenessRate(records), [records]);
+  const effortTrend = useMemo(() => buildEffortTrend(visibleRecords), [visibleRecords]);
+  const confidenceDonut = useMemo(
+    () => buildConfidenceDonut(visibleRecords, vocabulary),
+    [visibleRecords, vocabulary],
+  );
+  const assertiveness = useMemo(() => computeAssertivenessRate(visibleRecords), [visibleRecords]);
   const sparkline = effortTrend.map((point) => point.actual);
 
   const pendingLabel =
     role === "ADMIN" || role === "VALIDADOR"
-      ? `${newRequests + pendingLessons} itens`
+      ? `${newRequests + ongoingRequests + pendingLessons} itens`
       : role === "TECNICO"
         ? `${draftRecords} rascunhos`
         : `${formalized} lições`;
@@ -55,17 +65,17 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
   const actions =
     role === "ADMIN" || role === "VALIDADOR"
       ? [
-          { icon: ClipboardCheck, text: `${newRequests} solicitações novas para analisar`, href: "/solicitacoes" },
+          { icon: ClipboardCheck, text: `${newRequests} solicitações novas`, href: "/solicitacoes" },
           { icon: ClipboardCheck, text: `${pendingLessons} lições aguardando validação`, href: "/validacao" },
         ]
       : role === "TECNICO"
         ? [
-            { icon: Sparkles, text: "Abrir Assistente para novo orçamento", href: "/assistente" },
-            { icon: ClipboardList, text: `${draftRecords} registros em rascunho`, href: "/registros" },
+            { icon: ClipboardList, text: "Abrir registros para orçar", href: "/registros" },
+            { icon: Sparkles, text: `${draftRecords} registros em rascunho`, href: "/registros" },
           ]
         : [
             { icon: BookOpen, text: "Consultar vocabulário e indicadores", href: "/vocabulario" },
-            { icon: Sparkles, text: "Ver recomendações do Assistente", href: "/assistente" },
+            { icon: ClipboardList, text: "Consultar registros e histórico", href: "/registros" },
           ];
 
   const confidenceTotal = confidenceDonut.reduce((sum, slice) => sum + slice.value, 0);
@@ -116,7 +126,7 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
             value={pendingLabel}
             detail={role === "TECNICO" ? "Registros para completar" : "Aguardando sua ação"}
             icon={ClipboardCheck}
-            highlight={newRequests + pendingLessons + draftRecords > 0}
+            highlight={newRequests + ongoingRequests + pendingLessons + draftRecords > 0}
           />
         </div>
       </section>
@@ -159,9 +169,9 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
         <article className="home-dashboard__panel">
           <h2 className="home-dashboard__panel-title">Acesso rápido</h2>
           <div className="home-dashboard__quick-list">
-            <Link className="home-dashboard__quick-item" href="/assistente">
+            <Link className="home-dashboard__quick-item" href="/registros">
               <span className="home-dashboard__quick-icon"><Sparkles aria-hidden="true" /></span>
-              <span><strong>Assistente</strong><small>Orçamento com histórico e tarifas</small></span>
+              <span><strong>Orçamentos</strong><small>Assistente integrado ao bloco A</small></span>
               <ArrowRight aria-hidden="true" />
             </Link>
             <Link className="home-dashboard__quick-item" href="/registros">

@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const repoRoot = path.join(__dirname, "../..");
+const apiOrigin = process.env.API_PROXY_URL ?? "http://localhost:3333";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
@@ -19,6 +20,14 @@ const nextConfig: NextConfig = {
   turbopack: {
     // Next 16 exige o mesmo valor que outputFileTracingRoot.
     root: repoRoot,
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: `${apiOrigin}/api/v1/:path*`,
+      },
+    ];
   },
   async redirects() {
     return [

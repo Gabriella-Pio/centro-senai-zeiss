@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Input, Label } from "@cem/ui";
-import { ApiError, apiRequest } from "@/lib/api";
+import { ApiError, apiRequest, persistDemoLoginState } from "@/lib/api";
 import { DEMO_MODE } from "@/lib/demo/demo";
 import { DEMO_USERS } from "@/lib/demo/seed/users";
 
@@ -24,6 +24,7 @@ export function LoginForm() {
     setPending(true);
     try {
       await apiRequest("/auth/login", { method: "POST", body: { email: targetEmail, password: "senai-zeiss" } });
+      persistDemoLoginState(targetEmail);
       router.replace("/");
       router.refresh();
     } catch {
@@ -54,6 +55,7 @@ export function LoginForm() {
         method: "POST",
         body: { email: trimmedEmail, password },
       });
+      persistDemoLoginState(trimmedEmail);
       router.replace("/");
       router.refresh();
     } catch (caught) {

@@ -203,8 +203,6 @@ function buildRequest(proposal: RealProposal): QuoteRequest {
     message: proposal.message,
     receivedAt: proposal.proposalDate,
     status: proposal.requestStatus,
-    assignedToUserId: proposal.assignedToUserId,
-    assignedToName: proposal.assignedToName,
     linkedRecordId: recordId,
     linkedRecordNumber: recordId ? recordNumber(proposal) : undefined,
   };

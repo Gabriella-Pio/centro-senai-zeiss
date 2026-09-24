@@ -3,6 +3,7 @@ export type RecordBlockAFieldErrors = {
   estimatedHours?: string;
   proposedValue?: string;
   priceOverrideReason?: string;
+  estimationOverrideReason?: string;
   stages?: string;
 };
 

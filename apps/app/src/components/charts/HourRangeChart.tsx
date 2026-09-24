@@ -41,7 +41,7 @@ export function HourRangeChart({
   const data = [{ name: "Faixa", span: max - min }];
 
   return (
-    <ChartCard title="Faixa de horas" subtitle={`Q1 ${q1}h · mediana ${median}h · Q3 ${q3}h`}>
+    <ChartCard title="Faixa de horas" subtitle={`Faixa usual ${q1}h–${q3}h · mediana ${median}h`}>
       <ResponsiveContainer width="100%" height={CHART_HEIGHT_COMPACT}>
         <BarChart data={data} layout="vertical" margin={{ top: 24, right: 16, left: 16, bottom: 8 }}>
           <XAxis type="number" domain={[min, max]} tick={{ fontSize: 10 }} />

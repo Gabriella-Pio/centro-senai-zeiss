@@ -7,7 +7,7 @@ import { MACHINE_TARIFF_SEED } from '../seed/machine-tariff-seed';
 const RAW_VOCABULARY: VocabularyTerm[] = [
   {
     id: 'vocab-1',
-    label: 'Escaneamento 3D, digitalização de peças e impressão 3D',
+    label: 'Digitalização de peças e impressão 3D',
     class: 'SERVICE_TYPE',
     guidance:
       'Captura da geometria, modelagem e fabricação aditiva para análise ou engenharia reversa.',

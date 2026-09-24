@@ -1,8 +1,3 @@
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333/api/v1').replace(
-  /\/$/,
-  '',
-);
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -32,7 +27,7 @@ export async function apiRequest<T>(
   path: string,
   { body, headers, ...options }: RequestOptions = {},
 ): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}/${path.replace(/^\//, '')}`, {
+  const response = await fetch(`/api/v1/${path.replace(/^\//, '')}`, {
     ...options,
     body: body === undefined ? undefined : JSON.stringify(body),
     headers: {

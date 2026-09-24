@@ -2,8 +2,8 @@
 .request-detail-modal {
   --request-status-new-fg: #a85d00;
   --request-status-new-dot: #e08a16;
-  --request-status-assigned-fg: #245a9b;
-  --request-status-assigned-dot: #397bc8;
+  --request-status-ongoing-fg: #245a9b;
+  --request-status-ongoing-dot: #397bc8;
   --request-status-converted-fg: #167341;
   --request-status-converted-dot: #1a9a58;
 }
@@ -40,6 +40,13 @@
 }
 .requests-page__row--new td {
   border-bottom-color: color-mix(in srgb, var(--request-status-new-dot) 22%, var(--color-border));
+}
+.requests-page__row--ongoing {
+  background: color-mix(in srgb, var(--request-status-ongoing-dot) 9%, var(--color-card));
+  box-shadow: inset 3px 0 0 var(--request-status-ongoing-dot);
+}
+.requests-page__row--ongoing td {
+  border-bottom-color: color-mix(in srgb, var(--request-status-ongoing-dot) 22%, var(--color-border));
 }
 .requests-page__table td:first-child { min-width: 17rem; }
 .requests-page__table td:first-child strong,
@@ -122,12 +129,12 @@
   color: var(--request-status-new-fg);
 }
 .request-status--new::before { background: var(--request-status-new-dot); }
-.request-status--assigned {
-  border-color: color-mix(in srgb, var(--request-status-assigned-dot) 38%, transparent);
-  background: color-mix(in srgb, var(--request-status-assigned-dot) 14%, var(--color-card));
-  color: var(--request-status-assigned-fg);
+.request-status--on_going {
+  border-color: color-mix(in srgb, var(--request-status-ongoing-dot) 38%, transparent);
+  background: color-mix(in srgb, var(--request-status-ongoing-dot) 14%, var(--color-card));
+  color: var(--request-status-ongoing-fg);
 }
-.request-status--assigned::before { background: var(--request-status-assigned-dot); }
+.request-status--on_going::before { background: var(--request-status-ongoing-dot); }
 .request-status--converted {
   border-color: color-mix(in srgb, var(--request-status-converted-dot) 38%, transparent);
   background: color-mix(in srgb, var(--request-status-converted-dot) 14%, var(--color-card));

@@ -14,6 +14,7 @@ import {
   DEMO_MODE,
   // DEMO_USERS,
   DEMO_USERS_KEY,
+  DEMO_USER_COOKIE,
   clearDemoUserCookie,
   // demoRole,
   // findDemoUserByEmail,
@@ -49,12 +50,86 @@ class ApiError extends Error {
 
 export { ApiError };
 
+function shouldUseRealApi(path: string) {
+  const normalizedPath = path.replace(/^\//, '');
+  return (
+    normalizedPath === 'leads' ||
+    normalizedPath.startsWith('leads/') ||
+    normalizedPath.startsWith('auth/')
+  );
+}
+
+function resolveDemoUserFromBrowser(): DemoUser | null {
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  const cookieMatch = document.cookie.match(
+    new RegExp(`(?:^|; )${DEMO_USER_COOKIE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}=([^;]*)`),
+  );
+  const cookieUserId = cookieMatch?.[1] ? decodeURIComponent(cookieMatch[1]) : null;
+  if (cookieUserId) {
+    const fromCookie = findDemoUserById(cookieUserId);
+    if (fromCookie) {
+      return fromCookie;
+    }
+  }
+
+  return currentDemoUser();
+}
+
+export function persistDemoLoginState(email: string) {
+  if (!DEMO_MODE || typeof window === 'undefined') {
+    return;
+  }
+
+  const user = findDemoUserByEmail(email);
+  if (!user) {
+    return;
+  }
+
+  window.localStorage.removeItem(DEMO_LOGGED_OUT_KEY);
+  document.cookie = `${DEMO_LOGGED_OUT_KEY}=; path=/; max-age=0; samesite=lax`;
+  window.localStorage.setItem(DEMO_CURRENT_USER_ID_KEY, user.id);
+  setDemoUserCookie(user.id);
+}
+
+/** Garante cookie cem_session na API (necessário para importar leads no modo demo). */
+export async function ensureApiSession(): Promise<void> {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    await apiRequest<{ user: AuthUser }>('auth/me');
+    return;
+  } catch (error) {
+    if (!(error instanceof ApiError) || error.status !== 401) {
+      throw error;
+    }
+  }
+
+  if (!DEMO_MODE) {
+    throw new ApiError('Faça login para continuar.', 401);
+  }
+
+  const demoUser = resolveDemoUserFromBrowser();
+  if (!demoUser) {
+    throw new ApiError('Faça login para continuar.', 401);
+  }
+
+  await apiRequest('auth/login', {
+    method: 'POST',
+    body: { email: demoUser.email, password: 'senai-zeiss' },
+  });
+}
+
 export async function apiRequest<T>(
   path: string,
   init: Omit<RequestInit, 'body'> & { body?: unknown } = {},
 ): Promise<T> {
   const { body, headers, ...options } = init;
-  if (DEMO_MODE && typeof window !== 'undefined') {
+  if (DEMO_MODE && typeof window !== 'undefined' && !shouldUseRealApi(path)) {
     return demoRequest<T>(path, body);
   }
   const response = await fetch(`/api/v1/${path.replace(/^\//, '')}`, {
@@ -177,6 +252,14 @@ async function demoRequest<T>(path: string, body: unknown): Promise<T> {
     );
     writeDemoUsers(updated);
     return updated.find((user) => user.id === match[1]) as T;
+  }
+
+  const normalizedPath = path.replace(/^\//, '');
+  if (normalizedPath === 'leads') {
+    return [] as T;
+  }
+  if (/^leads\/[^/]+$/.test(normalizedPath)) {
+    return { ok: true } as T;
   }
 
   return {} as T;

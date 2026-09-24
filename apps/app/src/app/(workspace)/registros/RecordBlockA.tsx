@@ -25,7 +25,10 @@ export function RecordBlockA({
   resources,
   suggestedPrice,
   suggestedUnitPrice,
+  tariffReferencePrice,
   needsPriceOverride,
+  needsEstimationOverride,
+  stageHighlightPulse = 0,
   fieldErrors,
   onUpdate,
   onSave,
@@ -38,7 +41,10 @@ export function RecordBlockA({
   resources: VocabularyTerm[];
   suggestedPrice: number;
   suggestedUnitPrice: number;
+  tariffReferencePrice: number;
   needsPriceOverride: boolean;
+  needsEstimationOverride: boolean;
+  stageHighlightPulse?: number;
   fieldErrors?: RecordBlockAFieldErrors;
   onUpdate: (patch: Partial<ServiceRecord>) => void;
   onSave: () => void;
@@ -245,7 +251,7 @@ export function RecordBlockA({
         </div>
       ) : null}
 
-      <div className="record-section">
+      <div className="record-section" id="record-classification">
         <h2>Classificação</h2>
         <RecordServiceStagesEditor
           record={record}
@@ -253,18 +259,39 @@ export function RecordBlockA({
           resources={resources}
           readOnly={readOnly}
           stagesError={errors.stages}
+          highlightPulse={stageHighlightPulse}
           onUpdate={onUpdate}
         />
 
         <RecordVocabularyPicker
           label="Características da peça"
-          hint="Para aprendizado e busca de casos similares — não altera o preço do orçamento."
+          hint="Refina a busca de casos similares — não altera a tarifa calculada."
           addLabel="Adicionar característica"
           terms={partTraits}
           selectedIds={record.partTraitIds}
           readOnly={readOnly}
           onChange={(partTraitIds) => onUpdate({ partTraitIds })}
         />
+
+        {needsEstimationOverride ? (
+          <div>
+            <RecordFieldLabel required htmlFor="record-estimation-override">
+              Justificativa para horas diferentes da sugestão do assistente
+            </RecordFieldLabel>
+            <textarea
+              id="record-estimation-override"
+              disabled={readOnly}
+              value={record.estimationOverrideReason ?? ""}
+              onChange={(event) => onUpdate({ estimationOverrideReason: event.target.value })}
+              className={`records-form__textarea${
+                errors.estimationOverrideReason ? " records-form__input--error" : ""
+              }`}
+              rows={2}
+              aria-invalid={errors.estimationOverrideReason ? true : undefined}
+            />
+            <RecordFieldError error={errors.estimationOverrideReason} />
+          </div>
+        ) : null}
       </div>
 
       {!isPackageMode ? (
@@ -275,9 +302,9 @@ export function RecordBlockA({
               Adicione etapas do serviço para estimar horas e compor o orçamento.
             </p>
           ) : null}
-          {quoteMode === "commercial_fixed" && suggestedPrice > 0 ? (
+          {quoteMode === "commercial_fixed" && tariffReferencePrice > 0 ? (
             <p className="record-detail-page__field-hint">
-              Tarifa (referência): {formatCurrency(suggestedPrice)}
+              Tarifa (referência): {formatCurrency(tariffReferencePrice)}
               {isBatch ? ` · unitário ${formatCurrency(suggestedUnitPrice)}` : ""}
             </p>
           ) : null}
@@ -295,7 +322,7 @@ export function RecordBlockA({
               {isBatch && suggestedUnitPrice > 0 && quoteMode === "tariff" ? (
                 <p className="record-detail-page__field-hint">
                   Unitário: {formatCurrency(suggestedUnitPrice)} · Total ({getRecordQuantity(record)} peças):{" "}
-                  {formatCurrency(suggestedPrice)}
+                  {formatCurrency(tariffReferencePrice)}
                 </p>
               ) : null}
               <Input
@@ -308,20 +335,26 @@ export function RecordBlockA({
                   onUpdate({ proposedValue: event.target.value ? Number(event.target.value) : null })
                 }
                 className={`h-12${errors.proposedValue ? " records-form__input--error" : ""}`}
-                placeholder={suggestedPrice ? String(suggestedPrice) : ""}
+                placeholder={
+                  quoteMode === "tariff" && tariffReferencePrice > 0
+                    ? String(tariffReferencePrice)
+                    : suggestedPrice > 0
+                      ? String(suggestedPrice)
+                      : ""
+                }
                 aria-invalid={errors.proposedValue ? true : undefined}
               />
               <RecordFieldError error={errors.proposedValue} />
             </div>
-            {!readOnly && suggestedPrice > 0 && quoteMode === "tariff" ? (
+            {!readOnly && tariffReferencePrice > 0 && quoteMode === "tariff" ? (
               <div className="records-form__apply-price">
                 <Button
                   type="button"
                   variant="outline"
                   size="lg"
-                  onClick={() => onUpdate({ proposedValue: suggestedPrice })}
+                  onClick={() => onUpdate({ proposedValue: tariffReferencePrice })}
                 >
-                  Usar tarifa ({formatCurrency(suggestedPrice)})
+                  Usar tarifa ({formatCurrency(tariffReferencePrice)})
                 </Button>
               </div>
             ) : null}

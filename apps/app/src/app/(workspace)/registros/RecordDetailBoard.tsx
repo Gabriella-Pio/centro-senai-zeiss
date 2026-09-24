@@ -14,6 +14,7 @@ import { RECORD_BLOCK_COPY } from "./record-block-copy";
 import { RecordDetailAside } from "./RecordDetailAside";
 import { RecordDetailHeader } from "./RecordDetailHeader";
 import { RecordDetailNotices } from "./RecordDetailNotices";
+import { RecordDemoBanner } from "./RecordDemoBanner";
 import { useRecordDetailBoard } from "./use-record-detail-board";
 
 import "./records.css";
@@ -65,6 +66,8 @@ export function RecordDetailBoard({
 
       <RecordDetailHeader record={record} />
 
+      {record.isDemo ? <RecordDemoBanner /> : null}
+
       <RecordDetailNotices notices={board.detailNotices} />
 
       {board.notice ? (
@@ -101,9 +104,12 @@ export function RecordDetailBoard({
                 resources={board.resources}
                 suggestedPrice={board.suggestedPrice}
                 suggestedUnitPrice={board.suggestedUnitPrice}
+                tariffReferencePrice={board.tariffReferencePrice}
                 needsPriceOverride={Boolean(
                   board.needsPriceOverride
                 )}
+                needsEstimationOverride={Boolean(board.needsEstimationOverride)}
+                stageHighlightPulse={board.stageHighlightPulse}
                 fieldErrors={board.blockAFieldErrors}
                 onUpdate={board.updateRecord}
                 onSave={board.saveBlockA}
@@ -155,10 +161,19 @@ export function RecordDetailBoard({
             costBreakdown={board.costBreakdown}
             actualBreakdown={board.actualBreakdown}
             priceHistory={board.priceHistory}
+            recommendation={board.recommendation}
+            serviceTypeGuidance={board.serviceTypeGuidance}
+            serviceTypeLabel={board.serviceTypeLabel}
+            profileChips={board.profileChips}
+            currentEstimatedHours={board.currentEstimatedHours}
+            serviceOnlyCaseCount={board.serviceOnlyCaseCount}
+            readOnly={board.readOnly}
+            tariffReferencePrice={board.tariffReferencePrice}
             frozenTariff={board.frozenTariff}
             quoteOutdated={board.quoteOutdated}
             costDonut={board.costDonut}
             financialSummary={board.financialSummary}
+            onApplySuggestedHours={board.applySuggestedHours}
           />
         </aside>
       </div>

@@ -73,15 +73,57 @@ export function RecordsBoard({ userRole, userName }: { userRole: UserRole; userN
                 value={board.draft.company}
                 onChange={(event) => board.setDraft((current) => ({ ...current, company: event.target.value }))}
                 className="mt-2 h-12"
+                autoComplete="organization"
               />
             </div>
+            <div className="records-form__two-columns">
+              <div>
+                <Label htmlFor="record-cnpj">
+                  CNPJ <span className="records-form__optional">(opcional)</span>
+                </Label>
+                <Input
+                  id="record-cnpj"
+                  inputMode="numeric"
+                  value={board.draft.cnpj}
+                  onChange={(event) =>
+                    board.setDraft((current) => ({
+                      ...current,
+                      cnpj: board.formatCnpj(event.target.value),
+                    }))
+                  }
+                  className="mt-2 h-12"
+                  autoComplete="off"
+                  placeholder="00.000.000/0000-00"
+                />
+              </div>
+              <div>
+                <Label htmlFor="record-phone">
+                  Telefone <span className="records-form__optional">(opcional)</span>
+                </Label>
+                <Input
+                  id="record-phone"
+                  inputMode="tel"
+                  value={board.draft.phone}
+                  onChange={(event) =>
+                    board.setDraft((current) => ({
+                      ...current,
+                      phone: board.formatBrPhone(event.target.value),
+                    }))
+                  }
+                  className="mt-2 h-12"
+                  autoComplete="tel"
+                  placeholder="(62) 99999-0000"
+                />
+              </div>
+            </div>
             <div>
-              <Label htmlFor="record-requester">Solicitante</Label>
+              <Label htmlFor="record-requester">Responsável</Label>
               <Input
                 id="record-requester"
                 value={board.draft.requester}
                 onChange={(event) => board.setDraft((current) => ({ ...current, requester: event.target.value }))}
                 className="mt-2 h-12"
+                autoComplete="name"
               />
             </div>
             <div>

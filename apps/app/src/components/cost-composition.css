@@ -334,14 +334,19 @@
   line-height: 1.2;
 }
 
+.cost-panel__delta--off-tariff {
+  background: color-mix(in srgb, #d97706 12%, var(--color-card));
+  color: #8a4b00;
+}
+
 .cost-panel__delta--above {
-  background: color-mix(in srgb, var(--color-warning, #d97706) 14%, var(--color-card));
-  color: color-mix(in srgb, var(--color-warning, #d97706) 85%, var(--color-foreground));
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-card));
+  color: color-mix(in srgb, var(--color-primary) 85%, var(--color-foreground));
 }
 
 .cost-panel__delta--below {
-  background: color-mix(in srgb, var(--color-success, #16a34a) 14%, var(--color-card));
-  color: color-mix(in srgb, var(--color-success, #16a34a) 85%, var(--color-foreground));
+  background: color-mix(in srgb, var(--color-muted-foreground) 12%, var(--color-card));
+  color: var(--color-muted-foreground);
 }
 
 /* History */
@@ -414,6 +419,79 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
+}
+
+.cost-panel__history-note {
+  margin: 0.65rem 0 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.cost-panel__history-note--emphasis {
+  margin-top: 0.45rem;
+  font-weight: 600;
+}
+
+.cost-panel__history-case-link {
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.cost-panel__history-case-link:hover {
+  text-decoration: underline;
+}
+
+.cost-panel__history-cases {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cost-panel__history-case {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: calc(var(--radius) * 0.85);
+  background: var(--color-card);
+}
+
+.cost-panel__history-case-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.cost-panel__history-case-copy strong {
+  font-size: 0.78rem;
+}
+
+.cost-panel__history-case-copy span {
+  color: var(--color-muted-foreground);
+  font-size: 0.68rem;
+}
+
+.cost-panel__history-case-price {
+  flex: 0 0 auto;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cost-panel__history-case-unit {
+  color: var(--color-muted-foreground);
+  font-size: 0.68rem;
+  font-weight: 600;
 }
 
 /* Calculation details */

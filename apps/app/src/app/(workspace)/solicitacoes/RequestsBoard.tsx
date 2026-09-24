@@ -1,9 +1,9 @@
 "use client";
 
-import { Bell, Plus } from "lucide-react";
+import { Bell, RefreshCw } from "lucide-react";
 import { Button } from "@cem/ui";
 import { RequestArchiveDialog } from "./RequestArchiveDialog";
-import { RequestAssignDialog } from "./RequestAssignDialog";
+import { RequestConvertDialog } from "./RequestConvertDialog";
 import { RequestDetailDialog } from "./RequestDetailDialog";
 import { RequestsList } from "./RequestsList";
 import { RequestsToolbar } from "./RequestsToolbar";
@@ -27,9 +27,15 @@ export function RequestsBoard() {
           </p>
         </div>
         <div className="requests-page__header-actions">
-          <Button type="button" variant="outline" size="lg" onClick={board.simulateWebsiteRequest}>
-            <Plus aria-hidden="true" />
-            Simular pedido do site
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            disabled={board.syncingLeads}
+            onClick={() => void board.refreshLeadsFromSite()}
+          >
+            <RefreshCw aria-hidden="true" className={board.syncingLeads ? "animate-spin" : undefined} />
+            {board.syncingLeads ? "Atualizando…" : "Atualizar do site"}
           </Button>
         </div>
       </header>
@@ -48,6 +54,10 @@ export function RequestsBoard() {
 
         {board.notice ? (
           <div className="requests-page__notice" role="status" aria-live="polite">{board.notice}</div>
+        ) : board.syncingLeads ? (
+          <div className="requests-page__notice" role="status" aria-live="polite">
+            Sincronizando solicitações recebidas pelo site…
+          </div>
         ) : null}
 
         <h2 id="requests-heading" className="sr-only">Solicitações recebidas</h2>
@@ -58,7 +68,6 @@ export function RequestsBoard() {
             filtering={board.filtering}
             onView={board.openRequest}
             onClearFilters={board.clearFilters}
-            onSimulate={board.simulateWebsiteRequest}
           />
         </div>
       </section>
@@ -67,19 +76,19 @@ export function RequestsBoard() {
         request={board.selected}
         open={board.selected !== null}
         onOpenChange={(open) => !open && board.closeRequest()}
-        onAssign={board.setAssignTarget}
-        onConvert={board.handleConvert}
+        onConvert={board.handleStartConvert}
         onArchive={(request) => {
           board.setArchiveTarget(request);
           board.closeRequest();
         }}
       />
 
-      <RequestAssignDialog
-        request={board.assignTarget}
-        open={board.assignTarget !== null}
-        onOpenChange={(open) => !open && board.setAssignTarget(null)}
-        onConfirm={board.handleAssign}
+      <RequestConvertDialog
+        request={board.convertTarget}
+        open={board.convertTarget !== null}
+        onOpenChange={(open) => !open && board.setConvertTarget(null)}
+        serviceTypes={board.serviceTypes}
+        onConfirm={board.handleConvert}
       />
 
       <RequestArchiveDialog

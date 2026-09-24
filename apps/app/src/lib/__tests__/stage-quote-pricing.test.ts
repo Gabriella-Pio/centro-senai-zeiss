@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { ServiceStage } from '@/app/(workspace)/registros/types';
 import type { VocabularyTerm } from '@/app/(workspace)/vocabulario/types';
-import { DEFAULT_LAB_SETTINGS } from '@/lib/demo-store-types';
+import { DEFAULT_LAB_SETTINGS } from '@/lib/demo/demo-store-types';
 import { computeStageQuoteCost, resolveQuoteBreakdown } from '@/lib/pricing';
 
 const vocabulary: VocabularyTerm[] = [

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, ClipboardList, UserRound } from "lucide-react";
+import { ArrowRight, CalendarDays, ClipboardList, Phone, UserRound } from "lucide-react";
+import { Badge } from "@cem/ui";
 import { getRequestHref } from "@/lib/records-navigation";
 import { getRecordQuantity } from "@/lib/record-helpers";
 import { formatCreatedAt } from "./records-utils";
@@ -21,8 +22,19 @@ export function RecordDetailHeader({ record }: { record: ServiceRecord }) {
         <ul className="record-detail-page__meta" aria-label="Informações do registro">
           <li>
             <UserRound aria-hidden="true" />
-            <span>{record.requester}</span>
+            <span>Responsável: {record.requester}</span>
           </li>
+          {record.phone ? (
+            <li>
+              <Phone aria-hidden="true" />
+              <a href={`tel:${record.phone.replace(/\s+/g, "")}`}>{record.phone}</a>
+            </li>
+          ) : null}
+          {record.cnpj ? (
+            <li>
+              <span>CNPJ: {record.cnpj}</span>
+            </li>
+          ) : null}
           <li>
             <CalendarDays aria-hidden="true" />
             <span>Criado em {formatCreatedAt(record.createdAt)}</span>
@@ -50,6 +62,7 @@ export function RecordDetailHeader({ record }: { record: ServiceRecord }) {
           ) : null}
           <RecordStatusBadge status={record.serviceStatus} />
           <RecordLessonDetailBadge status={record.lessonStatus} />
+          {record.isDemo ? <Badge variant="demo">Mock demo</Badge> : null}
         </div>
 
         {record.requestId && record.requestNumber ? (

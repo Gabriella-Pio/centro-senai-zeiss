@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import type { QuoteRequest } from "@/app/(workspace)/solicitacoes/types";
 import {
   archiveRequestState,
-  assignRequest,
   canTransition,
   convertRequestState,
   getAllowedActions,
+  startRequestState,
   upgradeQuoteRequest,
 } from "@/lib/request-lifecycle";
 
@@ -27,21 +27,18 @@ function createRequest(overrides: Partial<QuoteRequest> = {}): QuoteRequest {
 
 describe("request lifecycle", () => {
   it("allows valid transitions and blocks terminal states", () => {
-    expect(canTransition("NEW", "ASSIGNED")).toBe(true);
-    expect(canTransition("NEW", "CONVERTED")).toBe(true);
-    expect(canTransition("ASSIGNED", "CONVERTED")).toBe(true);
-    expect(canTransition("ASSIGNED", "ARCHIVED")).toBe(true);
+    expect(canTransition("NEW", "ON_GOING")).toBe(true);
+    expect(canTransition("NEW", "ARCHIVED")).toBe(true);
+    expect(canTransition("ON_GOING", "CONVERTED")).toBe(true);
+    expect(canTransition("ON_GOING", "ARCHIVED")).toBe(true);
+    expect(canTransition("NEW", "CONVERTED")).toBe(false);
     expect(canTransition("CONVERTED", "ARCHIVED")).toBe(false);
-    expect(canTransition("ARCHIVED", "ASSIGNED")).toBe(false);
+    expect(canTransition("ARCHIVED", "NEW")).toBe(false);
   });
 
   it("returns contextual actions per status", () => {
-    expect(getAllowedActions(createRequest())).toEqual(["assign", "convert", "archive"]);
-    expect(getAllowedActions(createRequest({ status: "ASSIGNED" }))).toEqual([
-      "reassign",
-      "convert",
-      "archive",
-    ]);
+    expect(getAllowedActions(createRequest())).toEqual(["convert", "archive"]);
+    expect(getAllowedActions(createRequest({ status: "ON_GOING" }))).toEqual(["convert", "archive"]);
     expect(
       getAllowedActions(
         createRequest({
@@ -54,11 +51,9 @@ describe("request lifecycle", () => {
     expect(getAllowedActions(createRequest({ status: "ARCHIVED" }))).toEqual([]);
   });
 
-  it("assigns responsible fields", () => {
-    const assigned = assignRequest(createRequest(), "demo-sebastiao", "Sebastião");
-    expect(assigned.status).toBe("ASSIGNED");
-    expect(assigned.assignedToUserId).toBe("demo-sebastiao");
-    expect(assigned.assignedToName).toBe("Sebastião");
+  it("moves new requests to on going when conversion starts", () => {
+    const started = startRequestState(createRequest());
+    expect(started.status).toBe("ON_GOING");
   });
 
   it("blocks archiving converted requests", () => {
@@ -68,7 +63,7 @@ describe("request lifecycle", () => {
   });
 
   it("sets linked record fields on conversion", () => {
-    const converted = convertRequestState(createRequest({ status: "ASSIGNED" }), {
+    const converted = convertRequestState(createRequest({ status: "ON_GOING" }), {
       id: "record-42",
       recordNumber: "RS-2026-0042",
       company: "Empresa",
@@ -102,11 +97,15 @@ describe("request lifecycle", () => {
     expect(converted.linkedRecordNumber).toBe("RS-2026-0042");
   });
 
-  it("upgrades legacy IN_REVIEW status to ASSIGNED", () => {
+  it("upgrades legacy assigned statuses to ON_GOING and strips assignee fields", () => {
     const upgraded = upgradeQuoteRequest({
       ...createRequest(),
-      status: "IN_REVIEW",
+      status: "ASSIGNED",
+      assignedToUserId: "demo-user-01",
+      assignedToName: "Técnico",
     });
-    expect(upgraded.status).toBe("ASSIGNED");
+    expect(upgraded.status).toBe("ON_GOING");
+    expect(upgraded).not.toHaveProperty("assignedToUserId");
+    expect(upgraded).not.toHaveProperty("assignedToName");
   });
 });

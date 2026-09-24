@@ -42,6 +42,6 @@ export function countRequestsByStatus(requests: QuoteRequest[]) {
       counts.ALL += 1;
       return counts;
     },
-    { ALL: 0, NEW: 0, ASSIGNED: 0, CONVERTED: 0, ARCHIVED: 0 } as Record<"ALL" | RequestStatus, number>,
+    { ALL: 0, NEW: 0, ON_GOING: 0, CONVERTED: 0, ARCHIVED: 0 } as Record<"ALL" | RequestStatus, number>,
   );
 }

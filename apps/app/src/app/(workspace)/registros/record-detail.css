@@ -1056,6 +1056,29 @@
   display: grid;
   gap: 0.85rem;
   margin-bottom: 1rem;
+  border-radius: calc(var(--radius) + 2px);
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.record-stages-editor--pulse {
+  animation: record-stages-editor-pulse 1.8s ease;
+}
+
+@keyframes record-stages-editor-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 0%, transparent);
+    background: transparent;
+  }
+
+  20% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 0%, transparent);
+    background: transparent;
+  }
 }
 
 .record-stages-editor__header {
@@ -1455,4 +1478,84 @@
   color: var(--color-muted-foreground);
   font-size: 0.875rem;
   text-align: center;
+}
+
+.record-demo-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, #d97706 35%, var(--color-border));
+  border-radius: calc(var(--radius) + 2px);
+  background: color-mix(in srgb, #d97706 8%, var(--color-card));
+}
+
+.record-demo-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: color-mix(in srgb, #d97706 14%, var(--color-card));
+  color: #a85d00;
+}
+
+.record-demo-banner__icon svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.record-demo-banner__copy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.record-demo-banner__copy strong {
+  display: block;
+  font-size: 0.86rem;
+}
+
+.record-demo-banner__copy p {
+  margin: 0.25rem 0 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.record-demo-banner__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid color-mix(in srgb, #d97706 30%, var(--color-border));
+  border-radius: 999px;
+  background: var(--color-card);
+  color: #a85d00;
+  font-size: 0.72rem;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.record-demo-banner__link:hover {
+  background: color-mix(in srgb, #d97706 10%, var(--color-card));
+}
+
+.record-demo-banner__link svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+@media (width < 48rem) {
+  .record-demo-banner {
+    flex-direction: column;
+  }
+
+  .record-demo-banner__link {
+    align-self: flex-start;
+  }
 }

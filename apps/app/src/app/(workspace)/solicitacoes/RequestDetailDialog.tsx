@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Archive, ArrowRight, ClipboardPlus, UserRound } from "lucide-react";
+import { Archive, ArrowRight, ClipboardPlus } from "lucide-react";
 import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@cem/ui";
 import { getRecordDetailPath } from "@/lib/records-navigation";
 import { getAllowedActions } from "@/lib/request-lifecycle";
@@ -12,18 +12,18 @@ import { RequestStatusBadge } from "./RequestStatusBadge";
 function RequestWorkflowStepper({ request }: { request: QuoteRequest }) {
   const steps = [
     {
-      id: "received",
-      label: "Recebida",
-      done: true,
+      id: "new",
+      label: "Nova",
+      done: request.status !== "NEW",
       current: request.status === "NEW",
       detail: formatReceivedAt(request.receivedAt),
     },
     {
-      id: "assigned",
-      label: "Atribuída",
-      done: request.status === "ASSIGNED" || request.status === "CONVERTED",
-      current: request.status === "ASSIGNED",
-      detail: request.assignedToName ?? "Aguardando responsável",
+      id: "ongoing",
+      label: "Em andamento",
+      done: request.status === "CONVERTED",
+      current: request.status === "ON_GOING",
+      detail: request.status === "NEW" ? "Aguardando ação" : "Conversão iniciada",
     },
     {
       id: "converted",
@@ -37,12 +37,10 @@ function RequestWorkflowStepper({ request }: { request: QuoteRequest }) {
   if (request.status === "ARCHIVED") {
     return (
       <ol className="request-stepper" aria-label="Progresso da solicitação">
-        {steps.slice(0, request.assignedToName ? 2 : 1).map((step) => (
-          <li key={step.id} className="request-stepper__item request-stepper__item--done">
-            <span className="request-stepper__label">{step.label}</span>
-            <span className="request-stepper__detail">{step.detail}</span>
-          </li>
-        ))}
+        <li className="request-stepper__item request-stepper__item--done">
+          <span className="request-stepper__label">Nova</span>
+          <span className="request-stepper__detail">{formatReceivedAt(request.receivedAt)}</span>
+        </li>
         <li className="request-stepper__item request-stepper__item--current request-stepper__item--archived">
           <span className="request-stepper__label">Arquivada</span>
           <span className="request-stepper__detail">{request.archiveReason ?? "Sem justificativa"}</span>
@@ -70,14 +68,12 @@ export function RequestDetailDialog({
   request,
   open,
   onOpenChange,
-  onAssign,
   onConvert,
   onArchive,
 }: {
   request: QuoteRequest | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAssign: (request: QuoteRequest) => void;
   onConvert: (request: QuoteRequest) => void;
   onArchive: (request: QuoteRequest) => void;
 }) {
@@ -118,13 +114,6 @@ export function RequestDetailDialog({
             </div>
           </div>
 
-          {request.assignedToName ? (
-            <div className="request-detail__assignee">
-              <UserRound aria-hidden="true" />
-              <span>Responsável: <strong>{request.assignedToName}</strong></span>
-            </div>
-          ) : null}
-
           <div className="request-detail__message">
             <span>Mensagem enviada</span>
             <p>{request.message}</p>
@@ -153,12 +142,6 @@ export function RequestDetailDialog({
                 <Button type="button" variant="outline" size="lg" onClick={() => onArchive(request)}>
                   <Archive aria-hidden="true" />
                   Arquivar
-                </Button>
-              ) : null}
-              {actions.includes("assign") || actions.includes("reassign") ? (
-                <Button type="button" variant="outline" size="lg" onClick={() => onAssign(request)}>
-                  <UserRound aria-hidden="true" />
-                  {actions.includes("reassign") ? "Reatribuir" : "Atribuir responsável"}
                 </Button>
               ) : null}
               {actions.includes("convert") ? (

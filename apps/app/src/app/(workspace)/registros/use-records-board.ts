@@ -3,18 +3,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { UserRole } from '@/lib/api';
+import { formatBrPhone, formatCnpj, isValidBrPhone, isValidCnpj } from '@/lib/contact-fields';
 import { createEmptyRecord, updateDemoState } from '@/lib/demo/demo-store';
+import { canViewRecord } from '@/lib/formalized-knowledge';
 import { getRecordDetailPath } from '@/lib/records-navigation';
 import { useDemoStore } from '@/lib/use-demo-store';
 import type { ServiceRecord, ServiceStatus } from './types';
 import { countRecordsByStatus, filterRecords } from './records-utils';
 
-function canViewRecord(record: ServiceRecord, role: UserRole) {
-  if (record.visibility === 'RESTRICTED' && role === 'CONSULTA') {
-    return false;
-  }
-  return true;
-}
+const EMPTY_DRAFT = {
+  company: '',
+  cnpj: '',
+  requester: '',
+  phone: '',
+  service: '',
+  serviceTypeId: '',
+};
 
 export function useRecordsBoard(userRole: UserRole, userName: string) {
   const router = useRouter();
@@ -25,12 +29,7 @@ export function useRecordsBoard(userRole: UserRole, userName: string) {
   const [company, setCompany] = useState('ALL');
   const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [draft, setDraft] = useState({
-    company: '',
-    requester: '',
-    service: '',
-    serviceTypeId: '',
-  });
+  const [draft, setDraft] = useState(EMPTY_DRAFT);
 
   const registroId = searchParams.get('registro');
   const serviceTypes = vocabulary.filter((term) => term.class === 'SERVICE_TYPE' && term.active);
@@ -64,20 +63,38 @@ export function useRecordsBoard(userRole: UserRole, userName: string) {
   const filtering = Boolean(query.trim()) || status !== 'ALL' || company !== 'ALL';
 
   function createRecord() {
-    if (!draft.company.trim() || !draft.requester.trim() || !draft.serviceTypeId) {
-      setFormError('Preencha empresa, solicitante e tipo de serviço.');
+    const companyValue = draft.company.trim();
+    const requesterValue = draft.requester.trim();
+    const cnpjValue = draft.cnpj.trim();
+    const phoneValue = draft.phone.trim();
+
+    if (!companyValue || !requesterValue || !draft.serviceTypeId) {
+      setFormError('Preencha empresa, responsável e tipo de serviço.');
       return;
     }
+
+    if (cnpjValue && !isValidCnpj(cnpjValue)) {
+      setFormError('Confira o CNPJ informado.');
+      return;
+    }
+
+    if (phoneValue && !isValidBrPhone(phoneValue)) {
+      setFormError('Confira o telefone informado.');
+      return;
+    }
+
     const serviceType = serviceTypes.find((term) => term.id === draft.serviceTypeId);
     const record = createEmptyRecord({
-      company: draft.company.trim(),
-      requester: draft.requester.trim(),
+      company: companyValue,
+      requester: requesterValue,
       service: serviceType?.label ?? draft.service.trim(),
       serviceTypeId: draft.serviceTypeId,
       estimatedBy: userName,
+      ...(cnpjValue ? { cnpj: cnpjValue } : {}),
+      ...(phoneValue ? { phone: phoneValue } : {}),
     });
     updateDemoState((state) => ({ ...state, records: [...state.records, record] }));
-    setDraft({ company: '', requester: '', service: '', serviceTypeId: '' });
+    setDraft(EMPTY_DRAFT);
     setFormError(null);
     setCreating(false);
     router.push(getRecordDetailPath(record.id));
@@ -102,6 +119,8 @@ export function useRecordsBoard(userRole: UserRole, userName: string) {
     setFormError,
     draft,
     setDraft,
+    formatCnpj,
+    formatBrPhone,
     serviceTypes,
     canCreate,
     companies,

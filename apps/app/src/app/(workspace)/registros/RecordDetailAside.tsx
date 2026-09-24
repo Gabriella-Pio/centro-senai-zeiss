@@ -1,10 +1,12 @@
 import { CostCompositionPanel } from "@/components/CostCompositionPanel";
 import { DonutChart } from "@/components/charts/DonutChart";
 
+import { getRecordResourceIds, type AssistantRecommendation } from "@/lib/assistant";
 import type { RecordBlock } from "@/lib/record-lifecycle";
 import { formatActualEffort, formatEffort } from "@/lib/record-helpers";
 
 import type { DonutSlice, RecordFinancialSummary } from "@/lib/chart-data";
+import { RecordAssistantPanel } from "./RecordAssistantPanel";
 import { RecordFinancialSummaryPanel } from "./RecordFinancialSummaryPanel";
 import type {
   PriceHistoryStats,
@@ -22,21 +24,55 @@ export function RecordDetailAside({
   costBreakdown,
   actualBreakdown,
   priceHistory,
+  recommendation,
+  serviceTypeGuidance,
+  serviceTypeLabel,
+  currentEstimatedHours,
+  profileChips,
+  serviceOnlyCaseCount,
+  readOnly,
+  tariffReferencePrice,
   frozenTariff,
   quoteOutdated,
   costDonut,
   financialSummary,
+  onApplySuggestedHours,
 }: {
   record: ServiceRecord;
   activeTab: RecordBlock;
   costBreakdown: QuoteCostBreakdown | null;
   actualBreakdown: QuoteCostBreakdown | null;
   priceHistory: PriceHistoryStats | null;
+  recommendation: AssistantRecommendation;
+  serviceTypeGuidance: string | null;
+  serviceTypeLabel: string | null;
+  profileChips: string[];
+  currentEstimatedHours: number | null;
+  serviceOnlyCaseCount: number;
+  readOnly: boolean;
+  tariffReferencePrice: number;
   frozenTariff: boolean;
   quoteOutdated: boolean;
   costDonut: DonutSlice[];
   financialSummary: RecordFinancialSummary | null;
+  onApplySuggestedHours: () => void;
 }) {
+  const assistantPanelProps = {
+    recommendation,
+    serviceTypeGuidance,
+    serviceTypeLabel,
+    profileChips,
+    currentEstimatedHours,
+    isDemoData: record.isDemo,
+    readOnly,
+    hasServiceType: Boolean(record.serviceTypeId),
+    partTraitCount: record.partTraitIds.length,
+    resourceCount: getRecordResourceIds(record).length,
+    serviceOnlyCaseCount,
+    tariffReferencePrice: tariffReferencePrice > 0 ? tariffReferencePrice : null,
+    priceHistoryMedian: priceHistory?.median ?? null,
+    onApplySuggestedHours,
+  };
   if (activeTab === "C" && financialSummary) {
     return (
       <div className="record-aside-stack">
@@ -57,6 +93,7 @@ export function RecordDetailAside({
             variant="actual"
             breakdown={actualBreakdown}
             proposedValue={record.billedValue}
+            isDemoData={record.isDemo}
           />
         </div>
       </div>
@@ -68,6 +105,9 @@ export function RecordDetailAside({
   if (activeTab === "A" && quoteMode === "hourly_package") {
     return (
       <div className="record-aside-stack">
+        <div className="record-aside-panel">
+          <RecordAssistantPanel embedded {...assistantPanelProps} />
+        </div>
         <div className="record-summary-card">
           <div className="record-summary-card__header">
             <h3>Pacote / contrato</h3>
@@ -98,13 +138,15 @@ export function RecordDetailAside({
           )}
         </div>
         {costBreakdown && costBreakdown.lines.length > 0 ? (
-          <div className="record-aside-panel">
+          <div className="record-aside-panel" id="record-cost-composition">
             <CostCompositionPanel
               embedded
               breakdown={costBreakdown}
+              priceHistory={priceHistory ?? undefined}
               proposedValue={record.proposedValue}
               frozenAt={frozenTariff ? record.quoteSnapshot?.savedAt : undefined}
               tariffLabel="Referência por etapas"
+              isDemoData={record.isDemo}
             />
           </div>
         ) : null}
@@ -112,58 +154,61 @@ export function RecordDetailAside({
     );
   }
 
-  if (activeTab === "A" && costBreakdown) {
+  if (activeTab === "A") {
     return (
       <div className="record-aside-stack">
         <div className="record-aside-panel">
-          <CostCompositionPanel
-            embedded
-            breakdown={costBreakdown}
-            priceHistory={priceHistory ?? undefined}
-            proposedValue={record.proposedValue}
-            frozenAt={
-              frozenTariff
-                ? record.quoteSnapshot?.savedAt
-                : undefined
-            }
-            tariffLabel={
-              frozenTariff
-                ? record.quoteSnapshot?.tariffTableLabel
-                : quoteMode === "commercial_fixed"
-                  ? "Tarifa (referência)"
-                  : undefined
-            }
-          />
-
-          {quoteMode === "commercial_fixed" ? (
-            <p className="record-detail-page__tariff-note">
-              Valor comercial fechado da proposta. A composição tarifária é apenas referência.
-            </p>
-          ) : null}
-
-          {frozenTariff && quoteOutdated ? (
-            <p className="record-detail-page__tariff-note record-detail-page__tariff-note--warning">
-              Etapas ou tarifas mudaram desde o último salvamento. Salve o bloco A para atualizar o orçamento congelado.
-            </p>
-          ) : !frozenTariff && quoteMode === "tariff" ? (
-            <p className="record-detail-page__tariff-note">
-              Prévia com tarifas atuais. Salve o bloco A para congelar o orçamento.
-            </p>
-          ) : null}
+          <RecordAssistantPanel embedded {...assistantPanelProps} />
         </div>
-
-        {costBreakdown.lines.length > 0 ? (
-          <div className="record-aside-panel record-aside-panel--chart">
-            <DonutChart
-              title="Distribuição do preço"
-              subtitle={`Total ${formatCurrency(costBreakdown.suggestedPrice)}`}
-              slices={costDonut}
-              centerLabel={formatCurrency(costBreakdown.suggestedPrice)}
-              compactLegend
-              interactive
-              formatValue={formatCurrency}
-            />
-          </div>
+        {costBreakdown ? (
+          <>
+            <div className="record-aside-panel" id="record-cost-composition">
+              <CostCompositionPanel
+                embedded
+                breakdown={costBreakdown}
+                priceHistory={priceHistory ?? undefined}
+                proposedValue={record.proposedValue}
+                frozenAt={
+                  frozenTariff ? record.quoteSnapshot?.savedAt : undefined
+                }
+                tariffLabel={
+                  frozenTariff
+                    ? record.quoteSnapshot?.tariffTableLabel
+                    : quoteMode === "commercial_fixed"
+                      ? "Tarifa (referência)"
+                      : undefined
+                }
+                isDemoData={record.isDemo}
+              />
+              {quoteMode === "commercial_fixed" ? (
+                <p className="record-detail-page__tariff-note">
+                  Valor comercial fechado da proposta. A composição tarifária é apenas referência.
+                </p>
+              ) : null}
+              {frozenTariff && quoteOutdated ? (
+                <p className="record-detail-page__tariff-note record-detail-page__tariff-note--warning">
+                  Etapas ou tarifas mudaram desde o último salvamento. Salve o bloco A para atualizar o orçamento congelado.
+                </p>
+              ) : !frozenTariff && quoteMode === "tariff" ? (
+                <p className="record-detail-page__tariff-note">
+                  Prévia com tarifas atuais. Salve o bloco A para congelar o orçamento.
+                </p>
+              ) : null}
+            </div>
+            {costBreakdown.lines.length > 0 ? (
+              <div className="record-aside-panel record-aside-panel--chart">
+                <DonutChart
+                  title="Distribuição do preço"
+                  subtitle={`Total ${formatCurrency(costBreakdown.suggestedPrice)}`}
+                  slices={costDonut}
+                  centerLabel={formatCurrency(costBreakdown.suggestedPrice)}
+                  compactLegend
+                  interactive
+                  formatValue={formatCurrency}
+                />
+              </div>
+            ) : null}
+          </>
         ) : null}
       </div>
     );

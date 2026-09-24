@@ -3,8 +3,8 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { UserRole } from '@/lib/api';
-import { findSimilarRecords } from '@/lib/assistant';
-import { buildCostDonut } from '@/lib/chart-data';
+import { buildRecommendation, countServiceFormalizedCases, findSimilarRecords, getRecordResourceIds, needsEstimationOverrideReason } from '@/lib/assistant';
+import { buildCostDonut, buildRecordFinancialSummary } from '@/lib/chart-data';
 import { pushNotification, updateDemoState } from '@/lib/demo/demo-store';
 import {
   canAccessBlock,
@@ -20,22 +20,28 @@ import {
   resolveBilledValue,
 } from '@/lib/record-helpers';
 import { getRecordQuoteMode, needsPriceOverrideReason } from '@/lib/quote-mode';
-import { buildRecordFinancialSummary } from '@/lib/chart-data';
 import { upsertVocabularyTerm } from '@/lib/vocabulary-mutations';
 import {
+  applySuggestedHoursToRecord,
   finalizeStagesForExecution,
   getRecordStages,
   stagesHaveResources,
   sumStageActualHours,
   sumStageEstimatedHours,
 } from '@/lib/record-stages';
-import { buildPriceHistory, buildStageQuoteSnapshot, computeStageQuoteCost } from '@/lib/pricing';
+import {
+  buildPriceHistory,
+  buildStageQuoteSnapshot,
+  computeStageQuoteCost,
+  resolveSuggestedPrice,
+} from '@/lib/pricing';
 import {
   getValidationHref,
   parseRecordBlockParam,
   setRecordBlockParam,
 } from '@/lib/records-navigation';
 import { useDemoStore } from '@/lib/use-demo-store';
+import { canViewRecord } from '@/lib/formalized-knowledge';
 import type {
   RecordBlockAFieldErrors,
   RecordBlockBFieldErrors,
@@ -49,13 +55,16 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { records, vocabulary, labSettings } = useDemoStore();
-  const record = records.find((item) => item.id === recordId) ?? null;
+  const rawRecord = records.find((item) => item.id === recordId) ?? null;
+  const record =
+    rawRecord && canViewRecord(rawRecord, userRole) ? rawRecord : null;
   const [activeTab, setActiveTab] = useState<RecordBlock>('A');
   const [formError, setFormError] = useState<string | null>(null);
   const [blockAFieldErrors, setBlockAFieldErrors] = useState<RecordBlockAFieldErrors>({});
   const [blockBFieldErrors, setBlockBFieldErrors] = useState<RecordBlockBFieldErrors>({});
   const [blockCFieldErrors, setBlockCFieldErrors] = useState<RecordBlockCFieldErrors>({});
   const [notice, setNotice] = useState<string | null>(null);
+  const [stageHighlightPulse, setStageHighlightPulse] = useState(0);
 
   const serviceTypes = useMemo(
     () => vocabulary.filter((term) => term.class === 'SERVICE_TYPE' && term.active),
@@ -156,20 +165,86 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
   }, [record, liveBreakdown]);
   const detailNotices = useMemo(() => (record ? getRecordDetailNotices(record) : []), [record]);
 
-  const priceHistory = useMemo(() => {
+  const similarCases = useMemo(() => {
+    if (!record?.serviceTypeId) return [];
+    const resourceIds = getRecordResourceIds(record);
+    return findSimilarRecords(
+      records,
+      record.serviceTypeId,
+      record.partTraitIds,
+      resourceIds,
+      { excludeRecordId: record.id, viewerRole: userRole },
+    );
+  }, [records, record, userRole]);
+
+  const serviceOnlyCaseCount = useMemo(() => {
+    if (!record?.serviceTypeId) return 0;
+    return countServiceFormalizedCases(records, record.serviceTypeId, {
+      excludeRecordId: record.id,
+      viewerRole: userRole,
+    });
+  }, [records, record, userRole]);
+
+  const priceHistory = useMemo(() => buildPriceHistory(similarCases), [similarCases]);
+
+  const recommendation = useMemo(
+    () => buildRecommendation(similarCases),
+    [similarCases],
+  );
+
+  const serviceTypeGuidance = useMemo(() => {
     if (!record?.serviceTypeId) return null;
-    const similar = findSimilarRecords(records, record.serviceTypeId, record.partTraitIds);
-    return buildPriceHistory(similar);
-  }, [records, record]);
+    return serviceTypes.find((term) => term.id === record.serviceTypeId)?.guidance ?? null;
+  }, [record, serviceTypes]);
+
+  const serviceTypeLabel = useMemo(() => {
+    if (!record?.serviceTypeId) return null;
+    return serviceTypes.find((term) => term.id === record.serviceTypeId)?.label ?? null;
+  }, [record, serviceTypes]);
+
+  const profileChips = useMemo(() => {
+    if (!record) return [];
+    const chips: string[] = [];
+    if (serviceTypeLabel) {
+      chips.push(serviceTypeLabel);
+    }
+    for (const traitId of record.partTraitIds) {
+      const trait = partTraits.find((term) => term.id === traitId);
+      if (trait) {
+        chips.push(trait.label);
+      }
+    }
+    for (const resourceId of getRecordResourceIds(record)) {
+      const resource = resources.find((term) => term.id === resourceId);
+      if (resource) {
+        chips.push(resource.label);
+      }
+    }
+    return chips;
+  }, [record, serviceTypeLabel, partTraits, resources]);
+
+  const currentEstimatedHours = useMemo(() => {
+    if (!record) return null;
+    const stages = getRecordStages(record, serviceTypes);
+    const stageHours = sumStageEstimatedHours(stages);
+    return stageHours ?? record.estimatedHours ?? null;
+  }, [record, serviceTypes]);
 
   const costDonut = useMemo(
     () => (costBreakdown ? buildCostDonut(costBreakdown.lines) : []),
     [costBreakdown],
   );
 
-  const suggestedPrice = priceHistory?.median
-    ? Math.round(priceHistory.median)
-    : (costBreakdown?.suggestedPrice ?? 0);
+  const tariffReferencePrice = costBreakdown?.suggestedPrice ?? 0;
+  const suggestedPrice = useMemo(
+    () =>
+      resolveSuggestedPrice({
+        quoteMode: record ? getRecordQuoteMode(record) : 'tariff',
+        tariffPrice: tariffReferencePrice,
+        historicalCases: similarCases,
+      }),
+    [record, tariffReferencePrice, similarCases],
+  );
   const suggestedUnitPrice = costBreakdown?.unitPrice ?? suggestedPrice;
 
   const readOnly = Boolean(
@@ -177,7 +252,18 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
   );
 
   const quoteMode = record ? getRecordQuoteMode(record) : 'tariff';
-  const needsPriceOverride = record ? needsPriceOverrideReason(record, suggestedPrice) : false;
+  const needsPriceOverride = record
+    ? needsPriceOverrideReason(record, tariffReferencePrice)
+    : false;
+  const needsEstimationOverride = useMemo(
+    () =>
+      needsEstimationOverrideReason(
+        currentEstimatedHours,
+        recommendation.suggestedHours,
+        recommendation.level,
+      ),
+    [currentEstimatedHours, recommendation],
+  );
   const canEditQuoteMode =
     (userRole === 'ADMIN' || userRole === 'VALIDADOR') && !readOnly;
 
@@ -205,6 +291,9 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     }
     if (patch.priceOverrideReason !== undefined) {
       setBlockAFieldErrors((current) => ({ ...current, priceOverrideReason: undefined }));
+    }
+    if (patch.estimationOverrideReason !== undefined) {
+      setBlockAFieldErrors((current) => ({ ...current, estimationOverrideReason: undefined }));
     }
     if (patch.stages !== undefined) {
       setBlockAFieldErrors((current) => ({ ...current, stages: undefined }));
@@ -322,6 +411,10 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
       if (!record.proposedValue) {
         errors.proposedValue = 'Informe o valor do contrato.';
       }
+      if (needsEstimationOverride && !record.estimationOverrideReason?.trim()) {
+        errors.estimationOverrideReason =
+          'Justifique as horas diferentes da sugestão do assistente.';
+      }
       const stagesError = validateBlockAStages(stages, false);
       if (stagesError) {
         errors.stages = stagesError;
@@ -392,6 +485,10 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     }
     if (needsPriceOverride && !record.priceOverrideReason?.trim()) {
       errors.priceOverrideReason = 'Justifique o valor diferente do sugerido pela tarifa.';
+    }
+    if (needsEstimationOverride && !record.estimationOverrideReason?.trim()) {
+      errors.estimationOverrideReason =
+        'Justifique as horas diferentes da sugestão do assistente.';
     }
     if (Object.keys(errors).length > 0) {
       setBlockAFieldErrors(errors);
@@ -530,6 +627,30 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     router.push(getValidationHref(record.id));
   }
 
+  function applySuggestedHours() {
+    if (!record || recommendation.suggestedHours === null || readOnly) {
+      return;
+    }
+
+    const patch = applySuggestedHoursToRecord(
+      record,
+      serviceTypes,
+      recommendation.suggestedHours,
+    );
+    updateRecord({ ...patch, estimationOverrideReason: undefined });
+    setStageHighlightPulse((value) => value + 1);
+    setNotice(
+      `Horas sugeridas (${recommendation.suggestedHours} h) aplicadas ${
+        getRecordQuoteMode(record) === 'hourly_package' ? 'ao pacote' : 'às etapas'
+      }.`,
+    );
+    requestAnimationFrame(() => {
+      document
+        .getElementById('record-stages-editor')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+
   return {
     record,
     activeTab,
@@ -550,11 +671,20 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     quoteOutdated,
     detailNotices,
     priceHistory,
+    recommendation,
+    serviceTypeGuidance,
+    serviceTypeLabel,
+    profileChips,
+    serviceOnlyCaseCount,
+    stageHighlightPulse,
+    currentEstimatedHours,
     costDonut,
     suggestedPrice,
     suggestedUnitPrice,
+    tariffReferencePrice,
     actualCost: actualBreakdown?.suggestedPrice ?? record?.actualCost ?? null,
     needsPriceOverride,
+    needsEstimationOverride,
     quoteMode,
     canEditQuoteMode,
     readOnly,
@@ -565,5 +695,6 @@ export function useRecordDetailBoard(recordId: string, userRole: UserRole, userN
     saveBlockB,
     completeService,
     createDeviationCause,
+    applySuggestedHours,
   };
 }

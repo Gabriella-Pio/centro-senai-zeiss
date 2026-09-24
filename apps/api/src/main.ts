@@ -10,13 +10,17 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
   await app.register(cookie as never);
 
-  const origins = (process.env.FRONTEND_URL ?? 'http://localhost:3000,http://localhost:3001')
+  const origins = (
+    process.env.FRONTEND_URL ??
+    'http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001'
+  )
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
   app.enableCors({
     origin: origins,
-    methods: ['GET', 'POST', 'PATCH'],
+    methods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     credentials: true,
   });
   app.setGlobalPrefix('api/v1');

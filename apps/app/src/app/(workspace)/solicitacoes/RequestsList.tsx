@@ -1,4 +1,4 @@
-import { FilterX, Inbox, Plus } from "lucide-react";
+import { FilterX, Inbox } from "lucide-react";
 import { Button } from "@cem/ui";
 import { WorkspaceEmptyState } from "@/components/WorkspaceEmptyState";
 import type { QuoteRequest } from "./types";
@@ -9,13 +9,11 @@ export function RequestsList({
   filtering,
   onView,
   onClearFilters,
-  onSimulate,
 }: {
   requests: QuoteRequest[];
   filtering: boolean;
   onView: (request: QuoteRequest) => void;
   onClearFilters: () => void;
-  onSimulate: () => void;
 }) {
   if (requests.length === 0) {
     return filtering ? (
@@ -29,13 +27,7 @@ export function RequestsList({
       <WorkspaceEmptyState
         icon={Inbox}
         title="Nenhuma solicitação na fila"
-        description="Simule um pedido vindo do site para começar o fluxo comercial."
-        action={
-          <Button type="button" variant="outline" size="lg" onClick={onSimulate}>
-            <Plus aria-hidden="true" />
-            Simular pedido do site
-          </Button>
-        }
+        description="Quando um cliente enviar o formulário de orçamento na vitrine, clique em “Atualizar do site” para importar o pedido."
       />
     );
   }

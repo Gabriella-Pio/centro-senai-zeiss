@@ -1,7 +1,8 @@
-import type { ServiceRecord } from "@/app/(workspace)/registros/types";
-import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
-import type { LabSettings } from "./demo-store-types";
-import { computeRealizedMargin } from "./pricing";
+import type { ServiceRecord } from '@/app/(workspace)/registros/types';
+import type { VocabularyTerm } from '@/app/(workspace)/vocabulario/types';
+import { isDemoFormalizedCase } from './formalized-knowledge';
+import type { LabSettings } from './demo/demo-store-types';
+import { computeRealizedMargin } from './pricing';
 
 const TOLERANCE = 0.15;
 
@@ -20,16 +21,16 @@ export function computeIndicators(
   vocabulary: VocabularyTerm[],
   labSettings: LabSettings,
 ): IndicatorSummary {
-  const formalized = records.filter(
-    (record) => record.isDemo && record.lessonStatus === "FORMALIZED" && record.serviceStatus === "COMPLETED",
-  );
+  const formalized = records.filter(isDemoFormalizedCase);
 
   const withHours = formalized.filter(
-    (record) => record.estimatedHours !== null && record.actualHours !== null && record.estimatedHours > 0,
+    (record) =>
+      record.estimatedHours !== null && record.actualHours !== null && record.estimatedHours > 0,
   );
 
   const withinTolerance = withHours.filter((record) => {
-    const deviation = Math.abs(record.actualHours! - record.estimatedHours!) / record.estimatedHours!;
+    const deviation =
+      Math.abs(record.actualHours! - record.estimatedHours!) / record.estimatedHours!;
     return deviation <= TOLERANCE;
   });
 
@@ -72,7 +73,8 @@ export function computeIndicators(
 
   return {
     totalFormalized: formalized.length,
-    assertivenessRate: withHours.length === 0 ? 0 : Math.round((withinTolerance.length / withHours.length) * 100),
+    assertivenessRate:
+      withHours.length === 0 ? 0 : Math.round((withinTolerance.length / withHours.length) * 100),
     averageEffortDeviation: Math.round(averageEffortDeviation * 100),
     averageMarginPercent,
     belowTargetMarginCount,

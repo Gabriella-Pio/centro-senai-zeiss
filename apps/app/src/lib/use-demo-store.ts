@@ -2,7 +2,7 @@
 
 import { useMemo, useSyncExternalStore } from 'react';
 import { readDemoState, subscribeDemoStore } from './demo/demo-store';
-import type { DemoState } from './demo-store-types';
+import type { DemoState } from './demo/demo-store-types';
 
 export function useDemoStore(): DemoState {
   const snapshot = useSyncExternalStore(

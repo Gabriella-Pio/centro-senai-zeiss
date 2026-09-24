@@ -20,7 +20,9 @@ import {
   buildScatterData,
 } from "@/lib/chart-data";
 import { computeIndicators } from "@/lib/indicators";
+import { canViewRecord } from "@/lib/formalized-knowledge";
 import { useDemoStore } from "@/lib/use-demo-store";
+import type { UserRole } from "@/lib/api";
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import { WorkspaceEmptyState } from "@/components/WorkspaceEmptyState";
 import { DonutChart } from "@/components/charts/DonutChart";
@@ -30,25 +32,30 @@ import { ParetoChart } from "@/components/charts/ParetoChart";
 import { ScatterChart } from "@/components/charts/ScatterChart";
 import "./indicators.css";
 
-export function IndicatorsBoard() {
+export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
   const router = useRouter();
   const { records, vocabulary, labSettings } = useDemoStore();
 
-  const summary = useMemo(
-    () => computeIndicators(records, vocabulary, labSettings),
-    [records, vocabulary, labSettings],
+  const visibleRecords = useMemo(
+    () => records.filter((record) => canViewRecord(record, userRole)),
+    [records, userRole],
   );
-  const scatter = useMemo(() => buildScatterData(records), [records]);
-  const pareto = useMemo(() => buildParetoCauses(records, vocabulary), [records, vocabulary]);
-  const marginDonut = useMemo(() => buildMarginDonut(records, labSettings), [records, labSettings]);
-  const effortTrend = useMemo(() => buildEffortTrend(records), [records]);
 
-  const pendingLessons = records.filter(
+  const summary = useMemo(
+    () => computeIndicators(visibleRecords, vocabulary, labSettings),
+    [visibleRecords, vocabulary, labSettings],
+  );
+  const scatter = useMemo(() => buildScatterData(visibleRecords), [visibleRecords]);
+  const pareto = useMemo(() => buildParetoCauses(visibleRecords, vocabulary), [visibleRecords, vocabulary]);
+  const marginDonut = useMemo(() => buildMarginDonut(visibleRecords, labSettings), [visibleRecords, labSettings]);
+  const effortTrend = useMemo(() => buildEffortTrend(visibleRecords), [visibleRecords]);
+
+  const pendingLessons = visibleRecords.filter(
     (record: ServiceRecord) =>
       record.lessonStatus === "PENDING" && record.serviceStatus === "COMPLETED",
   ).length;
 
-  const aboveTarget = marginDonut.find((slice) => slice.label === "Acima da meta")?.value ?? 0;
+  const aboveTarget = marginDonut.find((slice) => slice.label === "Casos acima da meta")?.value ?? 0;
   const marginTotal = marginDonut.reduce((sum, slice) => sum + slice.value, 0);
   const abovePercent = marginTotal > 0 ? Math.round((aboveTarget / marginTotal) * 100) : 0;
   const hasFormalized = summary.totalFormalized > 0;
@@ -63,8 +70,9 @@ export function IndicatorsBoard() {
           </p>
           <h1 className="indicators-page__title">Indicadores</h1>
           <p className="indicators-page__intro">
-            O laboratório está estimando melhor? Onde perde margem? Métricas calculadas a partir
-            dos registros concluídos com lição formalizada — a mesma base que alimenta o Assistente.
+            O laboratório está estimando melhor? Onde perde margem? Métricas da base demo
+            formalizada (concluídos com lição validada) — o mesmo universo do Assistente, que
+            ainda refina por tipo de serviço, características e recursos do perfil em edição.
           </p>
         </div>
       </header>
@@ -132,7 +140,7 @@ export function IndicatorsBoard() {
               <KpiCard
                 label="Casos formalizados"
                 value={String(summary.totalFormalized)}
-                detail="Lições que alimentam o Assistente"
+                detail="Lições demo formalizadas na base compartilhada com o Assistente"
                 icon={ChartColumn}
               />
               <KpiCard

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { PriceHistoryStats, QuoteCostBreakdown } from "@/lib/pricing";
 import { formatCurrency } from "@/lib/pricing";
+import { getRecordDetailPath } from "@/lib/records-navigation";
 import { WorkspaceEmptyState } from "@/components/WorkspaceEmptyState";
 import "./cost-composition.css";
 
@@ -36,8 +37,9 @@ export function CostCompositionPanel({
   frozenAt,
   tariffLabel,
   embedded = false,
-  title = "Composição do orçamento",
+  title = "Referência tarifária",
   variant = "estimate",
+  isDemoData = false,
 }: {
   breakdown: QuoteCostBreakdown;
   priceHistory?: PriceHistoryStats;
@@ -47,10 +49,12 @@ export function CostCompositionPanel({
   embedded?: boolean;
   title?: string;
   variant?: "estimate" | "actual";
+  isDemoData?: boolean;
 }) {
   const comparePrice = breakdown.suggestedPrice;
+  const usesTariffComparison = breakdown.tariffAsPrice && variant === "estimate";
   const margin =
-    proposedValue && comparePrice > 0
+    proposedValue && comparePrice > 0 && !usesTariffComparison
       ? Math.round(((proposedValue - comparePrice) / proposedValue) * 100)
       : breakdown.marginPercent;
 
@@ -176,7 +180,9 @@ export function CostCompositionPanel({
                 <div className="cost-panel__proposed-copy">
                   <span className="cost-panel__proposed-label">Valor informado</span>
                   <span className="cost-panel__proposed-hint">
-                    Margem efetiva de {margin}%
+                    {usesTariffComparison
+                      ? "Comparado à tarifa acima"
+                      : `Margem efetiva de ${margin}%`}
                   </span>
                 </div>
                 <div className="cost-panel__proposed-values">
@@ -184,13 +190,16 @@ export function CostCompositionPanel({
                   {priceDelta !== null && priceDelta !== 0 ? (
                     <span
                       className={`cost-panel__delta${
-                        priceDelta > 0
-                          ? " cost-panel__delta--above"
-                          : " cost-panel__delta--below"
+                        usesTariffComparison
+                          ? " cost-panel__delta--off-tariff"
+                          : priceDelta > 0
+                            ? " cost-panel__delta--above"
+                            : " cost-panel__delta--below"
                       }`}
                     >
-                      {priceDelta > 0 ? "+" : ""}
-                      {formatCurrency(priceDelta)}
+                      {usesTariffComparison
+                        ? `${formatCurrency(Math.abs(priceDelta))} ${priceDelta > 0 ? "acima" : "abaixo"}`
+                        : `${priceDelta > 0 ? "+" : ""}${formatCurrency(priceDelta)}`}
                     </span>
                   ) : null}
                 </div>
@@ -201,28 +210,81 @@ export function CostCompositionPanel({
       )}
 
       {priceHistory && priceHistory.count > 0 ? (
-        <section className="cost-panel__history" aria-label="Histórico de preços">
+        <section className="cost-panel__history" aria-label="Histórico comercial">
           <div className="cost-panel__history-head">
             <History aria-hidden="true" />
-            <h4>Histórico de casos similares</h4>
+            <h4>Histórico comercial</h4>
             <span>{priceHistory.count} formalizados</span>
           </div>
-          <div className="cost-panel__history-stats">
-            <div className="cost-panel__stat">
-              <span>Mediana</span>
-              <strong>
-                {priceHistory.median ? formatCurrency(priceHistory.median) : "—"}
-              </strong>
-            </div>
-            {priceHistory.q1 && priceHistory.q3 ? (
+          <p className="cost-panel__history-note">
+            Valores fechados em serviços anteriores — referência comercial, não tarifa calculada acima.
+            {isDemoData ? " Casos listados são mock da base demo." : ""}
+          </p>
+
+          {priceHistory.cases && priceHistory.cases.length > 0 ? (
+            <>
+              <p className="cost-panel__history-note cost-panel__history-note--emphasis">
+                Poucos casos — revise cada registro antes de usar como referência.
+              </p>
+              <ul className="cost-panel__history-cases">
+                {priceHistory.cases.map((item) => (
+                  <li key={item.recordId} className="cost-panel__history-case">
+                    <div className="cost-panel__history-case-copy">
+                      <Link
+                        href={getRecordDetailPath(item.recordId, "C")}
+                        className="cost-panel__history-case-link"
+                      >
+                        {item.recordNumber}
+                      </Link>
+                      {item.estimatedHours !== null ? (
+                        <span>{item.estimatedHours.toFixed(1)} h</span>
+                      ) : null}
+                      {item.quantity > 1 ? (
+                        <span>
+                          {item.quantity} peças · {formatCurrency(item.totalPrice)} total
+                        </span>
+                      ) : null}
+                    </div>
+                    <strong className="cost-panel__history-case-price">
+                      {formatCurrency(item.unitPrice)}
+                      {item.quantity > 1 ? (
+                        <span className="cost-panel__history-case-unit"> / peça</span>
+                      ) : null}
+                    </strong>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <div className="cost-panel__history-stats">
               <div className="cost-panel__stat">
-                <span>Faixa (Q1–Q3)</span>
+                <span>Mediana</span>
                 <strong>
-                  {formatCurrency(priceHistory.q1)} – {formatCurrency(priceHistory.q3)}
+                  {priceHistory.median ? formatCurrency(priceHistory.median) : "—"}
                 </strong>
               </div>
-            ) : null}
-          </div>
+              {priceHistory.q1 !== null && priceHistory.q3 !== null ? (
+                <div className="cost-panel__stat">
+                  <span title="Faixa onde ficam os 50% centrais dos casos formalizados">
+                    Faixa usual
+                  </span>
+                  <strong>
+                    {formatCurrency(priceHistory.q1)} – {formatCurrency(priceHistory.q3)}
+                  </strong>
+                </div>
+              ) : null}
+              {priceHistory.count >= 15 &&
+              priceHistory.min !== null &&
+              priceHistory.max !== null ? (
+                <div className="cost-panel__stat">
+                  <span>Faixa completa</span>
+                  <strong>
+                    {formatCurrency(priceHistory.min)} – {formatCurrency(priceHistory.max)}
+                  </strong>
+                </div>
+              ) : null}
+            </div>
+          )}
         </section>
       ) : null}
 

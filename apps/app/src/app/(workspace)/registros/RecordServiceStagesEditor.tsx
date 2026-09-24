@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
 import { Button, Input, Label } from "@cem/ui";
 import {
@@ -37,6 +37,7 @@ export function RecordServiceStagesEditor({
   readOnly,
   mode = "estimate",
   stagesError,
+  highlightPulse = 0,
   onUpdate,
 }: {
   record: ServiceRecord;
@@ -45,8 +46,20 @@ export function RecordServiceStagesEditor({
   readOnly: boolean;
   mode?: "estimate" | "actual";
   stagesError?: string;
+  highlightPulse?: number;
   onUpdate: (patch: Partial<ServiceRecord>) => void;
 }) {
+  const [pulseActive, setPulseActive] = useState(false);
+
+  useEffect(() => {
+    if (!highlightPulse) {
+      return;
+    }
+
+    setPulseActive(true);
+    const timer = window.setTimeout(() => setPulseActive(false), 1800);
+    return () => window.clearTimeout(timer);
+  }, [highlightPulse]);
   const [query, setQuery] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const stages = getRecordStages(record, serviceTypes);
@@ -133,7 +146,12 @@ export function RecordServiceStagesEditor({
   }
 
   return (
-    <div className="record-stages-editor">
+    <div
+      className={`record-stages-editor${
+        pulseActive ? " record-stages-editor--pulse" : ""
+      }`}
+      id="record-stages-editor"
+    >
       <div className="record-stages-editor__header">
         <Label>{isActual ? "Etapas realizadas" : "Etapas do serviço"}</Label>
         <p className="record-detail-page__field-hint">{hoursHint()}</p>

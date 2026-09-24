@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button, Input, Label } from "@cem/ui";
 import { updateDemoState } from "@/lib/demo/demo-store";
-import type { LabSettings } from "@/lib/demo-store-types";
+import type { LabSettings } from "@/lib/demo/demo-store-types";
 import { useDemoStore } from "@/lib/use-demo-store";
 import "./lab-settings.css";
 

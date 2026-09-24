@@ -1,5 +1,6 @@
 import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
+import { isDemoFormalizedCase } from "./formalized-knowledge";
 import type { LabSettings } from "./demo-store-types";
 import { getComparableHours, getRecordChartLabel } from "./record-helpers";
 import { computeRealizedMargin } from "./pricing";
@@ -30,9 +31,7 @@ export type CaseBar = {
 };
 
 function formalizedRecords(records: ServiceRecord[]) {
-  return records.filter(
-    (record) => record.isDemo && record.lessonStatus === "FORMALIZED" && record.serviceStatus === "COMPLETED",
-  );
+  return records.filter(isDemoFormalizedCase);
 }
 
 function monthKey(iso: string) {

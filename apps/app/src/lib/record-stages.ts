@@ -179,3 +179,38 @@ export function updateServiceStage(
   );
   return buildRecordPatchFromStages(record, stages);
 }
+
+/**
+ * Distribui horas sugeridas pelas etapas existentes, proporcionalmente
+ * às horas já informadas ou em partes iguais quando ainda não há total.
+ */
+export function applySuggestedHoursToRecord(
+  record: ServiceRecord,
+  serviceTypes: VocabularyTerm[],
+  suggestedHours: number,
+): Partial<ServiceRecord> {
+  const stages = getRecordStages(record, serviceTypes);
+
+  if (stages.length === 0) {
+    return { estimatedHours: suggestedHours };
+  }
+
+  const currentTotal = sumStageEstimatedHours(stages);
+  let nextStages: ServiceStage[];
+
+  if (!currentTotal || currentTotal <= 0) {
+    const perStage = Math.round((suggestedHours / stages.length) * 10) / 10;
+    nextStages = stages.map((stage) => ({ ...stage, estimatedHours: perStage }));
+  } else {
+    const factor = suggestedHours / currentTotal;
+    nextStages = stages.map((stage) => ({
+      ...stage,
+      estimatedHours:
+        stage.estimatedHours !== null
+          ? Math.round(stage.estimatedHours * factor * 10) / 10
+          : null,
+    }));
+  }
+
+  return buildRecordPatchFromStages(record, nextStages);
+}

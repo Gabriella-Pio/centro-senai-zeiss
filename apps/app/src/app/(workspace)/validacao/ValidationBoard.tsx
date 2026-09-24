@@ -43,7 +43,7 @@ export function ValidationBoard() {
     pushNotification({
       roles: record.visibility === "RESTRICTED" ? ["VALIDADOR", "ADMIN"] : ["TECNICO", "VALIDADOR", "ADMIN", "CONSULTA"],
       message: `Nova lição formalizada sobre ${record.service}.`,
-      href: "/assistente",
+      href: getRecordDetailPath(recordId, "A"),
     });
     setNotice(`Lição de ${record.recordNumber} formalizada.`);
   }
