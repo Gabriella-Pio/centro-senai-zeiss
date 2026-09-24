@@ -68,7 +68,7 @@ export const services: ServiceContent[] = [
   },
   {
     id: "inspecao-interna",
-    label: "Inspeção interna (NDT)",
+    label: "Tomografia industrial para inspeções internas não destrutivas",
     icon: "Layers",
     cardImage: "/lab/services/bosello-front.jpeg",
     cardImageAlt: "Sistema ZEISS BOSELLO MAX para tomografia e raio-X industrial.",
@@ -89,9 +89,9 @@ export const services: ServiceContent[] = [
   },
   {
     id: "prototipacao-3d",
-    label: "Prototipação 3D",
+    label: "Digitalização de peças e impressão 3D",
     icon: "Printer",
-    cardImage: "/lab/services/prototipacao.jpeg",
+    cardImage: "/lab/services/cad.jpeg",
     cardImageAlt: "Peça em validação dimensional após prototipagem.",
     shortDescription:
       "Impressão 3D de protótipos a partir de modelos CAD ou malhas digitalizadas aqui, para testes funcionais e geométricos.",
@@ -110,13 +110,13 @@ export const services: ServiceContent[] = [
     id: "consultoria-qualidade",
     label: "Consultoria em qualidade",
     icon: "ClipboardCheck",
-    cardImage: "/lab/services/consultoria.jpeg",
+    cardImage: "/lab/services/consultorias.jpeg",
     cardImageAlt: "Equipe técnica do centro em operação de medição.",
     cardImagePosition: "50% 40%",
     shortDescription:
       "Apoio gerencial e técnico: planos de manutenção metrológica, conformidade com normas ISO e estruturação de processos de qualidade.",
     description:
-      "Nossa equipe gerencial e técnica apoia a estruturar e melhorar processos de qualidade — da definição de planos de manutenção de equipamentos à conformidade com normas e auditorias.",
+      "Nossa equipe gerencial e técnica apoia a estruturar e melhorar processos de qualidade — da definição de planos de manutenção de equipamentos à conformidade com normas e auditorias. Oferecemos treinamentos técnicos nas áreas de manutenção, metrologia, engenharia reversa, lubrificação e análise de falhas.",
     applications: [
       "Diagnóstico e estruturação de processos de metrologia",
       "Apoio à conformidade com normas ISO de qualidade",

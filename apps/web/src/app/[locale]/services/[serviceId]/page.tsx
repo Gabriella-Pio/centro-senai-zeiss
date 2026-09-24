@@ -31,20 +31,19 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 const extraGallery: Record<string, { src: string; alt: string; position?: string; machine?: string; fit?: "cover" | "contain" }[]> = {
   "controle-qualidade-dimensional": [
     {
+      src: "/lab/services/duramax-close.jpeg",
+      alt: "ZEISS DuraMax.",
+      machine: "DuraMax",
+    },
+    {
       src: "/lab/services/o-inspect-lat.jpeg",
       alt: "ZEISS O-Inspect no laboratório.",
       machine: "O-Inspect",
     },
     {
-      src: "/lab/services/o-inspect-tela.jpeg",
-      alt: "Leitura óptica no ZEISS O-Inspect.",
-      machine: "O-Inspect",
-    },
-  ],
-  "digitalizacao-engenharia-reversa": [
-    {
-      src: "/lab/services/digitalizacao.jpeg",
-      alt: "Digitalização 3D no laboratório.",
+      src: "/lab/services/prismo.jpeg",
+      alt: "ZEISS Prismo no laboratório.",
+      machine: "Prismo",
     },
   ],
   "inspecao-interna": [
@@ -56,11 +55,20 @@ const extraGallery: Record<string, { src: string; alt: string; position?: string
   ],
   "prototipacao-3d": [
     {
-      src: "/equipment/bambu-lab-a1.png",
+      src: "/lab/services/bambu-trabalha.jpeg",
       alt: "Impressora 3D Bambu Lab A1 no laboratório.",
-      fit: "contain",
+      // fit: "contain",
       machine: "Bambu Lab A1",
     },
+    {
+      src: "/lab/services/cad-print.png",
+      alt: "Digitalização 3D no laboratório.",
+    },
+    // TODO
+    // {
+    //   src: "/lab/services/cad.mp4",
+    //   alt: "Digitalização 3D no laboratório.",
+    // },
   ],
 };
 
