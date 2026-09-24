@@ -72,7 +72,7 @@ export function RecordDetailBoard({
 
       {board.notice ? (
         <div
-          className="record-detail-page__feedback"
+          className="workspace-notice workspace-notice--success record-detail-page__feedback"
           role="status"
           aria-live="polite"
         >
@@ -145,7 +145,7 @@ export function RecordDetailBoard({
 
           {board.formError ? (
             <div
-              className="record-detail-page__error-banner"
+              className="workspace-notice workspace-notice--error record-detail-page__error-banner"
               role="alert"
               aria-live="assertive"
             >

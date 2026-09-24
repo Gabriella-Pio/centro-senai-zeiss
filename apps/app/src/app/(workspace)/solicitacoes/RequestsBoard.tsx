@@ -53,9 +53,9 @@ export function RequestsBoard() {
         />
 
         {board.notice ? (
-          <div className="requests-page__notice" role="status" aria-live="polite">{board.notice}</div>
+          <div className="workspace-notice requests-page__notice" role="status" aria-live="polite">{board.notice}</div>
         ) : board.syncingLeads ? (
-          <div className="requests-page__notice" role="status" aria-live="polite">
+          <div className="workspace-notice workspace-notice--info requests-page__notice" role="status" aria-live="polite">
             Sincronizando solicitações recebidas pelo site…
           </div>
         ) : null}

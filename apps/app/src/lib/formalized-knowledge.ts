@@ -33,3 +33,13 @@ export function canUseCaseInKnowledge(record: ServiceRecord, viewerRole?: UserRo
   }
   return canViewRestrictedRecord(viewerRole);
 }
+
+/** Lições concluídas aguardando formalização em Validação (Home + Indicadores). */
+export function countPendingFormalizationLessons(records: ServiceRecord[], role: UserRole): number {
+  return records.filter(
+    (record) =>
+      canViewRecord(record, role) &&
+      record.lessonStatus === 'PENDING' &&
+      record.serviceStatus === 'COMPLETED',
+  ).length;
+}

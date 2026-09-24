@@ -4,9 +4,11 @@ import type { UserRole } from '@/lib/api';
 import {
   buildConfidenceDonut,
   buildEffortTrend,
+  buildMarginDonut,
   computeAssertivenessRate,
+  countMarginDonutAboveTarget,
 } from '@/lib/chart-data';
-import { canViewRecord } from '@/lib/formalized-knowledge';
+import { canViewRecord, countPendingFormalizationLessons } from '@/lib/formalized-knowledge';
 import { computeIndicators } from '@/lib/indicators';
 import type { LabSettings } from '@/lib/demo/demo-store-types';
 
@@ -53,9 +55,7 @@ function visibleRecordsForRole(records: ServiceRecord[], role: UserRole) {
 }
 
 function countPendingLessons(records: ServiceRecord[], role: UserRole) {
-  return visibleRecordsForRole(records, role).filter(
-    (record) => record.lessonStatus === 'PENDING' && record.serviceStatus === 'COMPLETED',
-  ).length;
+  return countPendingFormalizationLessons(records, role);
 }
 
 describe('record visibility in aggregates', () => {

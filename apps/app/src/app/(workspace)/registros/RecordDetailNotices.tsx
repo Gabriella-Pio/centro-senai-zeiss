@@ -11,12 +11,12 @@ export function RecordDetailNotices({ notices }: { notices: RecordDetailNotice[]
       {notices.map((notice) => (
         <div
           key={notice.id}
-          className={`record-detail-page__notice record-detail-page__notice--${notice.tone}`}
+          className={`workspace-notice workspace-notice--${notice.tone} workspace-notice--with-action record-detail-page__notice`}
           role="status"
         >
           <p>{notice.message}</p>
           {notice.href && notice.linkLabel ? (
-            <Link href={notice.href} className="record-detail-page__notice-link">
+            <Link href={notice.href} className="workspace-notice__link">
               {notice.linkLabel}
             </Link>
           ) : null}

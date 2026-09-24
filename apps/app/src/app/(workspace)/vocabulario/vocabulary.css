@@ -4,58 +4,11 @@
 }
 
 /* =========================================================
-   HEADER
+   HEADER (page-specific)
    ========================================================= */
-
-.vocabulary-page__header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
-  padding-bottom: 1.75rem;
-  border-bottom: 1px solid var(--color-border);
-}
 
 .vocabulary-page__heading {
   min-width: 0;
-}
-
-.vocabulary-page__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: 0;
-
-  color: var(--color-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.vocabulary-page__eyebrow svg {
-  width: 1rem;
-  height: 1rem;
-}
-
-.vocabulary-page__title {
-  margin: 0.55rem 0 0;
-
-  font-family: var(--font-heading);
-  font-size: clamp(2rem, 1.5rem + 1.4vw, 3rem);
-  font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
-}
-
-.vocabulary-page__intro {
-  max-width: 46rem;
-  margin: 0.8rem 0 0;
-
-  color: var(--color-muted-foreground);
-  font-size: 0.95rem;
-  line-height: 1.6;
 }
 
 .vocabulary-page__header > button {
@@ -330,62 +283,15 @@
 }
 
 /* =========================================================
-   TABLE
+   TABLE (page-specific)
    ========================================================= */
 
-.vocabulary-page__table-wrap {
-  width: 100%;
-  overflow-x: auto;
-}
-
 .vocabulary-page__table {
-  width: 100%;
   min-width: 48rem;
-
-  border-collapse: collapse;
-
-  text-align: left;
-}
-
-.vocabulary-page__table th {
-  padding: 0.7rem 1.5rem;
-
-  border-bottom: 1px solid var(--color-border);
-
-  background: var(--color-muted);
-
-  color: var(--color-muted-foreground);
-
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
 }
 
 .vocabulary-page__table td {
-  padding: 0.95rem 1.5rem;
-
-  border-bottom: 1px solid var(--color-border);
-
-  vertical-align: middle;
-
   font-size: 0.875rem;
-}
-
-.vocabulary-page__table tbody tr {
-  transition: background-color 120ms ease;
-}
-
-.vocabulary-page__table tbody tr:hover {
-  background: color-mix(
-    in srgb,
-    var(--color-muted) 45%,
-    var(--color-card)
-  );
-}
-
-.vocabulary-page__table tbody tr:last-child td {
-  border-bottom: 0;
 }
 
 /* =========================================================
@@ -465,61 +371,6 @@
 
 .vocabulary-page__dash {
   color: var(--color-muted-foreground);
-}
-
-/* =========================================================
-   STATUS
-   ========================================================= */
-.vocabulary-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  max-width: 100%;
-  padding: 0.22rem 0.6rem;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.25;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.vocabulary-status::before {
-  width: 0.4rem;
-  height: 0.4rem;
-  flex-shrink: 0;
-  border-radius: 50%;
-  content: "";
-}
-
-.vocabulary-status--active {
-  border-color: color-mix(in srgb, #1a9a58 38%, transparent);
-  background: color-mix(in srgb, #1a9a58 14%, var(--color-card));
-  color: #167341;
-}
-
-.vocabulary-status--active::before {
-  background: #1a9a58;
-}
-
-.vocabulary-status--inactive {
-  border-color: color-mix(
-    in srgb,
-    var(--color-muted-foreground) 28%,
-    transparent
-  );
-  background: color-mix(
-    in srgb,
-    var(--color-muted-foreground) 12%,
-    var(--color-card)
-  );
-  color: var(--color-muted-foreground);
-}
-
-.vocabulary-status--inactive::before {
-  background: var(--color-muted-foreground);
 }
 
 /* =========================================================

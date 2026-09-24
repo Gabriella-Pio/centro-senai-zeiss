@@ -3,6 +3,7 @@ import type { ServiceRecord } from '@/app/(workspace)/registros/types';
 import {
   canViewRecord,
   canUseCaseInKnowledge,
+  countPendingFormalizationLessons,
   isDemoFormalizedCase,
 } from '@/lib/formalized-knowledge';
 
@@ -58,5 +59,34 @@ describe('formalized-knowledge', () => {
 
     expect(canUseCaseInKnowledge(restricted, 'TECNICO')).toBe(false);
     expect(canUseCaseInKnowledge(restricted, 'VALIDADOR')).toBe(true);
+  });
+
+  it('counts pending formalization lessons only when service is completed and visible', () => {
+    const pendingCompleted = makeRecord({ lessonStatus: 'PENDING' });
+    const pendingDraft = makeRecord({
+      id: 'record-2',
+      recordNumber: 'RS-2026-0002',
+      lessonStatus: 'PENDING',
+      serviceStatus: 'DRAFT',
+    });
+    const pendingRestricted = makeRecord({
+      id: 'record-3',
+      recordNumber: 'RS-2026-0003',
+      lessonStatus: 'PENDING',
+      visibility: 'RESTRICTED',
+    });
+
+    expect(
+      countPendingFormalizationLessons(
+        [pendingCompleted, pendingDraft, pendingRestricted],
+        'TECNICO',
+      ),
+    ).toBe(1);
+    expect(
+      countPendingFormalizationLessons(
+        [pendingCompleted, pendingDraft, pendingRestricted],
+        'VALIDADOR',
+      ),
+    ).toBe(2);
   });
 });

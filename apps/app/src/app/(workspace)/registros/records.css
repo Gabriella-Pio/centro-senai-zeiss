@@ -1,20 +1,15 @@
 .records-page {
   width: 100%;
-  --record-status-draft-fg: #a85d00;
-  --record-status-draft-dot: #e08a16;
-  --record-status-quoted-fg: #245a9b;
-  --record-status-quoted-dot: #397bc8;
-  --record-status-completed-fg: #167341;
-  --record-status-completed-dot: #1a9a58;
-  --record-status-lesson-pending-fg: #6b4c9a;
-  --record-status-lesson-pending-dot: #8b5fbf;
+  --record-status-draft-fg: var(--status-warning-fg);
+  --record-status-draft-dot: var(--status-warning-dot);
+  --record-status-quoted-fg: var(--status-info-fg);
+  --record-status-quoted-dot: var(--status-info-dot);
+  --record-status-completed-fg: var(--status-success-fg);
+  --record-status-completed-dot: var(--status-success-dot);
+  --record-status-lesson-pending-fg: var(--status-accent-fg);
+  --record-status-lesson-pending-dot: var(--status-accent-dot);
 }
-.records-page__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--color-border); }
-.records-page__eyebrow { display: inline-flex; align-items: center; gap: .45rem; margin: 0; color: var(--color-primary); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.records-page__eyebrow svg { width: 1rem; height: 1rem; }
-.records-page__title { margin: .6rem 0 0; font-family: var(--font-heading); font-size: clamp(2rem, 1.5rem + 1.4vw, 3rem); font-weight: 600; line-height: 1.08; letter-spacing: -.025em; }
-.records-page__intro { max-width: 48rem; margin: .85rem 0 0; color: var(--color-muted-foreground); font-size: 1rem; line-height: 1.6; }
-.records-page__content { margin-top: 2rem; }
+.records-page__header-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .records-page__toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 14rem auto;
@@ -42,11 +37,7 @@
   box-shadow: 0 0 0 1px var(--color-ring);
 }
 .records-page__count { margin: 0; color: var(--color-muted-foreground); font-size: .875rem; white-space: nowrap; justify-self: end; }
-.records-page__table-wrap { margin-top: 1rem; overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-card); box-shadow: 0 8px 24px rgba(28,25,23,.05); }
-.records-page__table { width: 100%; min-width: 58rem; border-collapse: collapse; text-align: left; }
-.records-page__table th { padding: .8rem 1rem; border-bottom: 1px solid var(--color-border); background: var(--color-muted); color: var(--color-muted-foreground); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-.records-page__table td { padding: 1rem; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
-.records-page__table tr:last-child td { border-bottom: 0; }
+.records-page__table { min-width: 58rem; }
 .records-page__row--draft {
   background: color-mix(in srgb, var(--record-status-draft-dot) 9%, var(--color-card));
   box-shadow: inset 3px 0 0 var(--record-status-draft-dot);
@@ -81,123 +72,6 @@
 .records-page__view-button { color: var(--color-primary); }
 .records-page__view-button:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
 .records-page__view-button svg { width: 1.1rem; height: 1.1rem; }
-.record-status {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  max-width: 100%;
-  padding: .22rem .6rem;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: .6875rem;
-  font-weight: 700;
-  letter-spacing: .04em;
-  line-height: 1.25;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.record-status::before {
-  width: .4rem;
-  height: .4rem;
-  border-radius: 50%;
-  content: "";
-  flex-shrink: 0;
-}
-.record-status--draft {
-  border-color: color-mix(in srgb, var(--record-status-draft-dot) 38%, transparent);
-  background: color-mix(in srgb, var(--record-status-draft-dot) 14%, var(--color-card));
-  color: var(--record-status-draft-fg);
-}
-.record-status--draft::before { background: var(--record-status-draft-dot); }
-.record-status--quoted {
-  border-color: color-mix(in srgb, var(--record-status-quoted-dot) 38%, transparent);
-  background: color-mix(in srgb, var(--record-status-quoted-dot) 14%, var(--color-card));
-  color: var(--record-status-quoted-fg);
-}
-.record-status--quoted::before { background: var(--record-status-quoted-dot); }
-.record-status--completed {
-  border-color: color-mix(in srgb, var(--record-status-completed-dot) 38%, transparent);
-  background: color-mix(in srgb, var(--record-status-completed-dot) 14%, var(--color-card));
-  color: var(--record-status-completed-fg);
-}
-.record-status--completed::before { background: var(--record-status-completed-dot); }
-.record-status--lesson-pending {
-  border-color: color-mix(in srgb, var(--record-status-lesson-pending-dot) 38%, transparent);
-  background: color-mix(in srgb, var(--record-status-lesson-pending-dot) 14%, var(--color-card));
-  color: var(--record-status-lesson-pending-fg);
-}
-.record-status--lesson-pending::before { background: var(--record-status-lesson-pending-dot); }
-.records-segmented-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .65rem .85rem;
-  padding: .55rem .75rem;
-  border: 2px solid color-mix(in srgb, var(--color-primary) 24%, var(--color-border));
-  border-radius: calc(var(--radius) + 2px);
-  background: var(--color-card);
-  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.05), inset 2px 0 0 var(--color-primary);
-}
-.records-segmented-bar__label {
-  flex: 0 0 auto;
-  font-size: .6875rem;
-  font-weight: 800;
-  letter-spacing: .11em;
-  text-transform: uppercase;
-  color: var(--color-primary);
-  white-space: nowrap;
-}
-.records-segmented-bar__track {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.records-segmented-bar__filter {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  padding: .45rem .85rem;
-  border: 1.5px solid color-mix(in srgb, var(--color-border) 85%, var(--color-foreground));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-muted) 35%, var(--color-card));
-  color: var(--color-foreground);
-  font: inherit;
-  font-size: .8125rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: border-color .15s, background .15s, color .15s, box-shadow .15s;
-}
-.records-segmented-bar__filter:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
-  color: var(--color-primary);
-}
-.records-segmented-bar__filter--active {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
-  color: #fff;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--color-primary) 35%, transparent);
-}
-.records-segmented-bar__filter--active:hover {
-  color: #fff;
-  border-color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 92%, #000);
-}
-.records-segmented-bar__count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.35rem;
-  padding: 0 .3rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, currentColor 14%, transparent);
-  font-size: .6875rem;
-  font-weight: 800;
-}
-.records-segmented-bar__filter--active .records-segmented-bar__count {
-  background: color-mix(in srgb, #fff 22%, transparent);
-}
 .records-form__apply-price { display: flex; align-items: flex-end; }
 .records-form { display: grid; gap: 1rem; }
 .records-form > div { display: grid; gap: .5rem; }

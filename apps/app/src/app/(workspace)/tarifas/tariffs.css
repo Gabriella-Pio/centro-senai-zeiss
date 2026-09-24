@@ -11,37 +11,14 @@
 }
 
 .tariffs-page { width: 100%; }
-.tariffs-page__header { padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); }
-.tariffs-page__eyebrow { display: inline-flex; align-items: center; gap: .45rem; margin: 0; color: var(--color-primary); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.tariffs-page__title { margin: .6rem 0 0; font-family: var(--font-heading); font-size: clamp(2rem, 1.5rem + 1.4vw, 3rem); font-weight: 600; }
-.tariffs-page__intro { max-width: 48rem; margin: .85rem 0 0; color: var(--color-muted-foreground); line-height: 1.6; }
-.tariffs-card { margin-top: 1.5rem; padding: 1.25rem; border: 1px solid var(--color-border); border-radius: calc(var(--radius) + 2px); background: var(--color-card); box-shadow: 0 4px 16px rgba(28, 25, 23, 0.04); }
+.tariffs-card { margin-top: 1.5rem; padding: 1.25rem; border: 1px solid var(--workspace-surface-border); border-radius: calc(var(--radius) + 2px); background: var(--color-card); box-shadow: var(--workspace-surface-shadow-sm); }
 .tariffs-card h2 { margin: 0; font-size: 1.0625rem; font-weight: 600; }
 .tariffs-card__head { margin-bottom: 1rem; }
 .tariffs-card__head p { margin: .35rem 0 0; color: var(--color-muted-foreground); font-size: .875rem; }
 .tariffs-card__actions { display: flex; gap: .75rem; margin-top: 1rem; }
 .tariffs-card__saved { margin: .75rem 0 0; color: #16a34a; font-size: .875rem; font-weight: 600; }
 
-/* Barra de navegação segmentada — compartilhada entre página, gráficos e planilha */
-.tariffs-segmented-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .65rem .85rem;
-  padding: .7rem .9rem;
-  border: 2px solid color-mix(in srgb, var(--color-primary) 24%, var(--color-border));
-  border-radius: calc(var(--radius) + 2px);
-  background: var(--color-card);
-  box-shadow:
-    0 6px 20px rgba(28, 25, 23, 0.07),
-    inset 3px 0 0 var(--color-primary);
-}
-.tariffs-segmented-bar--compact {
-  padding: .55rem .75rem;
-  box-shadow:
-    0 4px 14px rgba(28, 25, 23, 0.05),
-    inset 2px 0 0 var(--color-primary);
-}
+/* Barra segmentada — base em workspace-shared.css; variantes locais abaixo */
 .tariffs-segmented-bar--inline {
   margin-bottom: 0;
 }
@@ -50,22 +27,6 @@
   top: 4.25rem;
   z-index: 4;
   margin-bottom: 1rem;
-}
-.tariffs-segmented-bar__label {
-  flex: 0 0 auto;
-  font-size: .6875rem;
-  font-weight: 800;
-  letter-spacing: .11em;
-  text-transform: uppercase;
-  color: var(--color-primary);
-  white-space: nowrap;
-}
-.tariffs-segmented-bar__track {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .4rem;
-  flex: 1 1 auto;
-  min-width: 0;
 }
 
 .tariffs-page-nav {

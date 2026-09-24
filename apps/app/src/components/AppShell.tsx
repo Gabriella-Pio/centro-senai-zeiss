@@ -159,17 +159,21 @@ export function AppShell({ user, children }: { user: AuthUser; children: ReactNo
     <div className="shell" data-collapsed={collapsed}>
       <div className="shell__bar">
         <AppBrand href="/" variant="footer" />
-        <NotificationBell role={user.role} />
-        <button
-          type="button"
-          className="shell__icon-btn"
-          aria-expanded={open}
-          aria-controls="app-sidebar"
-          onClick={() => setOpen(true)}
-        >
-          <Menu aria-hidden="true" />
-          <span className="sr-only">Abrir menu</span>
-        </button>
+        <div className="shell__bar-actions">
+          <div className="shell__bar-notifications">
+            <NotificationBell role={user.role} />
+          </div>
+          <button
+            type="button"
+            className="shell__icon-btn"
+            aria-expanded={open}
+            aria-controls="app-sidebar"
+            onClick={() => setOpen(true)}
+          >
+            <Menu aria-hidden="true" />
+            <span className="sr-only">Abrir menu</span>
+          </button>
+        </div>
       </div>
 
       {open ? (
@@ -184,24 +188,26 @@ export function AppShell({ user, children }: { user: AuthUser; children: ReactNo
       <aside id="app-sidebar" className="shell__sidebar" data-open={open}>
         <div className="shell__sidebar-header">
           <AppBrand href="/" variant="nav" />
-          <button
-            type="button"
-            className="shell__icon-btn shell__close"
-            onClick={() => setOpen(false)}
-          >
-            <X aria-hidden="true" />
-            <span className="sr-only">Fechar menu</span>
-          </button>
-          <button
-            type="button"
-            className="shell__collapse"
-            onClick={toggleCollapsed}
-            aria-pressed={collapsed}
-            title={collapsed ? "Expandir menu" : "Minimizar menu"}
-          >
-            {collapsed ? <PanelLeftOpen aria-hidden="true" /> : <PanelLeftClose aria-hidden="true" />}
-            <span className="sr-only">{collapsed ? "Expandir menu" : "Minimizar menu"}</span>
-          </button>
+          <div className="shell__sidebar-header-actions">
+            <button
+              type="button"
+              className="shell__icon-btn shell__close"
+              onClick={() => setOpen(false)}
+            >
+              <X aria-hidden="true" />
+              <span className="sr-only">Fechar menu</span>
+            </button>
+            <button
+              type="button"
+              className="shell__collapse"
+              onClick={toggleCollapsed}
+              aria-pressed={collapsed}
+              title={collapsed ? "Expandir menu" : "Minimizar menu"}
+            >
+              {collapsed ? <PanelLeftOpen aria-hidden="true" /> : <PanelLeftClose aria-hidden="true" />}
+              <span className="sr-only">{collapsed ? "Expandir menu" : "Minimizar menu"}</span>
+            </button>
+          </div>
         </div>
         <nav className="shell__nav" aria-label="Seções da área da equipe">
           <NavGroupList
@@ -230,6 +236,9 @@ export function AppShell({ user, children }: { user: AuthUser; children: ReactNo
       </aside>
 
       <div className="shell__main">
+        <div className="shell__topbar">
+          <NotificationBell role={user.role} />
+        </div>
         <div className="shell__content">{children}</div>
       </div>
     </div>

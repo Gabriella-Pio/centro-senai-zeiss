@@ -2,9 +2,38 @@
 @import "../../../../node_modules/tw-animate-css/dist/tw-animate.css";
 @import "../../../../node_modules/shadcn/dist/tailwind.css";
 @import "@cem/ui/tokens.css";
+@import "../styles/workspace-shared.css";
 
 @source "../../../../packages/ui/src";
 
 @theme inline {
   --color-destructive: #b42318;
+
+  /* Workspace surface depth — apps/app (mais contraste, menos “branco puro”) */
+  --color-background: #ebe5da;
+  --color-card: #f7f2ea;
+  --color-muted: #e0d9ce;
+  --color-border: rgba(28, 25, 23, 0.165);
+  --color-input: rgba(28, 25, 23, 0.2);
+
+  /* Semantic status scale */
+  --status-success-fg: #167341;
+  --status-success-dot: #1a9a58;
+  --status-warning-fg: #a85d00;
+  --status-warning-dot: #e08a16;
+  --status-info-fg: #245a9b;
+  --status-info-dot: #397bc8;
+  --status-error-fg: #b42318;
+  --status-error-dot: #dc2626;
+  --status-neutral-fg: #57534e;
+  --status-neutral-dot: #78716c;
+  --status-accent-fg: #6b4c9a;
+  --status-accent-dot: #8b5fbf;
+
+  /* Workspace layout */
+  --workspace-content-max: 84rem;
+  --workspace-content-max-wide: 88rem;
+  --workspace-surface-border: rgba(28, 25, 23, 0.2);
+  --workspace-surface-shadow: 0 8px 24px rgba(28, 25, 23, 0.075);
+  --workspace-surface-shadow-sm: 0 4px 14px rgba(28, 25, 23, 0.065);
 }

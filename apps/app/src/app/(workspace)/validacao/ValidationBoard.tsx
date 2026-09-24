@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import { Badge, Button } from "@cem/ui";
+import { Button } from "@cem/ui";
+import { WorkspaceEmptyState } from "@/components/WorkspaceEmptyState";
 import { pushNotification, updateDemoState } from "@/lib/demo/demo-store";
 import { getRecordDetailPath } from "@/lib/records-navigation";
 import { useDemoStore } from "@/lib/use-demo-store";
-import { LESSON_STATUS_LABELS, VISIBILITY_LABELS } from "../registros/types";
+import { RecordLessonDetailBadge } from "../registros/RecordStatusBadge";
+import { VISIBILITY_LABELS } from "../registros/types";
 import "./validation.css";
 
 export function ValidationBoard() {
@@ -68,10 +70,20 @@ export function ValidationBoard() {
         </div>
       </header>
 
-      {notice ? <p className="validation-page__notice" role="status">{notice}</p> : null}
+      {notice ? (
+        <div className="workspace-notice workspace-notice--success validation-page__notice" role="status">
+          {notice}
+        </div>
+      ) : null}
 
       <section className="validation-page__content">
-        {pending.length === 0 ? <p className="validation-page__empty">Nenhuma lição aguardando validação.</p> : (
+        {pending.length === 0 ? (
+          <WorkspaceEmptyState
+            icon={ShieldCheck}
+            title="Nenhuma lição aguardando validação"
+            description="Quando um registro tiver lição pendente de conferência, ela aparecerá aqui para formalização ou superação."
+          />
+        ) : (
           <div className="validation-list">
             {pending.map((record) => {
               const cause = vocabulary.find((term) => term.id === record.deviationCauseId)?.label ?? "—";
@@ -87,9 +99,13 @@ export function ValidationBoard() {
                     <span>{record.company} · {record.service}</span>
                     <p>{record.lesson}</p>
                     <div className="validation-card__meta">
-                      <Badge variant="outline">{LESSON_STATUS_LABELS[record.lessonStatus]}</Badge>
-                      <Badge variant="outline">{VISIBILITY_LABELS[record.visibility]}</Badge>
-                      <span>Causa: {cause}</span>
+                      <RecordLessonDetailBadge status={record.lessonStatus} />
+                      <span
+                        className={`status-pill status-pill--${record.visibility === "RESTRICTED" ? "warning" : "neutral"}`}
+                      >
+                        {VISIBILITY_LABELS[record.visibility]}
+                      </span>
+                      <span className="validation-card__cause">Causa: {cause}</span>
                     </div>
                     <Link href={getRecordDetailPath(record.id, "C")} className="validation-card__record-link">
                       Abrir registro

@@ -18,12 +18,12 @@ import {
   buildMarginDonut,
   buildParetoCauses,
   buildScatterData,
+  countMarginDonutAboveTarget,
 } from "@/lib/chart-data";
 import { computeIndicators } from "@/lib/indicators";
-import { canViewRecord } from "@/lib/formalized-knowledge";
+import { canViewRecord, countPendingFormalizationLessons } from "@/lib/formalized-knowledge";
 import { useDemoStore } from "@/lib/use-demo-store";
 import type { UserRole } from "@/lib/api";
-import type { ServiceRecord } from "@/app/(workspace)/registros/types";
 import { WorkspaceEmptyState } from "@/components/WorkspaceEmptyState";
 import { DonutChart } from "@/components/charts/DonutChart";
 import { EffortTrendChart } from "@/components/charts/EffortTrendChart";
@@ -50,12 +50,9 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
   const marginDonut = useMemo(() => buildMarginDonut(visibleRecords, labSettings), [visibleRecords, labSettings]);
   const effortTrend = useMemo(() => buildEffortTrend(visibleRecords), [visibleRecords]);
 
-  const pendingLessons = visibleRecords.filter(
-    (record: ServiceRecord) =>
-      record.lessonStatus === "PENDING" && record.serviceStatus === "COMPLETED",
-  ).length;
+  const pendingLessons = countPendingFormalizationLessons(records, userRole);
 
-  const aboveTarget = marginDonut.find((slice) => slice.label === "Casos acima da meta")?.value ?? 0;
+  const aboveTarget = countMarginDonutAboveTarget(marginDonut);
   const marginTotal = marginDonut.reduce((sum, slice) => sum + slice.value, 0);
   const abovePercent = marginTotal > 0 ? Math.round((aboveTarget / marginTotal) * 100) : 0;
   const hasFormalized = summary.totalFormalized > 0;
@@ -77,18 +74,21 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
         </div>
       </header>
 
-      <section className="indicators-page__demo-banner" aria-label="Aviso sobre dados de demonstração">
-        <div className="indicators-page__demo-icon" aria-hidden="true">
+      <section
+        className="workspace-notice workspace-notice--info workspace-notice--banner-grid indicators-page__demo-banner"
+        aria-label="Aviso sobre dados de demonstração"
+      >
+        <div className="workspace-notice__icon indicators-page__demo-icon" aria-hidden="true">
           <Info />
         </div>
-        <div className="indicators-page__demo-copy">
+        <div className="workspace-notice__copy indicators-page__demo-copy">
           <strong>Dados da demonstração</strong>
           <p>
             Os números abaixo vêm da base demo versionada, não do histórico real do laboratório.
             Na operação, os indicadores nascerão vazios e crescerão conforme lições forem formalizadas.
           </p>
         </div>
-        <Link href="/validacao" className="indicators-page__demo-link">
+        <Link href="/validacao" className="workspace-notice__link indicators-page__demo-link">
           Ver validação
           <ArrowUpRight aria-hidden="true" />
         </Link>
@@ -98,7 +98,7 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
         <>
 
           {pendingLessons > 0 ? (
-            <section className="indicators-page__pending-banner">
+            <section className="workspace-notice workspace-notice--accent indicators-page__pending-banner">
               <ClipboardCheck aria-hidden="true" />
               <p>
                 <strong>{pendingLessons}</strong>{" "}

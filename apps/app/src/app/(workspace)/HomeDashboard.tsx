@@ -21,11 +21,16 @@ import {
   computeAssertivenessRate,
 } from "@/lib/chart-data";
 import { computeIndicators } from "@/lib/indicators";
-import { canViewRecord, isDemoFormalizedCase } from "@/lib/formalized-knowledge";
+import {
+  canViewRecord,
+  countPendingFormalizationLessons,
+  isDemoFormalizedCase,
+} from "@/lib/formalized-knowledge";
 import { useDemoStore } from "@/lib/use-demo-store";
 import { DonutChart } from "@/components/charts/DonutChart";
 import { EffortTrendChart } from "@/components/charts/EffortTrendChart";
 import { KpiCard } from "@/components/charts/KpiCard";
+import "@/components/charts/charts.css";
 import "./home.css";
 
 export function HomeDashboard({ role, name }: { role: UserRole; name: string }) {
@@ -38,7 +43,7 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
 
   const newRequests = requests.filter((item) => item.status === "NEW").length;
   const ongoingRequests = requests.filter((item) => item.status === "ON_GOING").length;
-  const pendingLessons = records.filter((item) => item.lessonStatus === "PENDING").length;
+  const pendingLessons = countPendingFormalizationLessons(records, role);
   const draftRecords = records.filter((item) => item.serviceStatus === "DRAFT").length;
   const formalized = visibleRecords.filter(isDemoFormalizedCase).length;
   const unread = notifications.filter((item) => item.roles.includes(role) && !item.read).length;
@@ -60,7 +65,21 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
       ? `${newRequests + ongoingRequests + pendingLessons} itens`
       : role === "TECNICO"
         ? `${draftRecords} rascunhos`
-        : `${formalized} lições`;
+        : "0 pendências";
+
+  const pendingDetail =
+    role === "TECNICO"
+      ? "Registros para completar"
+      : role === "CONSULTA"
+        ? "Sem pendências no momento"
+        : "Aguardando sua ação";
+
+  const pendingHighlight =
+    role === "ADMIN" || role === "VALIDADOR"
+      ? newRequests + ongoingRequests + pendingLessons > 0
+      : role === "TECNICO"
+        ? draftRecords > 0
+        : false;
 
   const actions =
     role === "ADMIN" || role === "VALIDADOR"
@@ -124,9 +143,9 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
           <KpiCard
             label="Pendentes"
             value={pendingLabel}
-            detail={role === "TECNICO" ? "Registros para completar" : "Aguardando sua ação"}
+            detail={pendingDetail}
             icon={ClipboardCheck}
-            highlight={newRequests + ongoingRequests + pendingLessons + draftRecords > 0}
+            highlight={pendingHighlight}
           />
         </div>
       </section>
@@ -142,7 +161,7 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
       </section>
 
       <section className="home-dashboard__section home-dashboard__grid">
-        <article className="home-dashboard__panel home-dashboard__panel--focus">
+        <article className="chart-card home-dashboard__panel home-dashboard__panel--focus">
           <h2 className="home-dashboard__panel-title">Próximas ações</h2>
           <ul className="home-dashboard__focus-list">
             {actions.map((action) => {
@@ -166,7 +185,7 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
           </Link>
         </article>
 
-        <article className="home-dashboard__panel">
+        <article className="chart-card home-dashboard__panel">
           <h2 className="home-dashboard__panel-title">Acesso rápido</h2>
           <div className="home-dashboard__quick-list">
             <Link className="home-dashboard__quick-item" href="/registros">

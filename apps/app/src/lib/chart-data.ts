@@ -21,6 +21,12 @@ export type ParetoItem = { label: string; count: number; percent: number };
 
 export type DonutSlice = { label: string; value: number; color: string; id?: string };
 
+export const MARGIN_DONUT_SLICE_ABOVE = "Acima da meta";
+
+export function countMarginDonutAboveTarget(slices: DonutSlice[]): number {
+  return slices.find((slice) => slice.label === MARGIN_DONUT_SLICE_ABOVE)?.value ?? 0;
+}
+
 export type WaterfallStep = { label: string; value: number; color: string };
 
 export type CaseBar = {
@@ -123,7 +129,7 @@ export function buildMarginDonut(records: ServiceRecord[], labSettings: LabSetti
   if (above + mid + below === 0) return [];
 
   return [
-    { label: "Acima da meta", value: above, color: "#16a34a" },
+    { label: MARGIN_DONUT_SLICE_ABOVE, value: above, color: "#16a34a" },
     { label: "Próximo da meta", value: mid, color: "#d97706" },
     { label: "Abaixo da meta", value: below, color: "#dc2626" },
   ];
