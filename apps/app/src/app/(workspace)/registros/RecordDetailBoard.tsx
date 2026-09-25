@@ -66,7 +66,7 @@ export function RecordDetailBoard({
 
       <RecordDetailHeader record={record} />
 
-      {record.isDemo ? <RecordDemoBanner /> : null}
+      {/* {record.isDemo ? <RecordDemoBanner /> : null} */}
 
       <RecordDetailNotices notices={board.detailNotices} />
 

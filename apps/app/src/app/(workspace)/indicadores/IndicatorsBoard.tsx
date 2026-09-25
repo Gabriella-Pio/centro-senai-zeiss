@@ -108,7 +108,7 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
             </section>
           ) : null}
 
-          <div className="indicators-page__summary" role="region" aria-label="Resumo rápido">
+          {/* <div className="indicators-page__summary" role="region" aria-label="Resumo rápido">
             <div className="indicators-page__summary-item">
               <strong>{summary.totalFormalized}</strong>
               <span>Casos formalizados</span>
@@ -125,7 +125,7 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
               <strong>{abovePercent}%</strong>
               <span>Acima da meta</span>
             </div>
-          </div>
+          </div> */}
 
           <section className="indicators-page__content" aria-labelledby="indicators-kpis-heading">
             <div className="indicators-page__section-head">
@@ -168,7 +168,7 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
                 detail={`Serviços com margem abaixo de ${summary.targetMarginPercent}%`}
                 icon={TrendingDown}
               />
-              <KpiCard
+              {/* <KpiCard
                 label="Acima da meta"
                 value={marginTotal > 0 ? `${abovePercent}%` : "—"}
                 detail={
@@ -177,7 +177,7 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
                     : "Distribuição de margem realizada"
                 }
                 icon={Target}
-              />
+              /> */}
             </div>
           </section>
 

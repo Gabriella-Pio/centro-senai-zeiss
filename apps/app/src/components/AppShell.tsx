@@ -127,6 +127,7 @@ export function AppShell({ user, children }: { user: AuthUser; children: ReactNo
   const items = navForRole(user.role);
   const workItems = items.filter((item) => item.group === "work");
   const manageItems = items.filter((item) => item.group === "manage");
+  const profileItems = items.filter((item) => item.group === "profile");
   const roleLabel = ROLE_LABELS[user.role];
   const showRole = user.name.trim().toLocaleLowerCase("pt-BR") !== roleLabel.toLocaleLowerCase("pt-BR");
 
@@ -219,6 +220,12 @@ export function AppShell({ user, children }: { user: AuthUser; children: ReactNo
           <NavGroupList
             label="Gestão"
             items={manageItems}
+            pathname={pathname}
+            onNavigate={() => setOpen(false)}
+          />
+          <NavGroupList
+            label="Perfil"
+            items={profileItems}
             pathname={pathname}
             onNavigate={() => setOpen(false)}
           />
