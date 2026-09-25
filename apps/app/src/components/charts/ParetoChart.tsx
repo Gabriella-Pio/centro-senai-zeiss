@@ -9,15 +9,30 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import type { FieldHelpContent } from "@/components/FieldHelp";
 import type { ParetoItem } from "@/lib/chart-data";
+import { CHART_HELP } from "@/lib/indicator-help";
 import { ChartCard } from "./ChartCard";
 import { RechartsTooltipContent } from "./RechartsTooltip";
 import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN_LEFT, truncateLabel } from "./recharts-theme";
 
-export function ParetoChart({ data }: { data: ParetoItem[] }) {
+export function ParetoChart({
+  data,
+  help = CHART_HELP.pareto,
+  helpId = "chart-pareto",
+}: {
+  data: ParetoItem[];
+  help?: FieldHelpContent;
+  helpId?: string;
+}) {
   if (data.length === 0) {
     return (
-      <ChartCard title="Causas de desvio" subtitle="Onde o laboratório mais erra na estimativa">
+      <ChartCard
+        title="Causas de desvio"
+        subtitle="Onde o laboratório mais erra na estimativa"
+        help={help}
+        helpId={helpId}
+      >
         <p className="chart-card__empty">Nenhuma causa registrada ainda.</p>
       </ChartCard>
     );
@@ -31,7 +46,12 @@ export function ParetoChart({ data }: { data: ParetoItem[] }) {
   }));
 
   return (
-    <ChartCard title="Causas de desvio" subtitle="Onde o laboratório mais erra na estimativa">
+    <ChartCard
+      title="Causas de desvio"
+      subtitle="Onde o laboratório mais erra na estimativa"
+      help={help}
+      helpId={helpId}
+    >
       <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
         <BarChart data={chartData} layout="vertical" margin={{ ...CHART_MARGIN_LEFT, left: 4, bottom: 12 }}>
           <CartesianGrid horizontal={false} stroke="var(--color-border)" strokeDasharray="3 3" />

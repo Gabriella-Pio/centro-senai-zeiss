@@ -882,66 +882,6 @@
   font-size: .75rem;
   line-height: 1.35;
 }
-.tariff-field-help {
-  position: relative;
-  display: inline-flex;
-  vertical-align: middle;
-}
-.tariff-field-help__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.15rem;
-  height: 1.15rem;
-  margin-left: .25rem;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-card));
-  color: var(--color-primary);
-  cursor: help;
-}
-.tariff-field-help__btn svg {
-  width: .8rem;
-  height: .8rem;
-}
-.tariff-field-help__popover {
-  position: absolute;
-  z-index: 20;
-  left: 50%;
-  bottom: calc(100% + .45rem);
-  transform: translateX(-50%);
-  width: min(16rem, 70vw);
-  padding: .65rem .75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-card);
-  box-shadow: 0 8px 24px rgba(28, 25, 23, 0.12);
-  color: var(--color-foreground);
-  font-size: .8125rem;
-  line-height: 1.45;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity .15s, visibility .15s;
-}
-.tariff-field-help__popover p { margin: 0; }
-.tariff-field-help__popover code {
-  display: block;
-  margin-top: .45rem;
-  padding: .35rem .45rem;
-  border-radius: calc(var(--radius) - 2px);
-  background: color-mix(in srgb, var(--color-muted) 55%, var(--color-card));
-  font-family: var(--font-mono);
-  font-size: .75rem;
-  color: var(--color-primary);
-  white-space: normal;
-}
-.tariff-field-help:hover .tariff-field-help__popover,
-.tariff-field-help:focus-within .tariff-field-help__popover {
-  opacity: 1;
-  visibility: visible;
-}
 .machine-tariff-panel__field-label {
   display: inline-flex;
   align-items: center;

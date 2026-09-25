@@ -10,22 +10,42 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import type { FieldHelpContent } from "@/components/FieldHelp";
 import type { TrendPoint } from "@/lib/chart-data";
+import { CHART_HELP } from "@/lib/indicator-help";
 import { ChartCard } from "./ChartCard";
 import { RechartsTooltipContent } from "./RechartsTooltip";
 import { CHART_COLORS, CHART_HEIGHT, CHART_MARGIN_WITH_LEGEND, formatChartHours } from "./recharts-theme";
 
-export function EffortTrendChart({ data }: { data: TrendPoint[] }) {
+export function EffortTrendChart({
+  data,
+  help = CHART_HELP.effortTrend,
+  helpId = "chart-effort-trend",
+}: {
+  data: TrendPoint[];
+  help?: FieldHelpContent;
+  helpId?: string;
+}) {
   if (data.length === 0) {
     return (
-      <ChartCard title="Evolução do esforço" subtitle="Média mensal de horas estimadas vs realizadas">
+      <ChartCard
+        title="Evolução do esforço"
+        subtitle="Média mensal de horas estimadas vs realizadas"
+        help={help}
+        helpId={helpId}
+      >
         <p className="chart-card__empty">Sem casos formalizados suficientes para o gráfico.</p>
       </ChartCard>
     );
   }
 
   return (
-    <ChartCard title="Evolução do esforço" subtitle="Média mensal de horas estimadas vs realizadas nos casos formalizados">
+    <ChartCard
+      title="Evolução do esforço"
+      subtitle="Média mensal de horas estimadas vs realizadas nos casos formalizados"
+      help={help}
+      helpId={helpId}
+    >
       <ResponsiveContainer width="100%" height={CHART_HEIGHT + 40}>
         <LineChart data={data} margin={CHART_MARGIN_WITH_LEGEND}>
           <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" />

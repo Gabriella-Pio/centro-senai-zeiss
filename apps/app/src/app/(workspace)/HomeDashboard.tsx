@@ -21,6 +21,7 @@ import {
   computeAssertivenessRate,
 } from "@/lib/chart-data";
 import { computeIndicators } from "@/lib/indicators";
+import { CHART_HELP, HOME_KPI_HELP } from "@/lib/indicator-help";
 import {
   canViewRecord,
   countPendingFormalizationLessons,
@@ -127,18 +128,24 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
             icon={Target}
             highlight
             sparkline={sparkline}
+            help={HOME_KPI_HELP.assertiveness}
+            helpId="home-kpi-assertiveness"
           />
           <KpiCard
             label="Margem média"
             value={`${summary.averageMarginPercent}%`}
             detail={`Meta do laboratório: ${summary.targetMarginPercent}%`}
             icon={TrendingUp}
+            help={HOME_KPI_HELP.averageMargin}
+            helpId="home-kpi-average-margin"
           />
           <KpiCard
             label="Formalizados"
             value={String(formalized).padStart(2, "0")}
             detail="Lições que alimentam o Assistente"
             icon={ChartColumn}
+            help={HOME_KPI_HELP.formalized}
+            helpId="home-kpi-formalized"
           />
           <KpiCard
             label="Pendentes"
@@ -146,6 +153,8 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
             detail={pendingDetail}
             icon={ClipboardCheck}
             highlight={pendingHighlight}
+            help={HOME_KPI_HELP.pending}
+            helpId="home-kpi-pending"
           />
         </div>
       </section>
@@ -157,6 +166,8 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
           subtitle="Quantos serviços têm histórico robusto no Assistente"
           slices={confidenceDonut}
           centerLabel={`${confidencePercent}%`}
+          help={CHART_HELP.confidenceDonut}
+          helpId="home-chart-confidence"
         />
       </section>
 

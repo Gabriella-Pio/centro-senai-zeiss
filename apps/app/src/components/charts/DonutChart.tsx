@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import type { FieldHelpContent } from "@/components/FieldHelp";
 import type { DonutSlice } from "@/lib/chart-data";
 import { ChartCard } from "./ChartCard";
 import { CHART_HEIGHT_DONUT } from "./recharts-theme";
@@ -15,6 +16,8 @@ export function DonutChart({
   formatValue,
   compactLegend = false,
   interactive = false,
+  help,
+  helpId,
 }: {
   title: string;
   subtitle?: string;
@@ -24,6 +27,8 @@ export function DonutChart({
   formatValue?: (value: number) => string;
   compactLegend?: boolean;
   interactive?: boolean;
+  help?: FieldHelpContent;
+  helpId?: string;
 }) {
   const format = formatValue ?? ((value: number) => String(value));
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
@@ -32,7 +37,7 @@ export function DonutChart({
 
   if (visibleSlices.length === 0) {
     return (
-      <ChartCard title={title} subtitle={subtitle}>
+      <ChartCard title={title} subtitle={subtitle} help={help} helpId={helpId}>
         <p className="chart-card__empty">Sem dados para exibir.</p>
       </ChartCard>
     );
@@ -48,7 +53,13 @@ export function DonutChart({
   const active = activeIndex !== undefined ? data[activeIndex] : undefined;
 
   return (
-    <ChartCard title={title} subtitle={subtitle} className={interactive ? "chart-card--interactive" : undefined}>
+    <ChartCard
+      title={title}
+      subtitle={subtitle}
+      className={interactive ? "chart-card--interactive" : undefined}
+      help={help}
+      helpId={helpId}
+    >
       <div className={`chart-donut${interactive ? " chart-donut--interactive" : ""}`}>
         <div className="chart-donut__visual chart-donut__visual--recharts">
           <div

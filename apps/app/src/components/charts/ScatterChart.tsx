@@ -12,7 +12,9 @@ import {
   YAxis,
   ZAxis,
 } from "recharts";
+import type { FieldHelpContent } from "@/components/FieldHelp";
 import type { ScatterPoint } from "@/lib/chart-data";
+import { CHART_HELP } from "@/lib/indicator-help";
 import { ChartCard } from "./ChartCard";
 import {
   CHART_COLORS,
@@ -22,10 +24,23 @@ import {
   niceChartMax,
 } from "./recharts-theme";
 
-export function ScatterChart({ data }: { data: ScatterPoint[] }) {
+export function ScatterChart({
+  data,
+  help = CHART_HELP.scatter,
+  helpId = "chart-scatter",
+}: {
+  data: ScatterPoint[];
+  help?: FieldHelpContent;
+  helpId?: string;
+}) {
   if (data.length === 0) {
     return (
-      <ChartCard title="Orçado vs realizado" subtitle="Cada ponto é um caso formalizado. Na diagonal = estimativa perfeita.">
+      <ChartCard
+        title="Orçado vs realizado"
+        subtitle="Cada ponto é um caso formalizado. Na diagonal = estimativa perfeita."
+        help={help}
+        helpId={helpId}
+      >
         <p className="chart-card__empty">Sem casos com horas estimadas e realizadas.</p>
       </ChartCard>
     );
@@ -36,7 +51,12 @@ export function ScatterChart({ data }: { data: ScatterPoint[] }) {
   const bad = data.filter((point) => !point.withinTolerance);
 
   return (
-    <ChartCard title="Orçado vs realizado" subtitle="Cada ponto é um caso formalizado. Na diagonal = estimativa perfeita.">
+    <ChartCard
+      title="Orçado vs realizado"
+      subtitle="Cada ponto é um caso formalizado. Na diagonal = estimativa perfeita."
+      help={help}
+      helpId={helpId}
+    >
       <ResponsiveContainer width="100%" height={CHART_HEIGHT + 48}>
         <RechartsScatterChart margin={{ ...CHART_MARGIN_WITH_LEGEND, left: 4 }}>
           <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" />

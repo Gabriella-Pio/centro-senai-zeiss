@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleHelp } from "lucide-react";
+import { FieldHelp } from "@/components/FieldHelp";
 
 export function TariffFieldHelp({
   label,
@@ -13,22 +13,9 @@ export function TariffFieldHelp({
   formula?: string;
   fieldId?: string;
 }) {
-  const tooltipId = fieldId ? `tariff-field-help-${fieldId.replace(/^tariff-field-/, "")}` : undefined;
+  const tooltipId = fieldId
+    ? `tariff-field-help-${fieldId.replace(/^tariff-field-/, "")}`
+    : undefined;
 
-  return (
-    <span className="tariff-field-help">
-      <button
-        type="button"
-        className="tariff-field-help__btn"
-        aria-label={`Ajuda: ${label}`}
-        aria-describedby={tooltipId}
-      >
-        <CircleHelp aria-hidden="true" />
-      </button>
-      <span id={tooltipId} className="tariff-field-help__popover" role="tooltip">
-        <p>{hint}</p>
-        {formula ? <code>{formula}</code> : null}
-      </span>
-    </span>
-  );
+  return <FieldHelp label={label} hint={hint} formula={formula} id={tooltipId} />;
 }

@@ -21,6 +21,7 @@ import {
   countMarginDonutAboveTarget,
 } from "@/lib/chart-data";
 import { computeIndicators } from "@/lib/indicators";
+import { CHART_HELP, INDICATORS_KPI_HELP } from "@/lib/indicator-help";
 import { canViewRecord, countPendingFormalizationLessons } from "@/lib/formalized-knowledge";
 import { useDemoStore } from "@/lib/use-demo-store";
 import type { UserRole } from "@/lib/api";
@@ -142,6 +143,8 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
                 value={String(summary.totalFormalized)}
                 detail="Lições demo formalizadas na base compartilhada com o Assistente"
                 icon={ChartColumn}
+                help={INDICATORS_KPI_HELP.formalized}
+                helpId="indicators-kpi-formalized"
               />
               <KpiCard
                 label="Assertividade"
@@ -149,24 +152,32 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
                 detail="Dentro de ±15% entre estimado e realizado"
                 icon={Target}
                 highlight
+                help={INDICATORS_KPI_HELP.assertiveness}
+                helpId="indicators-kpi-assertiveness"
               />
               <KpiCard
                 label="Desvio médio"
                 value={`${summary.averageEffortDeviation}%`}
                 detail="Diferença média estimado vs realizado"
                 icon={TrendingUp}
+                help={INDICATORS_KPI_HELP.averageDeviation}
+                helpId="indicators-kpi-average-deviation"
               />
               <KpiCard
                 label="Margem média"
                 value={`${summary.averageMarginPercent}%`}
                 detail={`Meta do laboratório: ${summary.targetMarginPercent}%`}
                 icon={TrendingUp}
+                help={INDICATORS_KPI_HELP.averageMargin}
+                helpId="indicators-kpi-average-margin"
               />
               <KpiCard
                 label="Abaixo da meta"
                 value={String(summary.belowTargetMarginCount)}
                 detail={`Serviços com margem abaixo de ${summary.targetMarginPercent}%`}
                 icon={TrendingDown}
+                help={INDICATORS_KPI_HELP.belowTarget}
+                helpId="indicators-kpi-below-target"
               />
               {/* <KpiCard
                 label="Acima da meta"
@@ -202,6 +213,8 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
                   slices={marginDonut}
                   centerLabel={`${abovePercent}%`}
                   centerCaption="acima da meta"
+                  help={CHART_HELP.marginDonut}
+                  helpId="indicators-chart-margin-donut"
                 />
               </div>
             </div>
