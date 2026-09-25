@@ -16,19 +16,19 @@ import {
 import type { UserRole } from "@/lib/api";
 import { ROLE_LABELS } from "@/lib/api";
 import {
-  buildConfidenceDonut,
+  buildConfidenceByServiceType,
   buildEffortTrend,
   computeAssertivenessRate,
 } from "@/lib/chart-data";
 import { computeIndicators } from "@/lib/indicators";
-import { CHART_HELP, HOME_KPI_HELP } from "@/lib/indicator-help";
+import { HOME_KPI_HELP } from "@/lib/indicator-help";
 import {
   canViewRecord,
   countPendingFormalizationLessons,
   isDemoFormalizedCase,
 } from "@/lib/formalized-knowledge";
 import { useDemoStore } from "@/lib/use-demo-store";
-import { DonutChart } from "@/components/charts/DonutChart";
+import { ConfidenceByServiceTypeChart } from "@/components/charts/ConfidenceByServiceTypeChart";
 import { EffortTrendChart } from "@/components/charts/EffortTrendChart";
 import { KpiCard } from "@/components/charts/KpiCard";
 import "@/components/charts/charts.css";
@@ -54,8 +54,8 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
     [visibleRecords, vocabulary, labSettings],
   );
   const effortTrend = useMemo(() => buildEffortTrend(visibleRecords), [visibleRecords]);
-  const confidenceDonut = useMemo(
-    () => buildConfidenceDonut(visibleRecords, vocabulary),
+  const confidenceByServiceType = useMemo(
+    () => buildConfidenceByServiceType(visibleRecords, vocabulary),
     [visibleRecords, vocabulary],
   );
   const assertiveness = useMemo(() => computeAssertivenessRate(visibleRecords), [visibleRecords]);
@@ -98,10 +98,6 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
             { icon: ClipboardList, text: "Consultar registros e histórico", href: "/registros" },
           ];
 
-  const confidenceTotal = confidenceDonut.reduce((sum, slice) => sum + slice.value, 0);
-  const highConfidence = confidenceDonut.find((slice) => slice.label === "Alta")?.value ?? 0;
-  const confidencePercent = confidenceTotal > 0 ? Math.round((highConfidence / confidenceTotal) * 100) : 0;
-
   return (
     <main className="home-dashboard">
       <header className="home-dashboard__header">
@@ -124,7 +120,7 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
           <KpiCard
             label="Assertividade"
             value={`${assertiveness}%`}
-            detail="Casos dentro de ±15% de desvio"
+            detail="Casos dentro de ±15% de desvio (horas)"
             icon={Target}
             highlight
             sparkline={sparkline}
@@ -132,12 +128,12 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
             helpId="home-kpi-assertiveness"
           />
           <KpiCard
-            label="Margem média"
-            value={`${summary.averageMarginPercent}%`}
-            detail={`Meta do laboratório: ${summary.targetMarginPercent}%`}
+            label="Desvio médio"
+            value={`${summary.averageEffortDeviation}%`}
+            detail="Diferença média de horas estimadas vs realizadas"
             icon={TrendingUp}
-            help={HOME_KPI_HELP.averageMargin}
-            helpId="home-kpi-average-margin"
+            help={HOME_KPI_HELP.averageDeviation}
+            helpId="home-kpi-average-deviation"
           />
           <KpiCard
             label="Formalizados"
@@ -159,16 +155,9 @@ export function HomeDashboard({ role, name }: { role: UserRole; name: string }) 
         </div>
       </section>
 
-      <section className="dashboard-charts">
+      <section className="dashboard-charts dashboard-charts--stacked">
         <EffortTrendChart data={effortTrend} />
-        <DonutChart
-          title="Confiança por tipo de serviço"
-          subtitle="Quantos serviços têm histórico robusto no Assistente"
-          slices={confidenceDonut}
-          centerLabel={`${confidencePercent}%`}
-          help={CHART_HELP.confidenceDonut}
-          helpId="home-chart-confidence"
-        />
+        <ConfidenceByServiceTypeChart data={confidenceByServiceType} />
       </section>
 
       <section className="home-dashboard__section home-dashboard__grid">

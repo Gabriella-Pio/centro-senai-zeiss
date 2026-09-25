@@ -12,6 +12,12 @@ export const CHART_COLORS = {
 export const CHART_HEIGHT = 220;
 export const CHART_HEIGHT_COMPACT = 180;
 export const CHART_HEIGHT_DONUT = 176;
+export const CHART_HEIGHT_WITH_LEGEND = CHART_HEIGHT + 48;
+
+/** Altura compartilhada para pares de gráficos lado a lado (ex.: scatter + margem). */
+export function pairedIndicatorsChartHeight(rowCount: number) {
+  return Math.max(CHART_HEIGHT_WITH_LEGEND, rowCount * 34 + 48);
+}
 
 export const CHART_MARGIN = { top: 12, right: 20, left: 12, bottom: 12 };
 export const CHART_MARGIN_WITH_LEGEND = { top: 12, right: 20, left: 12, bottom: 36 };

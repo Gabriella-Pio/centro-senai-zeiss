@@ -62,7 +62,7 @@ export function RecordDetailHeader({ record }: { record: ServiceRecord }) {
           ) : null}
           <RecordStatusBadge status={record.serviceStatus} />
           <RecordLessonDetailBadge status={record.lessonStatus} />
-          {record.isDemo ? <Badge variant="demo">Mock demo</Badge> : null}
+          {/* {record.isDemo ? <Badge variant="demo">Mock demo</Badge> : null} */}
         </div>
 
         {record.requestId && record.requestNumber ? (

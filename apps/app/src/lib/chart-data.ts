@@ -3,7 +3,7 @@ import type { VocabularyTerm } from "@/app/(workspace)/vocabulario/types";
 import { isDemoFormalizedCase } from "./formalized-knowledge";
 import type { LabSettings } from "./demo-store-types";
 import { getComparableHours, getRecordChartLabel } from "./record-helpers";
-import { computeRealizedMargin } from "./pricing";
+import { computeMarginPercent, computeRealizedMargin } from "./pricing";
 
 const TOLERANCE = 0.15;
 
@@ -36,8 +36,19 @@ export type CaseBar = {
   actual: number;
 };
 
+export type ServiceMarginRow = {
+  id: string;
+  label: string;
+  quotedMargin: number | null;
+  realizedMargin: number | null;
+};
+
 function formalizedRecords(records: ServiceRecord[]) {
   return records.filter(isDemoFormalizedCase);
+}
+
+function recordFinalizedAt(record: ServiceRecord) {
+  return record.deliveredAt ?? record.createdAt;
 }
 
 function monthKey(iso: string) {
@@ -112,6 +123,21 @@ export function buildParetoCauses(records: ServiceRecord[], vocabulary: Vocabula
     .slice(0, 5);
 }
 
+export function buildServiceMarginRows(records: ServiceRecord[], limit = 10): ServiceMarginRow[] {
+  return formalizedRecords(records)
+    .map((record) => ({
+      id: record.id,
+      label: getRecordChartLabel(record),
+      quotedMargin: computeMarginPercent(record.estimatedCost, record.proposedValue),
+      realizedMargin: computeRealizedMargin(record),
+      finalizedAt: recordFinalizedAt(record),
+    }))
+    .filter((row) => row.quotedMargin !== null || row.realizedMargin !== null)
+    .sort((a, b) => b.finalizedAt.localeCompare(a.finalizedAt))
+    .slice(0, limit)
+    .map(({ finalizedAt: _finalizedAt, ...row }) => row);
+}
+
 export function buildMarginDonut(records: ServiceRecord[], labSettings: LabSettings): DonutSlice[] {
   const formalized = formalizedRecords(records);
   let above = 0;
@@ -135,25 +161,71 @@ export function buildMarginDonut(records: ServiceRecord[], labSettings: LabSetti
   ];
 }
 
+export type ServiceTypeConfidenceLevel = "high" | "medium" | "low";
+
+export type ServiceTypeConfidenceRow = {
+  id: string;
+  label: string;
+  caseCount: number;
+  level: ServiceTypeConfidenceLevel;
+};
+
+export const CONFIDENCE_LEVEL_COLORS: Record<ServiceTypeConfidenceLevel, string> = {
+  high: "#0057b8",
+  medium: "#d97706",
+  low: "#94a3b8",
+};
+
+export const CONFIDENCE_LEVEL_LABELS: Record<ServiceTypeConfidenceLevel, string> = {
+  high: "Alta",
+  medium: "Média",
+  low: "Baixa",
+};
+
+export function confidenceLevelFromCaseCount(count: number): ServiceTypeConfidenceLevel {
+  if (count >= 15) return "high";
+  if (count >= 5) return "medium";
+  return "low";
+}
+
+export function buildConfidenceByServiceType(
+  records: ServiceRecord[],
+  vocabulary: VocabularyTerm[],
+): ServiceTypeConfidenceRow[] {
+  const formalized = formalizedRecords(records);
+
+  return vocabulary
+    .filter((term) => term.class === "SERVICE_TYPE" && term.active)
+    .map((type) => {
+      const caseCount = formalized.filter((record) => record.serviceTypeId === type.id).length;
+      return {
+        id: type.id,
+        label: type.label,
+        caseCount,
+        level: confidenceLevelFromCaseCount(caseCount),
+      };
+    })
+    .sort((a, b) => b.caseCount - a.caseCount || a.label.localeCompare(b.label, "pt-BR"));
+}
+
 export function buildConfidenceDonut(records: ServiceRecord[], vocabulary: VocabularyTerm[]): DonutSlice[] {
-  const serviceTypes = vocabulary.filter((term) => term.class === "SERVICE_TYPE" && term.active);
+  const rows = buildConfidenceByServiceType(records, vocabulary);
+  if (rows.length === 0) return [];
+
   let high = 0;
   let medium = 0;
   let low = 0;
 
-  serviceTypes.forEach((type) => {
-    const count = formalizedRecords(records).filter((record) => record.serviceTypeId === type.id).length;
-    if (count >= 15) high += 1;
-    else if (count >= 5) medium += 1;
+  rows.forEach((row) => {
+    if (row.level === "high") high += 1;
+    else if (row.level === "medium") medium += 1;
     else low += 1;
   });
 
-  if (high + medium + low === 0) return [];
-
   return [
-    { label: "Alta", value: high, color: "#0057b8" },
-    { label: "Média", value: medium, color: "#d97706" },
-    { label: "Baixa / sem histórico", value: low, color: "#94a3b8" },
+    { label: "Alta", value: high, color: CONFIDENCE_LEVEL_COLORS.high },
+    { label: "Média", value: medium, color: CONFIDENCE_LEVEL_COLORS.medium },
+    { label: "Baixa / sem histórico", value: low, color: CONFIDENCE_LEVEL_COLORS.low },
   ];
 }
 

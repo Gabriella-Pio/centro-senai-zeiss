@@ -461,12 +461,12 @@ export function RecordAssistantPanel({
           </>
         )}
 
-        {isDemoData ? (
+        {/* {isDemoData ? (
           <p className="record-assistant__mock-note">
             <FlaskConical aria-hidden="true" />
             Base mock de demonstração — confira os registros fonte.
           </p>
-        ) : null}
+        ) : null} */}
       </div>
     </section>
   );

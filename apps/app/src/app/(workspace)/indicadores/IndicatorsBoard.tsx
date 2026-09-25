@@ -15,22 +15,22 @@ import {
 import { Button } from "@cem/ui";
 import {
   buildEffortTrend,
-  buildMarginDonut,
   buildParetoCauses,
   buildScatterData,
-  countMarginDonutAboveTarget,
+  buildServiceMarginRows,
 } from "@/lib/chart-data";
 import { computeIndicators } from "@/lib/indicators";
-import { CHART_HELP, INDICATORS_KPI_HELP } from "@/lib/indicator-help";
+import { INDICATORS_KPI_HELP } from "@/lib/indicator-help";
 import { canViewRecord, countPendingFormalizationLessons } from "@/lib/formalized-knowledge";
 import { useDemoStore } from "@/lib/use-demo-store";
 import type { UserRole } from "@/lib/api";
 import { WorkspaceEmptyState } from "@/components/WorkspaceEmptyState";
-import { DonutChart } from "@/components/charts/DonutChart";
 import { EffortTrendChart } from "@/components/charts/EffortTrendChart";
 import { KpiCard } from "@/components/charts/KpiCard";
 import { ParetoChart } from "@/components/charts/ParetoChart";
 import { ScatterChart } from "@/components/charts/ScatterChart";
+import { pairedIndicatorsChartHeight } from "@/components/charts/recharts-theme";
+import { ServiceMarginChart } from "@/components/charts/ServiceMarginChart";
 import "./indicators.css";
 
 export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
@@ -48,14 +48,15 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
   );
   const scatter = useMemo(() => buildScatterData(visibleRecords), [visibleRecords]);
   const pareto = useMemo(() => buildParetoCauses(visibleRecords, vocabulary), [visibleRecords, vocabulary]);
-  const marginDonut = useMemo(() => buildMarginDonut(visibleRecords, labSettings), [visibleRecords, labSettings]);
+  const serviceMargins = useMemo(() => buildServiceMarginRows(visibleRecords), [visibleRecords]);
+  const pairedChartHeight = useMemo(
+    () => (serviceMargins.length > 0 ? pairedIndicatorsChartHeight(serviceMargins.length) : undefined),
+    [serviceMargins.length],
+  );
   const effortTrend = useMemo(() => buildEffortTrend(visibleRecords), [visibleRecords]);
 
   const pendingLessons = countPendingFormalizationLessons(records, userRole);
 
-  const aboveTarget = countMarginDonutAboveTarget(marginDonut);
-  const marginTotal = marginDonut.reduce((sum, slice) => sum + slice.value, 0);
-  const abovePercent = marginTotal > 0 ? Math.round((aboveTarget / marginTotal) * 100) : 0;
   const hasFormalized = summary.totalFormalized > 0;
 
   return (
@@ -158,27 +159,19 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
               <KpiCard
                 label="Desvio médio"
                 value={`${summary.averageEffortDeviation}%`}
-                detail="Diferença média estimado vs realizado"
+                detail="Diferença média de horas estimadas vs realizadas"
                 icon={TrendingUp}
                 help={INDICATORS_KPI_HELP.averageDeviation}
                 helpId="indicators-kpi-average-deviation"
               />
-              <KpiCard
-                label="Margem média"
-                value={`${summary.averageMarginPercent}%`}
-                detail={`Meta do laboratório: ${summary.targetMarginPercent}%`}
-                icon={TrendingUp}
-                help={INDICATORS_KPI_HELP.averageMargin}
-                helpId="indicators-kpi-average-margin"
-              />
-              <KpiCard
+              {/* <KpiCard
                 label="Abaixo da meta"
                 value={String(summary.belowTargetMarginCount)}
                 detail={`Serviços com margem abaixo de ${summary.targetMarginPercent}%`}
                 icon={TrendingDown}
                 help={INDICATORS_KPI_HELP.belowTarget}
                 helpId="indicators-kpi-below-target"
-              />
+              /> */}
               {/* <KpiCard
                 label="Acima da meta"
                 value={marginTotal > 0 ? `${abovePercent}%` : "—"}
@@ -197,25 +190,17 @@ export function IndicatorsBoard({ userRole }: { userRole: UserRole }) {
               <p className="indicators-page__section-eyebrow">Visualização</p>
               <h2 id="indicators-charts-heading">Gráficos e tendências</h2>
               <p className="indicators-page__section-intro">
-                Comparativo de horas, distribuição de margem, evolução mensal e causas mais frequentes
+                Comparativo de horas, margem por serviço, evolução mensal e causas mais frequentes
                 nos casos formalizados.
               </p>
             </div>
 
-            <div className="dashboard-charts indicators-page__charts">
+            <div className="dashboard-charts dashboard-charts--full indicators-page__charts">
               <div className="indicators-page__chart-panel">
-                <ScatterChart data={scatter} />
+                <ScatterChart data={scatter} chartHeight={pairedChartHeight} />
               </div>
               <div className="indicators-page__chart-panel">
-                <DonutChart
-                  title="Distribuição de margem"
-                  subtitle="Verde = acima da meta · Amarelo = próximo · Vermelho = abaixo"
-                  slices={marginDonut}
-                  centerLabel={`${abovePercent}%`}
-                  centerCaption="acima da meta"
-                  help={CHART_HELP.marginDonut}
-                  helpId="indicators-chart-margin-donut"
-                />
+                <ServiceMarginChart data={serviceMargins} chartHeight={pairedChartHeight} />
               </div>
             </div>
 

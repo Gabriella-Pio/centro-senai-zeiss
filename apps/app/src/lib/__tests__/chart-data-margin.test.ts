@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ServiceRecord } from '@/app/(workspace)/registros/types';
-import { buildMarginDonut, countMarginDonutAboveTarget } from '@/lib/chart-data';
-import type { LabSettings } from '@/lib/demo/demo-store-types';
-
-const labSettings: LabSettings = {
-  tariffTableLabel: 'Demo',
-  teamHourlyRate: 95,
-  targetMarginPercent: 35,
-};
+import { buildServiceMarginRows } from '@/lib/chart-data';
 
 function makeRecord(overrides: Partial<ServiceRecord> = {}): ServiceRecord {
   return {
@@ -23,10 +16,10 @@ function makeRecord(overrides: Partial<ServiceRecord> = {}): ServiceRecord {
     resourceIds: [],
     estimatedHours: 10,
     estimatedCost: 1000,
-    proposedValue: 1000,
+    proposedValue: 1500,
     actualHours: 10,
-    actualCost: 1000,
-    billedValue: 1000,
+    actualCost: 500,
+    billedValue: 1500,
     deliveredAt: '2026-09-20T11:00:00.000Z',
     rework: false,
     scopeChange: false,
@@ -41,29 +34,39 @@ function makeRecord(overrides: Partial<ServiceRecord> = {}): ServiceRecord {
   };
 }
 
-describe('buildMarginDonut above-target lookup', () => {
-  it('counts cases above target for KPI/resumo alignment', () => {
-    const records = [
+describe('buildServiceMarginRows', () => {
+  it('returns quoted and realized margins per formalized case', () => {
+    const rows = buildServiceMarginRows([
       makeRecord({
-        id: 'above-target',
-        recordNumber: 'RS-2026-0002',
+        id: 'record-1',
+        recordNumber: 'RS-2026-0001',
+        estimatedCost: 1000,
+        proposedValue: 1500,
         actualCost: 500,
-        billedValue: 1000,
+        billedValue: 1500,
       }),
       makeRecord({
-        id: 'below-target',
-        recordNumber: 'RS-2026-0003',
+        id: 'record-2',
+        recordNumber: 'RS-2026-0002',
+        createdAt: '2026-09-10T11:00:00.000Z',
+        deliveredAt: '2026-09-22T11:00:00.000Z',
+        estimatedCost: 800,
+        proposedValue: 1000,
         actualCost: 950,
         billedValue: 1000,
       }),
-    ];
+    ]);
 
-    const marginDonut = buildMarginDonut(records, labSettings);
-    const aboveTarget = countMarginDonutAboveTarget(marginDonut);
-    const marginTotal = marginDonut.reduce((sum, slice) => sum + slice.value, 0);
-    const abovePercent = marginTotal > 0 ? Math.round((aboveTarget / marginTotal) * 100) : 0;
-
-    expect(aboveTarget).toBe(1);
-    expect(abovePercent).toBe(50);
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toMatchObject({
+      label: '0002',
+      quotedMargin: 20,
+      realizedMargin: 5,
+    });
+    expect(rows[1]).toMatchObject({
+      label: '0001',
+      quotedMargin: 33,
+      realizedMargin: 67,
+    });
   });
 });

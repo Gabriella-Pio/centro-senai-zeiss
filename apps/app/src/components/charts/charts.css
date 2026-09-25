@@ -972,10 +972,27 @@
   height: 2rem;
 }
 
+.chart-confidence-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem 1rem;
+  margin-top: 0.65rem;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+}
+
+.chart-confidence-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .dashboard-charts {
   display: grid;
   gap: 1rem;
   margin-top: 1.5rem;
+  align-items: start;
 }
 
 @media (width >= 56rem) {
@@ -986,6 +1003,14 @@
   .dashboard-charts--full {
     grid-template-columns: 1fr 1fr;
   }
+
+  .dashboard-charts--stacked {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-charts--stacked {
+  grid-template-columns: 1fr;
 }
 
 .chart-machine-rates {

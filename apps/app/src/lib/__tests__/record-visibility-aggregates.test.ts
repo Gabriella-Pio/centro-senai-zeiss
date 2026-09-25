@@ -4,9 +4,8 @@ import type { UserRole } from '@/lib/api';
 import {
   buildConfidenceDonut,
   buildEffortTrend,
-  buildMarginDonut,
+  buildServiceMarginRows,
   computeAssertivenessRate,
-  countMarginDonutAboveTarget,
 } from '@/lib/chart-data';
 import { canViewRecord, countPendingFormalizationLessons } from '@/lib/formalized-knowledge';
 import { computeIndicators } from '@/lib/indicators';
@@ -79,9 +78,8 @@ describe('record visibility in aggregates', () => {
       expect(computeIndicators(visible, [], labSettings).totalFormalized).toBe(1);
       expect(computeAssertivenessRate(visible)).toBe(100);
       expect(buildEffortTrend(visible)).toHaveLength(1);
-      expect(
-        computeIndicators(visible, [], labSettings).averageMarginPercent,
-      ).not.toBe(computeIndicators(records, [], labSettings).averageMarginPercent);
+      expect(buildServiceMarginRows(visible)).toHaveLength(1);
+      expect(buildServiceMarginRows(records)).toHaveLength(2);
     },
   );
 

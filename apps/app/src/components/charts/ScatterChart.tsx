@@ -18,7 +18,7 @@ import { CHART_HELP } from "@/lib/indicator-help";
 import { ChartCard } from "./ChartCard";
 import {
   CHART_COLORS,
-  CHART_HEIGHT,
+  CHART_HEIGHT_WITH_LEGEND,
   CHART_MARGIN_WITH_LEGEND,
   formatChartHours,
   niceChartMax,
@@ -26,10 +26,12 @@ import {
 
 export function ScatterChart({
   data,
+  chartHeight = CHART_HEIGHT_WITH_LEGEND,
   help = CHART_HELP.scatter,
   helpId = "chart-scatter",
 }: {
   data: ScatterPoint[];
+  chartHeight?: number;
   help?: FieldHelpContent;
   helpId?: string;
 }) {
@@ -57,7 +59,7 @@ export function ScatterChart({
       help={help}
       helpId={helpId}
     >
-      <ResponsiveContainer width="100%" height={CHART_HEIGHT + 48}>
+      <ResponsiveContainer width="100%" height={chartHeight}>
         <RechartsScatterChart margin={{ ...CHART_MARGIN_WITH_LEGEND, left: 4 }}>
           <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" />
           <XAxis
